@@ -2,11 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Level Editor</title>
   <style>
     body { background: #111; color: #fff; font-family: sans-serif; }
     #level-editor { background:#222; color:#fff; padding:10px; }
     canvas { display:block; margin:20px auto; border:2px solid #fff; background:#222; }
+    .controls {
+      margin: 20px;
+    }
+    button {
+      margin: 5px;
+      padding: 5px 10px;
+    }
   </style>
 </head>
 <body>
@@ -30,6 +38,6 @@
   <input id="level-file" type="file" accept=".json">
 </div>
   <canvas id="editor-canvas"></canvas>
-  <script src="editor.js"></script>
+  <script src="./editor.js"></script>
 </body>
 </html>

@@ -42,22 +42,22 @@ export function initializeAudio() {
         
         // Preload sounds
         hitSoundPool.forEach(sound => {
-            sound.src = 'sound/hit.mp3';
+            sound.src = './assets/sounds/hit.mp3';
             sound.load();
         });
         
         lifeLossSoundPool.forEach(sound => {
-            sound.src = 'sound/lifeloss.mp3';
+            sound.src = './assets/sounds/lifeloss.mp3';
             sound.load();
         });
         
         poesklapSoundPool.forEach(sound => {
-            sound.src = 'sound/poesklap.mp3';
+            sound.src = './assets/sounds/poesklap.mp3';
             sound.load();
         });
         
         brannasSoundPool.forEach(sound => {
-            sound.src = 'sound/brannas.mp3';
+            sound.src = './assets/sounds/brannas.mp3';
             sound.load();
         });
     } catch (e) {

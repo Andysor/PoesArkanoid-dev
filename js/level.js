@@ -89,7 +89,7 @@ export class Level {
         
         try {
             // Force a fresh load of the level data
-            const response = await fetch(`/assets/levels/level${levelNumber}.json?t=${Date.now()}`);
+            const response = await fetch(`./assets/levels/level${levelNumber}.json?t=${Date.now()}`);
             if (!response.ok) {
                 throw new Error(`Failed to load level ${levelNumber}`);
             }

@@ -112,6 +112,8 @@ canvas.addEventListener('click', function(e) {
 // Eksporter til JSON med alle felter
 window.exportLevel = function() {
   const bgUrl = document.getElementById('bg-url').value || "";
+  // Ensure background URL is relative if it's a local path
+  const relativeBgUrl = bgUrl.startsWith('/') ? '.' + bgUrl : bgUrl;
   const level = bricks.map(row => row.map(brick => ({
     type: brick.type,
     destroyed: false,
@@ -122,7 +124,7 @@ window.exportLevel = function() {
     effect: brick.effect
   })));
   const exportObj = {
-    background: bgUrl,
+    background: relativeBgUrl,
     bricks: level
   };
   const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj, null, 2));

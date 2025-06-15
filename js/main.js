@@ -3,6 +3,7 @@ import { Game } from './game.js';
 import { Paddle } from './paddle.js';
 import { Ball } from './ball.js';
 import { Level } from './level.js';
+import { db, loadHighscores } from './firebase-init.js';
 
 // Game configuration
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -27,6 +28,14 @@ const app = new PIXI.Application({
 
 // Add canvas to the page
 document.body.appendChild(app.view);
+
+// Initialize Firebase
+console.log('🔥 Initializing Firebase...');
+loadHighscores().then(() => {
+    console.log('✅ Firebase initialized successfully');
+}).catch(error => {
+    console.error('❌ Firebase initialization failed:', error);
+});
 
 // Set canvas style to fill the window while maintaining aspect ratio
 const style = app.view.style;

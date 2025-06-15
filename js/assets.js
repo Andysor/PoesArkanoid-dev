@@ -2,26 +2,26 @@
 export const ASSETS = {
     images: {
         characters: {
-            SAFlag: 'assets/images/characters/SAFlag.png',
-            Springbok: 'assets/images/characters/Springbok.png',
-            Voortrekker: 'assets/images/characters/Voortrekker.png',
-            Braai: 'assets/images/characters/Braai.png',
-            RugbyBall: 'assets/images/characters/RugbyBall.png'
+            SAFlag: './assets/images/characters/SAFlag.png',
+            Springbok: './assets/images/characters/Springbok.png',
+            Voortrekker: './assets/images/characters/Voortrekker.png',
+            Braai: './assets/images/characters/Braai.png',
+            RugbyBall: './assets/images/characters/RugbyBall.png'
         },
         items: {
-            Sausage: 'assets/images/items/Sausage.png',
-            Coin: 'assets/images/items/Coin.png',
-            Brannas: 'assets/images/items/Brannas.png'
+            Sausage: './assets/images/items/Sausage.png',
+            Coin: './assets/images/items/Coin.png',
+            Brannas: './assets/images/items/Brannas.png'
         },
-        levels: (name, ext = '.png') => `assets/images/levels/${name}${ext}`
+        levels: (name, ext = '.png') => `./assets/images/levels/${name}${ext}`
     },
     sounds: {
-        hit: 'assets/sounds/hit.mp3',
-        lifeLoss: 'assets/sounds/lifeLoss.mp3',
-        poesKlap: 'assets/sounds/poesKlap.mp3',
-        brannas: 'assets/sounds/brannas.mp3'
+        hit: './assets/sounds/hit.mp3',
+        lifeLoss: './assets/sounds/lifeLoss.mp3',
+        poesKlap: './assets/sounds/poesKlap.mp3',
+        brannas: './assets/sounds/brannas.mp3'
     },
-    levels: (levelNum) => `assets/levels/level${levelNum}.json`
+    levels: (levelNum) => `./assets/levels/level${levelNum}.json`
 };
 
 // Asset loading functions
