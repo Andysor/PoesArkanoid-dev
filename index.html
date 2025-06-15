@@ -2,65 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Poes Gaming Arkanoid</title>
-  <style>
-  body {
-    margin: 0;
-    background: #000;
-    color: white;
-    font-family: sans-serif;
-    overflow: hidden;
-  }
-  #character-select,
-  #name-input-container {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,0.85);
-    z-index: 10;
-  }
-  #character-select span,
-  #name-input-container span {
-    margin-bottom: 10px;
-    font-size: 20px;
-  }
-  #character-select img {
-    margin: 5px;
-  }
-  canvas {
-    display: block;
-    margin: 0 auto;
-    border: 2px solid #fff;
-    background: #111;
-    position: relative;
-    z-index: 1;
-  }
-</style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Poes Arkanoid</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.3.2/pixi.min.js"></script>
 </head>
 <body>
- <div id="character-select" style="text-align:center; margin:20px;">
-      <span>Kies jou poes:</span>
-      <img src="https://raw.githubusercontent.com/Andysor/PoesGame/main/images/springbok.png" class="char-opt" data-img="https://raw.githubusercontent.com/Andysor/PoesGame/main/images/springbok.png" style="width:60px;cursor:pointer;border:2px solid #fff;margin:5px;">
-      <img src="https://raw.githubusercontent.com/Andysor/PoesGame/main/images/south-africa.png" class="char-opt" data-img="https://raw.githubusercontent.com/Andysor/PoesGame/main/images/south-africa.png" style="width:60px;cursor:pointer;border:2px solid #fff;margin:5px;">
-      <img src="https://raw.githubusercontent.com/Andysor/PoesGame/main/images/voortrekker.png" class="char-opt" data-img="https://raw.githubusercontent.com/Andysor/PoesGame/main/images/voortrekker.png" style="width:60px;cursor:pointer;border:2px solid #fff;margin:5px;">
-      <img src="https://raw.githubusercontent.com/Andysor/PoesGame/main/images/rugby-ball.png" class="char-opt" data-img="https://raw.githubusercontent.com/Andysor/PoesGame/main/images/rugby-ball.png" style="width:60px;cursor:pointer;border:2px solid #fff;margin:5px;">
-      <img src="https://raw.githubusercontent.com/Andysor/PoesGame/main/images/braai.png" class="char-opt" data-img="https://raw.githubusercontent.com/Andysor/PoesGame/main/images/braai.png" style="width:60px;cursor:pointer;border:2px solid #fff;margin:5px;">
-      </div> 
-  <div id="name-input-container" style="display:none; text-align:center; margin:20px;">
-      <span>Skryf jou naam:</span><br>
-      <input id="player-name" type="text" maxlength="10" style="font-size:20px; margin:10px;">
-      <button id="start-btn" style="font-size:20px;">Begin spel</button>
+  <div id="name-input-container">
+    <h2>Enter Your Name</h2>
+    <input type="text" id="name-input" placeholder="Your name">
+    <br>
+    <button id="start-button">Start Game</button>
   </div>
-  <canvas id="arkanoid" width="600" height="400"></canvas>
-<!-- Firebase SDK-er -->
-<script src="https://www.gstatic.com/firebasejs/11.9.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore-compat.js"></script>
-<script src="firebase-init.js"></script>
-<script src="game.js"></script>
-
+  
+  <div id="character-select">
+    <h2>Choose Your Character</h2>
+    <div class="character-options">
+      <img src="assets/images/characters/SAFlag.png" class="char-opt" data-img="SAFlag" alt="South African Flag">
+      <img src="assets/images/characters/Springbok.png" class="char-opt" data-img="Springbok" alt="Springbok">
+      <img src="assets/images/characters/Voortrekker.png" class="char-opt" data-img="Voortrekker" alt="Voortrekker">
+      <img src="assets/images/characters/Braai.png" class="char-opt" data-img="Braai" alt="Braai">
+      <img src="assets/images/characters/RugbyBall.png" class="char-opt" data-img="RugbyBall" alt="Rugby Ball">
+    </div>
+  </div>
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>

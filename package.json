@@ -1,0 +1,17 @@
+{
+  "name": "poes-arkanoid",
+  "version": "1.0.0",
+  "description": "A modern Arkanoid game using PixiJS",
+  "main": "index.js",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "pixi.js": "^7.4.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+} 
