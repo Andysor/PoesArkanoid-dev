@@ -5,19 +5,20 @@ export const GAME_VERSION = '0.1.0';
 export const TEST_MODE = false;
 
 // Ball settings
-export const BASE_INITIAL_SPEED = 7;
-export const BASE_MAX_SPEED = 15;
+export const BASE_INITIAL_SPEED = 4;
+export const BASE_MAX_SPEED = 12;
 export const LEVEL_SPEED_INCREASE = 0.1;
+export const BALL_RADIUS = window.innerWidth * 0.02; // 1% of screen width
 
 // Paddle settings
-export const PADDLE_WIDTH = 75;
-export const PADDLE_HEIGHT = 10;
+export const PADDLE_WIDTH = window.innerWidth * 0.2; // 20% of screen width
+export const PADDLE_HEIGHT = window.innerHeight * 0.05; // 5% of screen height
 export const PADDLE_SPEED = 7;
 
 // Brick settings
-export const BRICK_WIDTH = 75;
-export const BRICK_HEIGHT = 20;
-export const BRICK_PADDING = 10;
+export const BRICK_WIDTH = window.innerWidth * 0.05; // 5% of screen width
+export const BRICK_HEIGHT = window.innerHeight * 0.02; // 2% of screen height
+export const BRICK_PADDING = window.innerWidth * 0.01; // 1% of screen width
 
 // Power-up settings
 export const POWER_UP_CHANCE = 0.2;

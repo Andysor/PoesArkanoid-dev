@@ -7,27 +7,51 @@ import { db, loadHighscores } from './firebase-init.js';
 
 // Game configuration
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+const GAME_WIDTH = isMobile ? 600 : 800;
+const GAME_HEIGHT = isMobile ? 1200: 600;
+
 const GAME_CONFIG = {
-    width: isMobile ? 720 : 800,
-    height: isMobile ? 1280 : 600,
-    backgroundColor: 0x000000,
-    resolution: 1, // Force 1:1 pixel ratio
-    autoDensity: false, // Disable automatic density scaling
-    antialias: true
+    width: GAME_WIDTH,
+    height: GAME_HEIGHT,
+    //backgroundColor: 0x000000,
+    //resolution: 1, // Force 1:1 pixel ratio
+    //autoDensity: false, // Disable automatic density scaling
+    //antialias: true
 };
 
 // Initialize PIXI Application
 const app = new PIXI.Application({
-    width: isMobile ? 720 : 800,
-    height: isMobile ? 1280 : 600,
+    width: window.innerWidth,
+    height: window.innerHeight,
     backgroundColor: 0x000000,
-    resolution: 1,
-    autoDensity: false,
+    resolution: window.devicePixelRatio || 1,
+    autoDensity: true,
     antialias: true
 });
 
 // Add canvas to the page
 document.body.appendChild(app.view);
+
+// 🎯 SKALER CANVAS TIL SKJERMEN
+//function resizeCanvas() {
+//    const screenWidth = window.innerWidth;
+//    const screenHeight = window.innerHeight;
+
+//    const scale = Math.min(screenWidth / GAME_WIDTH, screenHeight / GAME_HEIGHT);
+
+//    const canvasWidth = GAME_WIDTH * scale;
+//    const canvasHeight = GAME_HEIGHT * scale;
+
+//    app.view.style.width = `${canvasWidth}px`;
+//    app.view.style.height = `${canvasHeight}px`;
+//    app.view.style.display = "block";
+//    app.view.style.margin = "0 auto";
+//}
+
+
+//window.addEventListener("resize", resizeCanvas);
+//resizeCanvas(); // kjør én gang med en gang
 
 // Initialize Firebase
 console.log('🔥 Initializing Firebase...');
@@ -39,10 +63,8 @@ loadHighscores().then(() => {
 
 // Set canvas style to fill the window while maintaining aspect ratio
 const style = app.view.style;
-style.position = 'absolute';
-style.width = '100%';
-style.height = '100%';
-style.objectFit = 'contain';
+//style.position = 'absolute';
+
 
 // Log initial dimensions for debugging
 console.log('Initial dimensions:', {
@@ -86,12 +108,8 @@ const startButton = document.getElementById('start-button');
 setTimeout(() => {
     if (!game && app.stage) {
         game = new Game(app);
-        paddle = new Paddle(app);
-        ball = new Ball(app);
-        
-        // Set up references
-        ball.setLevel(game.levelInstance);
-        ball.game = game;
+        paddle = game.paddle;
+        ball = game.ball;
     }
 }, 100); // Small delay to ensure PIXI is fully initialized
 
@@ -125,29 +143,10 @@ document.querySelectorAll('.char-opt').forEach(img => {
 
 // Game loop
 app.ticker.add(() => {
-    if (gameStarted && game) {
-        // Ensure ball and paddle are on stage
-        if (!ball.graphics.parent) {
-            app.stage.addChild(ball.graphics);
-        }
-        if (!paddle.graphics.parent) {
-            app.stage.addChild(paddle.graphics);
-        }
-        
-        // Ensure UI elements are visible
-        if (game.scoreText && !game.scoreText.parent) {
-            app.stage.addChild(game.scoreText);
-        }
-        if (game.livesText && !game.livesText.parent) {
-            app.stage.addChild(game.livesText);
-        }
-        if (game.levelText && !game.levelText.parent) {
-            app.stage.addChild(game.levelText);
-        }
-        
+    if (gameStarted && game && game.ball) {
         game.update();
         paddle.update();
-        const result = ball.update(paddle, game.levelInstance);
+        const result = game.ball.update(paddle, game.levelInstance);
         if (result.lifeLost) {
             game.loseLife();
         }

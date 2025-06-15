@@ -9,9 +9,11 @@ export const ASSETS = {
             RugbyBall: './assets/images/characters/RugbyBall.png'
         },
         items: {
-            Sausage: './assets/images/items/Sausage.png',
-            Coin: './assets/images/items/Coin.png',
-            Brannas: './assets/images/items/Brannas.png'
+            sausage: './assets/images/items/sausage.png',
+            coin: './assets/images/items/coin.png',
+            brannas: './assets/images/items/brannas.png',
+            ball: './assets/images/items/ball.png',
+            extraball: './assets/images/items/extraball.png'
         },
         levels: (name, ext = '.png') => `./assets/images/levels/${name}${ext}`
     },

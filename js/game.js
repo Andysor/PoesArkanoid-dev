@@ -11,6 +11,8 @@ import {
 } from './config.js';
 import { Level } from './level.js';
 import { GameOverManager } from './gameOverManager.js';
+import { Ball } from './ball.js';
+import { Paddle } from './paddle.js';
 
 export class Game {
     constructor(app) {
@@ -41,6 +43,11 @@ export class Game {
         
         // Create game container
         this.gameContainer = new PIXI.Container();
+        this.app.stage.addChild(this.gameContainer);
+        
+        // Create UI container
+        this.uiContainer = new PIXI.Container();
+        this.gameContainer.addChild(this.uiContainer);
         
         // Create score text
         this.scoreText = new PIXI.Text('Score: 0', {
@@ -49,7 +56,7 @@ export class Game {
             fill: 0xffffff
         });
         this.scoreText.position.set(10, 10);
-        this.gameContainer.addChild(this.scoreText);
+        this.uiContainer.addChild(this.scoreText);
         
         // Create lives text
         this.livesText = new PIXI.Text('Lives: 3', {
@@ -58,7 +65,7 @@ export class Game {
             fill: 0xffffff
         });
         this.livesText.position.set(app.screen.width - 100, 10);
-        this.gameContainer.addChild(this.livesText);
+        this.uiContainer.addChild(this.livesText);
         
         // Create level text
         this.levelText = new PIXI.Text('Level: 1', {
@@ -67,16 +74,30 @@ export class Game {
             fill: 0xffffff
         });
         this.levelText.position.set(app.screen.width / 2 - 50, 10);
-        this.gameContainer.addChild(this.levelText);
+        this.uiContainer.addChild(this.levelText);
         
         // Create game over manager
         this.gameOverManager = new GameOverManager(app);
         
-        // Add game container to stage
-        app.stage.addChild(this.gameContainer);
+        // Create game objects container
+        this.objectsContainer = new PIXI.Container();
+        this.gameContainer.addChild(this.objectsContainer);
         
         // Initialize level instance
         this.levelInstance = new Level(app);
+        this.objectsContainer.addChild(this.levelInstance.brickContainer);
+        
+        // Initialize paddle
+        this.paddle = new Paddle(app);
+        this.objectsContainer.addChild(this.paddle.graphics);
+        
+        // Load ball textures and initialize main ball
+        Ball.loadTextures().then(() => {
+            this.ball = new Ball(app);
+            this.ball.game = this;
+            this.ball.setLevel(this.levelInstance);
+            this.objectsContainer.addChild(this.ball.graphics);
+        });
         
         // Load sounds
         this.sounds = {
@@ -99,13 +120,16 @@ export class Game {
     
     initializeGameState() {
         console.log('🎮 Initializing game state...');
+        
+        // Reset game state
         this.score = 0;
         this.lives = 3;
         this.level = 1;
-        this.gameOver = false;
-        this.showHighscores = false;
-        this.waitingForInput = true;
         this.gameStarted = false;
+        this.gameOver = false;
+        this.waitingForInput = true;
+        this.showHighscores = false;
+        this.extraBalls = [];
         
         // Reset UI elements
         this.scoreText.text = `Score: ${this.score}`;
@@ -122,23 +146,27 @@ export class Game {
             this.levelInstance.restartLevel();
         }
         
-        // Reset ball and paddle
-        if (this.ball) {
-            this.ball.reset();
-        }
+        // Reset paddle position
         if (this.paddle) {
-            this.paddle.reset();
+            this.paddle.graphics.x = (this.app.screen.width - this.paddle.graphics.width) / 2;
+            this.paddle.graphics.y = this.app.screen.height - this.paddle.graphics.height - 20;
+        }
+        
+        // Reinitialize ball in the same order as constructor
+        if (this.ball) {
+            // First remove the old ball
+            if (this.objectsContainer) {
+                this.objectsContainer.removeChild(this.ball.graphics);
+            }
+            // Create a new ball
+            this.ball = new Ball(this.app);
+            this.ball.game = this;
+            this.ball.setLevel(this.levelInstance);
+            this.objectsContainer.addChild(this.ball.graphics);
         }
         
         // Show game elements
-        if (this.app.stage.children) {
-            this.app.stage.children.forEach(child => {
-                if (child !== this.gameOverManager.gameOverContainer && 
-                    child !== this.gameOverManager.highscoreContainer) {
-                    child.visible = true;
-                }
-            });
-        }
+        this.gameContainer.visible = true;
     }
 
     handleGameOverClick(e) {
@@ -409,13 +437,59 @@ export class Game {
             return;
         }
         
-        if (!this.gameStarted) return;
+        // Don't update if game hasn't started or is waiting for input
+        if (!this.gameStarted || this.waitingForInput) {
+            return;
+        }
         
         // Check for game over
         if (this.lives <= 0) {
             this.updateLives();
             return;
         }
+        
+        // Update paddle
+        if (this.paddle) {
+            this.paddle.update();
+        }
+        
+        // Update all balls
+        let lifeLost = false;
+        let brickHit = false;
+        
+        if (Ball.balls && Ball.balls.length > 0) {
+            Ball.balls.forEach(ball => {
+                if (ball && ball.update) {
+                    const result = ball.update(this.paddle, this.levelInstance);
+                    if (result.lifeLost) {
+                        lifeLost = true;
+                    }
+                    if (result.brickHit) {
+                        brickHit = true;
+                    }
+                }
+            });
+        }
+        
+        // Handle life lost
+        if (lifeLost) {
+            this.loseLife();
+        }
+        
+        // Handle brick hit
+        if (brickHit) {
+            this.addScore(10);
+        }
+        
+        // Update level
+        if (this.levelInstance) {
+            this.levelInstance.update();
+        }
+        
+        // Update UI elements
+        this.updateScore();
+        this.updateLives();
+        this.updateLevel();
         
         // Check for level completion
         if (this.checkLevelComplete()) {
@@ -455,6 +529,10 @@ export class Game {
     }
     
     loseLife() {
+        // Remove all extra balls first
+        Ball.resetAll(this.app, this, this.levelInstance);
+        
+        // Then update lives and play sound
         this.lives--;
         this.updateLives();
         this.playSound('lifeLoss');
@@ -463,11 +541,31 @@ export class Game {
     nextLevel() {
         this.level++;
         this.updateLevel();
+        
+        // Remove all extra balls before loading next level
+        Ball.resetAll();
+        
+        // Load the next level
+        this.levelInstance.loadLevel(this.level).then(() => {
+            // Reset ball position and speed
+            if (this.ball) {
+                this.ball.reset();
+                this.ball.setLevel(this.levelInstance);
+            }
+            
+            // Reset paddle position
+            if (this.paddle) {
+                this.paddle.graphics.x = (this.app.screen.width - this.paddle.graphics.width) / 2;
+            }
+        });
     }
     
     checkLevelComplete() {
-        // This will be implemented when we add bricks
-        return false;
+        if (!this.levelInstance) return false;
+        
+        // Check if there are any remaining bricks
+        const remainingBricks = this.levelInstance.bricks.flat().filter(brick => brick !== null).length;
+        return remainingBricks === 0;
     }
     
     showGameOver() {

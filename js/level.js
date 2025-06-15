@@ -33,7 +33,6 @@ export class Level {
         
         // Create brick container
         this.brickContainer = new PIXI.Container();
-        this.app.stage.addChild(this.brickContainer);
         
         // Initialize brick array
         this.initializeBrickArray();
@@ -42,13 +41,6 @@ export class Level {
     handleBrickDestroyed(c, r) {
         const brick = this.bricks[c]?.[r];
         if (brick) {
-            console.log('🔨 Brick destruction started:', {
-                position: `[${c},${r}]`,
-                status: brick.status,
-                hasGraphics: !!brick.graphics,
-                containerChildren: this.brickContainer.children.length
-            });
-
             // Remove brick from array
             this.bricks[c][r] = null;
             
@@ -177,6 +169,7 @@ export class Level {
                     const brick = new Brick(x, y, this.brickWidth, this.brickHeight, type);
                     brick.column = c;
                     brick.row = r;
+                    brick.brickInfo = brickInfo; // Set the brickInfo property
                     this.brickContainer.addChild(brick.graphics);
                     this.bricks[c][r] = brick;
                 }
@@ -225,7 +218,6 @@ export class Level {
 
         // Force stage update if there were destroyed bricks
         if (destroyedBricks > 0) {
-            console.log('🔄 Updating stage after brick destruction');
             this.app.stage.removeChildren();
             this.app.stage.addChild(this.brickContainer);
             
@@ -238,13 +230,6 @@ export class Level {
                     }
                 }
             }
-            
-            console.log('📊 Update complete:', {
-                activeBricks,
-                destroyedBricks,
-                containerChildren: this.brickContainer.children.length,
-                expectedChildren: activeBricks
-            });
         }
 
         return allDestroyed;
