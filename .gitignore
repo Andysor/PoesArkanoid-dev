@@ -1,9 +1,5 @@
 # Ignorer bilder og nivådata
-images/
-img/
-levels/
-data/levels/
-assets/
+
 
 # Midlertidige/redigeringsfiler
 *.psd
