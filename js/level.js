@@ -34,8 +34,17 @@ export class Level {
         // Create brick container
         this.brickContainer = new PIXI.Container();
         
-        // Initialize brick array
-        this.initializeBrickArray();
+        // Initialize empty brick array
+        this.bricks = new Array(this.brickColumnCount);
+        for (let c = 0; c < this.brickColumnCount; c++) {
+            this.bricks[c] = new Array(this.brickRowCount).fill(null);
+        }
+        console.log('Brick array initialized:', {
+            columns: this.bricks.length,
+            rows: this.bricks[0].length,
+            totalCells: this.bricks.length * this.bricks[0].length,
+            nullCells: this.bricks.flat().filter(b => b === null).length
+        });
     }
     
     handleBrickDestroyed(c, r) {
@@ -56,28 +65,13 @@ export class Level {
         }
     }
     
-    initializeBrickArray() {
-        // Create a new array for each column
-        this.bricks = new Array(this.brickColumnCount);
-        
-        // Initialize each column with null values
-        for (let c = 0; c < this.brickColumnCount; c++) {
-            this.bricks[c] = new Array(this.brickRowCount).fill(null);
-        }
-
-        console.log('Brick array initialized:', {
-            columns: this.bricks.length,
-            rows: this.bricks[0].length,
-            totalCells: this.bricks.length * this.bricks[0].length,
-            nullCells: this.bricks.flat().filter(b => b === null).length
-        });
-    }
-    
     async loadLevel(levelNumber) {
         console.log('Loading level:', levelNumber);
         
-        // Clear existing bricks first
-        this.clearBricks();
+        // Only clear if we have bricks
+        if (this.bricks.flat().some(b => b !== null)) {
+            this.clearBricks();
+        }
         
         try {
             // Force a fresh load of the level data
@@ -99,17 +93,6 @@ export class Level {
             // Create a default level if loading fails
             this.createDefaultLevel();
         }
-    }
-
-    restartLevel() {
-        console.log('Restarting level...');
-        
-        // Clear existing bricks and reset level
-        this.clearBricks();
-        this.currentLevel = 1;
-        
-        // Load level 1 directly with fresh data
-        return this.loadLevel(1);
     }
 
     clearBricks() {
@@ -136,8 +119,10 @@ export class Level {
             this.brickContainer.removeChild(this.brickContainer.children[0]);
         }
         
-        // Clear the brick array
-        this.initializeBrickArray();
+        // Reset the brick array
+        for (let c = 0; c < this.brickColumnCount; c++) {
+            this.bricks[c] = new Array(this.brickRowCount).fill(null);
+        }
 
         console.log('Bricks cleared:', {
             afterBrickCount: this.bricks.flat().filter(b => b !== null).length,

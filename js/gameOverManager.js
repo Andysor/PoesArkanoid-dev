@@ -167,9 +167,9 @@ export class GameOverManager {
         // Start the game loop
         this.app.ticker.start();
         
-        // Initialize game state
+        // Reset game state and start the game
         if (this.game) {
-            this.game.initializeGameState();
+            this.game.restart();
         } else {
             console.error('Game instance not found');
         }

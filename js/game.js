@@ -93,10 +93,15 @@ export class Game {
         
         // Load ball textures and initialize main ball
         Ball.loadTextures().then(() => {
-            this.ball = new Ball(app);
+            this.ball = new Ball(this.app);
             this.ball.game = this;
             this.ball.setLevel(this.levelInstance);
             this.objectsContainer.addChild(this.ball.graphics);
+            
+            // Load initial level and initialize game state
+            this.levelInstance.loadLevel(1).then(() => {
+                this.resetGameState();
+            });
         });
         
         // Load sounds
@@ -113,15 +118,12 @@ export class Game {
             coin: loadImage(ASSETS.images.items.Coin),
             brannas: loadImage(ASSETS.images.items.Brannas)
         };
-        
-        // Initialize game state
-        this.initializeGameState();
     }
     
-    initializeGameState() {
-        console.log('🎮 Initializing game state...');
+    resetGameState() {
+        console.log('🎮 Resetting game state...');
         
-        // Reset game state
+        // 🧼 1. Reset game state
         this.score = 0;
         this.lives = 3;
         this.level = 1;
@@ -131,44 +133,49 @@ export class Game {
         this.showHighscores = false;
         this.extraBalls = [];
         
-        // Reset UI elements
+        // 🔄 2. Reset UI
         this.scoreText.text = `Score: ${this.score}`;
         this.livesText.text = `Lives: ${this.lives}`;
         this.levelText.text = `Level: ${this.level}`;
-        
-        // Show UI elements
         this.scoreText.visible = true;
         this.livesText.visible = true;
         this.levelText.visible = true;
         
-        // Reset level
-        if (this.levelInstance) {
-            this.levelInstance.restartLevel();
-        }
-        
-        // Reset paddle position
+        // 🧱 3. Reset paddle
         if (this.paddle) {
             this.paddle.graphics.x = (this.app.screen.width - this.paddle.graphics.width) / 2;
             this.paddle.graphics.y = this.app.screen.height - this.paddle.graphics.height - 20;
         }
         
-        // Reinitialize ball in the same order as constructor
-        if (this.ball) {
-            // First remove the old ball
-            if (this.objectsContainer) {
-                this.objectsContainer.removeChild(this.ball.graphics);
+        // 🎾 4. Remove old balls and event listeners
+        Ball.balls.forEach(ball => {
+            ball.removeInputListeners();
+            if (ball.graphics && this.objectsContainer.children.includes(ball.graphics)) {
+                this.objectsContainer.removeChild(ball.graphics);
             }
-            // Create a new ball
-            this.ball = new Ball(this.app);
-            this.ball.game = this;
-            this.ball.setLevel(this.levelInstance);
-            this.objectsContainer.addChild(this.ball.graphics);
+        });
+        console.log('🧹 Removed all ball graphics');
+
+        Ball.balls = [];
+        this.balls = [];
+        
+        // 🧱 5. Reset level
+        if (this.levelInstance) {
+            this.levelInstance.loadLevel(1);
         }
         
-        // Show game elements
+        // 🆕 6. Create and place new main ball
+        this.ball = new Ball(this.app);
+        this.ball.game = this;
+        this.ball.setLevel(this.levelInstance);
+        this.objectsContainer.addChild(this.ball.graphics);
+        this.ball.placeOnPaddle(this.paddle);
+        console.log('🆕 New ball placed on paddle after restart');
+        
+        // 🖼️ 7. Show game elements
         this.gameContainer.visible = true;
     }
-
+    
     handleGameOverClick(e) {
         if (!this.gameOver) return;
         
@@ -219,7 +226,7 @@ export class Game {
             });
 
             // Initialize fresh game state
-            this.initializeGameState();
+            this.resetGameState();
 
             console.log('🔄 After game initialization:', {
                 gameStarted: this.gameStarted,
@@ -234,6 +241,18 @@ export class Game {
             }, 100);
         }
     }
+
+    handleStartInput(e) {
+        if (e?.preventDefault) e.preventDefault();
+    
+        if (this.isMoving) return; // Sikring
+    
+        if (e.code === 'Space' || e.type === 'touchstart') {
+            console.log("🚀 Ball start triggered");
+            this.start();
+        }
+    }   
+    
 
     handleGameStart(e) {
         if (this.waitingForInput) {
@@ -400,13 +419,10 @@ export class Game {
     }
     
     start() {
-        console.log('🎮 Starting game...');
-        
-        // Reset game state
+        if (this.gameStarted) return;
         this.gameStarted = true;
-        this.gameOver = false;
-        this.showHighscores = false;
         this.waitingForInput = false;
+        console.log('🎮 Starting game...');
         
         // Show UI elements
         if (this.scoreText) this.scoreText.visible = true;
@@ -426,8 +442,19 @@ export class Game {
         // Start the game loop
         this.app.ticker.start();
         
-        // Add click handler for starting the game
-        this.app.stage.once('pointerdown', this.handleGameStart.bind(this));
+        // Start the main ball
+        const mainBall = Ball.balls.find(b => !b.isExtraBall);
+        if (mainBall && !mainBall.isMoving) {
+            mainBall.start();
+        }
+    }
+    
+    restart() {
+        // Reset game state
+        this.resetGameState();
+        
+        // Start the game
+        this.start();
     }
     
     update() {
@@ -461,6 +488,7 @@ export class Game {
             Ball.balls.forEach(ball => {
                 if (ball && ball.update) {
                     const result = ball.update(this.paddle, this.levelInstance);
+                    
                     if (result.lifeLost) {
                         lifeLost = true;
                     }
@@ -543,7 +571,7 @@ export class Game {
         this.updateLevel();
         
         // Remove all extra balls before loading next level
-        Ball.resetAll();
+        Ball.resetAll(this.app, this, this.levelInstance);
         
         // Load the next level
         this.levelInstance.loadLevel(this.level).then(() => {
@@ -586,7 +614,7 @@ export class Game {
         this.gameOverManager.showGameOver(this.score, () => {
             this.showHighscores = true;
             this.gameOver = false;
-            this.initializeGameState();
+            this.resetGameState();
             this.app.ticker.start();
         });
     }
@@ -648,6 +676,6 @@ export class Game {
         this.characterSelectContainer.visible = false;
         
         // Initialize fresh game state
-        this.initializeGameState();
+        this.resetGameState();
     }
 } 

@@ -13,11 +13,7 @@ const GAME_HEIGHT = isMobile ? 1200: 600;
 
 const GAME_CONFIG = {
     width: GAME_WIDTH,
-    height: GAME_HEIGHT,
-    //backgroundColor: 0x000000,
-    //resolution: 1, // Force 1:1 pixel ratio
-    //autoDensity: false, // Disable automatic density scaling
-    //antialias: true
+    height: GAME_HEIGHT,   
 };
 
 // Initialize PIXI Application
@@ -33,25 +29,7 @@ const app = new PIXI.Application({
 // Add canvas to the page
 document.body.appendChild(app.view);
 
-// 🎯 SKALER CANVAS TIL SKJERMEN
-//function resizeCanvas() {
-//    const screenWidth = window.innerWidth;
-//    const screenHeight = window.innerHeight;
 
-//    const scale = Math.min(screenWidth / GAME_WIDTH, screenHeight / GAME_HEIGHT);
-
-//    const canvasWidth = GAME_WIDTH * scale;
-//    const canvasHeight = GAME_HEIGHT * scale;
-
-//    app.view.style.width = `${canvasWidth}px`;
-//    app.view.style.height = `${canvasHeight}px`;
-//    app.view.style.display = "block";
-//    app.view.style.margin = "0 auto";
-//}
-
-
-//window.addEventListener("resize", resizeCanvas);
-//resizeCanvas(); // kjør én gang med en gang
 
 // Initialize Firebase
 console.log('🔥 Initializing Firebase...');
@@ -66,28 +44,6 @@ const style = app.view.style;
 //style.position = 'absolute';
 
 
-// Log initial dimensions for debugging
-console.log('Initial dimensions:', {
-    screen: {
-        width: window.innerWidth,
-        height: window.innerHeight
-    },
-    canvas: {
-        width: app.view.width,
-        height: app.view.height,
-        styleWidth: app.view.style.width,
-        styleHeight: app.view.style.height
-    },
-    renderer: {
-        width: app.renderer.width,
-        height: app.renderer.height,
-        resolution: app.renderer.resolution
-    },
-    game: {
-        width: app.screen.width,
-        height: app.screen.height
-    }
-});
 
 // Hide canvas initially
 app.view.style.display = 'none';
@@ -97,7 +53,7 @@ let gameStarted = false;
 let playerName = '';
 let game = null;
 let paddle = null;
-let ball = null;
+//let ball = null;
 
 // DOM Elements
 const nameInputContainer = document.getElementById('name-input-container');
@@ -109,7 +65,6 @@ setTimeout(() => {
     if (!game && app.stage) {
         game = new Game(app);
         paddle = game.paddle;
-        ball = game.ball;
     }
 }, 100); // Small delay to ensure PIXI is fully initialized
 
@@ -143,16 +98,10 @@ document.querySelectorAll('.char-opt').forEach(img => {
 
 // Game loop
 app.ticker.add(() => {
-    if (gameStarted && game && game.ball) {
+    if (gameStarted && game) {
         game.update();
         paddle.update();
-        const result = game.ball.update(paddle, game.levelInstance);
-        if (result.lifeLost) {
-            game.loseLife();
-        }
-        if (result.brickHit) {
-            game.addScore(10);
-        }
+                
         game.levelInstance.update();
     }
 });
@@ -216,7 +165,6 @@ window.addEventListener('resize', () => {
 document.addEventListener('keydown', (e) => {
     if (e.code === 'Space' && !game.gameStarted && !game.gameOver) {
         game.start();
-        game.ball.start();
     }
 });
 
@@ -224,6 +172,5 @@ document.addEventListener('keydown', (e) => {
 app.stage.addEventListener('click', () => {
     if (game.gameOver) {
         game.restart();
-        game.ball.start();
     }
 }); 

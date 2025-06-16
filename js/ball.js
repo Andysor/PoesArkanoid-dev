@@ -56,6 +56,7 @@ export class Ball {
             return;
         }
         this.graphics = new PIXI.Sprite(texture);
+        this.graphics.isBallGraphic = true; // Add this line for easy removal
         const originalSize = texture.width;
         this.graphics.anchor.set(0.5); // Center the sprite
         this.graphics.scale.set(this.radius * 2 / 1024);
@@ -66,25 +67,80 @@ export class Ball {
         this.graphics.x = app.screen.width / 2;
         this.graphics.y = app.screen.height / 10;
 
-        // Add event listeners for starting the ball (only for main ball)
-        if (!isExtraBall) {
-            document.addEventListener('keydown', this.handleStartInput.bind(this));
-            this.app.view.addEventListener('touchstart', this.handleStartInput.bind(this));
-        }
-
         // Add to static balls array
         Ball.balls.push(this);
 
         // Initialize trail effect with different colors for regular and extra balls
         this.trail = new BallTrail(app, isExtraBall ? 0x42f5f5 : 0xf58a42); // Cyan for extra balls, orange for regular balls
+
+        // Initialize bound handlers and add event listeners for main ball
+        if (!isExtraBall) {
+            console.log('🎯 Setting up input handlers for main ball');
+            this.boundHandleStartInput = this.handleStartInput.bind(this);
+            this.addInputListeners();
+        }
     }
     
     setLevel(level) {
         this.level = level;
     }
     
+    placeOnPaddle(paddle) {
+        if (!paddle) {
+            console.error('No paddle provided for ball placement');
+            return;
+        }
+
+        // Reset movement state
+        this.isMoving = false;
+        this.dx = 0;
+        this.dy = 0;
+
+        // Calculate position
+        const ballX = paddle.graphics.x + paddle.graphics.width / 2;
+        const ballY = paddle.graphics.y - this.radius;
+        
+        // Update graphics position
+        this.graphics.x = ballX;
+        this.graphics.y = ballY;
+        
+        console.log('🎯 placeOnPaddle called', {
+            ballX,
+            ballY,
+            paddleX: paddle.graphics.x,
+            paddleY: paddle.graphics.y,
+            paddleWidth: paddle.graphics.width
+        });
+    }
+    
+    addInputListeners() {
+        if (this.isExtraBall) return;
+        
+        console.log('🎯 Adding input listeners for ball');
+        this.boundHandleStartInput = this.handleStartInput.bind(this);
+        document.addEventListener('keydown', this.boundHandleStartInput);
+        this.app.stage.eventMode = 'static';
+        this.app.stage.addEventListener('pointerdown', this.boundHandleStartInput);
+    }
+
+    removeInputListeners() {
+        if (!this.isExtraBall) {
+            console.log('🎯 Removing input listeners for ball');
+            document.removeEventListener('keydown', this.boundHandleStartInput);
+            this.app.view.removeEventListener('touchstart', this.boundHandleStartInput);
+        }
+    }
+
     handleStartInput(e) {
-        if (!this.isMoving && (e.code === 'Space' || e.type === 'touchstart')) {
+        if (e?.preventDefault) e.preventDefault();
+        
+        if (this.isMoving) {
+            console.log('🎯 Ball already moving, ignoring input', { isMoving: this.isMoving });
+            return;
+        }
+        
+        if (e.code === 'Space' || e.type === 'pointerdown') {
+            console.log("🚀 Ball start triggered", { isMoving: this.isMoving, isExtraBall: this.isExtraBall });
             this.start();
         }
     }
@@ -192,31 +248,42 @@ export class Ball {
         this.isMoving = false;
         this.dx = 0;
         this.dy = 0;
-        this.speed = BASE_INITIAL_SPEED; // Reset speed to initial value
-        this.trail.clear(); // Clear trail when ball resets
-        
-        // Only place the ball on the paddle if it's the main ball
+        this.speed = BASE_INITIAL_SPEED;
+    
+        if (this.trail) {
+            this.trail.clear();
+        }
+    
+        if (this.graphics?.parent) {
+            this.graphics.parent.removeChild(this.graphics);
+        }
+    
         if (!this.isExtraBall) {
-            // Position will be updated in the next update call
             this.graphics.x = this.app.screen.width / 2;
             this.graphics.y = this.app.screen.height / 10;
-        } else {
-            // For extra balls, remove them from the game
-            if (this.game && this.game.objectsContainer) {
-                this.game.objectsContainer.removeChild(this.graphics);
+    
+            if (this.game?.objectsContainer && !this.game.objectsContainer.children.includes(this.graphics)) {
+                this.game.objectsContainer.addChild(this.graphics);
             }
-            // Remove from balls array
+        } else {
             const index = Ball.balls.indexOf(this);
-            if (index > -1) {
+            if (index !== -1) {
                 Ball.balls.splice(index, 1);
             }
         }
     }
+    
+    
 
     start() {
+        if (this.isMoving) {
+            console.log('🎯 Ball already moving, ignoring start');
+            return;
+        }
         this.isMoving = true;
         this.dx = COMPONENT_SPEED;
         this.dy = -COMPONENT_SPEED;
+        console.log("🚀 Ball started", { isMoving: this.isMoving });
     }
 
     addRandomFactor() {
@@ -356,8 +423,8 @@ export class Ball {
                 } else if (brick.brickInfo.type === 'extra') {
                     // Handle extra ball effect
                     if (this.game) {
-                        const extraBall = Ball.createExtraBall(this.app, this.graphics.x, this.graphics.y, this.speed, -this.dx, -this.dy);
-                        Ball.balls.push(extraBall);
+                        Ball.createExtraBall(this.app, this.graphics.x, this.graphics.y, this.speed, -this.dx, -this.dy);
+                        console.log('🎾 Extra ball triggered from special brick'); 
                     }
                 }
             }
@@ -374,70 +441,118 @@ export class Ball {
             direction: { dx, dy },
             currentBalls: Ball.balls.length
         });
-        
+    
+        if (!Ball.textures.extra) {
+            console.error('❌ Extra ball texture not loaded.');
+            return null;
+        }
+    
         const extraBall = new Ball(app, true);
+    
         extraBall.graphics.x = x;
         extraBall.graphics.y = y;
         extraBall.speed = speed;
-        
-        // Calculate a different angle for the extra ball
+        extraBall.graphics.isBallGraphic = true; // For korrekt opprydding
+    
+        // Spre litt på retningen
         const currentAngle = Math.atan2(dy, dx);
-        const angleOffset = Math.PI / 4; // 45 degrees
+        const angleOffset = Math.PI / 4; // 45 grader
         const newAngle = currentAngle + angleOffset;
-        
-        // Set new direction based on the angle
+    
         extraBall.dx = speed * Math.cos(newAngle);
         extraBall.dy = speed * Math.sin(newAngle);
-        extraBall.isMoving = true; // Start moving immediately
-
-        // Get references from the main ball
-        const mainBall = Ball.balls.find(ball => !ball.isExtraBall);
+        extraBall.isMoving = true;
+    
+        const mainBall = Ball.balls.find(b => !b.isExtraBall);
         if (mainBall) {
             extraBall.level = mainBall.level;
             extraBall.game = mainBall.game;
-            if (extraBall.game && extraBall.game.objectsContainer) {
-                extraBall.game.objectsContainer.addChild(extraBall.graphics);
-            }
+        } else {
+            console.warn('⚠️ No mainBall found — setting level and game to null');
+            extraBall.level = null;
+            extraBall.game = null;
         }
-        
+    
+        if (extraBall.game?.objectsContainer) {
+            extraBall.game.objectsContainer.addChild(extraBall.graphics);
+        } else {
+            app.stage.addChild(extraBall.graphics); // Fallback hvis game mangler
+        }
+    
         console.log('Extra ball created:', {
             speed: extraBall.speed,
             direction: { dx: extraBall.dx, dy: extraBall.dy },
             isMoving: extraBall.isMoving,
-            totalBalls: Ball.balls.length + 1
+            totalBalls: Ball.balls.length
         });
-        
+    
         return extraBall;
     }
+    
 
     static resetAll(app, game, levelInstance) {
-        // Find the main ball
-        const mainBall = Ball.balls.find(ball => !ball.isExtraBall);
-        
-        // Remove all balls from the stage and clear the array
-        Ball.clearAll();
-        
-        if (mainBall) {
-            // Reset the main ball's properties
-            mainBall.speed = BASE_INITIAL_SPEED;
-            mainBall.dx = 0;
-            mainBall.dy = 0;
-            mainBall.isMoving = false;
-            mainBall.graphics.x = app.screen.width / 2;
-            mainBall.graphics.y = app.screen.height / 10;
-            mainBall.trail.clear();
-            
-            // Ensure references are set
-            mainBall.game = game;
-            mainBall.setLevel(levelInstance);
-            
-            // Add back to the array
-            Ball.balls.push(mainBall);
-            
-            // Ensure it's in the container
-            if (mainBall.game && mainBall.game.objectsContainer) {
-                mainBall.game.objectsContainer.addChild(mainBall.graphics);
+        console.log('Before resetAll - Current balls:', Ball.balls.map(b => ({
+            isExtra: b.isExtraBall,
+            isMoving: b.isMoving,
+            dx: b.dx,
+            dy: b.dy
+        })));
+    
+        // Remove all ball graphics and clear trails
+        Ball.balls.forEach(ball => {
+            if (ball.graphics && ball.graphics.parent) {
+                ball.graphics.parent.removeChild(ball.graphics);
             }
+            if (ball.trail) {
+                ball.trail.clear();
+            }
+        });
+    
+        // Clear balls array
+        Ball.balls = [];
+    
+        // Remove lingering ball graphics
+        if (game?.objectsContainer) {
+            const lingering = game.objectsContainer.children.filter(child =>
+                child.isBallGraphic || child instanceof PIXI.Sprite && child.texture?.baseTexture?.resource?.url?.includes('ball')
+            );
+            lingering.forEach(child => game.objectsContainer.removeChild(child));
+            console.log(`🧹 Removed lingering ball graphics (post-clear): ${lingering.length}`);
         }
+        
+
+        // Check if balls array is empty
+        if (Ball.balls.length !== 0) {
+            console.warn('❗ Ball.balls not empty after clearing:', Ball.balls);
+        }
+
+        // Create new main ball
+        const mainBall = new Ball(app, false);
+        mainBall.speed = BASE_INITIAL_SPEED;
+        mainBall.dx = 0;
+        mainBall.dy = 0;
+        mainBall.isMoving = false;
+        mainBall.graphics.x = app.screen.width / 2;
+        mainBall.graphics.y = app.screen.height / 10;
+        mainBall.trail.clear();
+        mainBall.setLevel(levelInstance);
+        mainBall.game = game;
+        mainBall.graphics.isBallGraphic = true;
+    
+        if (mainBall.game?.objectsContainer) {
+            mainBall.game.objectsContainer.addChild(mainBall.graphics);
+        }
+    
+        console.log('After resetAll - Current balls:', Ball.balls.map(b => ({
+            isExtra: b.isExtraBall,
+            isMoving: b.isMoving,
+            dx: b.dx,
+            dy: b.dy
+        })));
+    
+        console.log('✔ Objects in container after reset:', game.objectsContainer?.children.length);
+        console.log('✔ Balls in memory after reset:', Ball.balls.length);
     }
+    
+    
 } 
