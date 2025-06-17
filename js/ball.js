@@ -72,13 +72,6 @@ export class Ball {
 
         // Initialize trail effect with different colors for regular and extra balls
         this.trail = new BallTrail(app, isExtraBall ? 0x42f5f5 : 0xf58a42); // Cyan for extra balls, orange for regular balls
-
-        // Initialize bound handlers and add event listeners for main ball
-        if (!isExtraBall) {
-            console.log('🎯 Setting up input handlers for main ball');
-            this.boundHandleStartInput = this.handleStartInput.bind(this);
-            this.addInputListeners();
-        }
     }
     
     setLevel(level) {
@@ -112,37 +105,19 @@ export class Ball {
             paddleWidth: paddle.graphics.width
         });
     }
-    
-    addInputListeners() {
-        if (this.isExtraBall) return;
-        
-        console.log('🎯 Adding input listeners for ball');
-        this.boundHandleStartInput = this.handleStartInput.bind(this);
-        document.addEventListener('keydown', this.boundHandleStartInput);
-        this.app.stage.eventMode = 'static';
-        this.app.stage.addEventListener('pointerdown', this.boundHandleStartInput);
-    }
 
-    removeInputListeners() {
-        if (!this.isExtraBall) {
-            console.log('🎯 Removing input listeners for ball');
-            document.removeEventListener('keydown', this.boundHandleStartInput);
-            this.app.view.removeEventListener('touchstart', this.boundHandleStartInput);
-        }
-    }
-
-    handleStartInput(e) {
-        if (e?.preventDefault) e.preventDefault();
+    start() {
+        if (this.isMoving) return;
         
-        if (this.isMoving) {
-            console.log('🎯 Ball already moving, ignoring input', { isMoving: this.isMoving });
-            return;
-        }
+        console.log("🚀 Ball start triggered", { isMoving: this.isMoving, isExtraBall: this.isExtraBall });
         
-        if (e.code === 'Space' || e.type === 'pointerdown') {
-            console.log("🚀 Ball start triggered", { isMoving: this.isMoving, isExtraBall: this.isExtraBall });
-            this.start();
-        }
+        // Set initial velocity
+        this.dx = this.speed * Math.cos(Math.PI / 4); // 45 degrees
+        this.dy = -this.speed * Math.sin(Math.PI / 4); // Moving upward
+        this.isMoving = true;
+        
+        // Add some randomness to the initial direction
+        this.addRandomFactor();
     }
     
     update(paddle, level) {
@@ -273,19 +248,6 @@ export class Ball {
         }
     }
     
-    
-
-    start() {
-        if (this.isMoving) {
-            console.log('🎯 Ball already moving, ignoring start');
-            return;
-        }
-        this.isMoving = true;
-        this.dx = COMPONENT_SPEED;
-        this.dy = -COMPONENT_SPEED;
-        console.log("🚀 Ball started", { isMoving: this.isMoving });
-    }
-
     addRandomFactor() {
         const randomFactor = (Math.random() - 0.5) * 0.2;
         this.dx += randomFactor;

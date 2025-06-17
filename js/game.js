@@ -41,6 +41,10 @@ export class Game {
         this.fallingTexts = [];
         this.waitingForInput = true;
         
+        // Make stage interactive
+        this.app.stage.eventMode = 'static';
+        this.app.stage.hitArea = this.app.screen;
+        
         // Create game container
         this.gameContainer = new PIXI.Container();
         this.app.stage.addChild(this.gameContainer);
@@ -101,6 +105,8 @@ export class Game {
             // Load initial level and initialize game state
             this.levelInstance.loadLevel(1).then(() => {
                 this.resetGameState();
+                // Set up initial game start handler
+                this.app.stage.on('pointermove', this.handleGameStart.bind(this));
             });
         });
         
@@ -147,9 +153,8 @@ export class Game {
             this.paddle.graphics.y = this.app.screen.height - this.paddle.graphics.height - 20;
         }
         
-        // 🎾 4. Remove old balls and event listeners
+        // 🎾 4. Remove old balls
         Ball.balls.forEach(ball => {
-            ball.removeInputListeners();
             if (ball.graphics && this.objectsContainer.children.includes(ball.graphics)) {
                 this.objectsContainer.removeChild(ball.graphics);
             }
@@ -174,6 +179,9 @@ export class Game {
         
         // 🖼️ 7. Show game elements
         this.gameContainer.visible = true;
+        
+        // Set up game start handler
+        this.app.stage.on('pointerdown', this.handleGameStart.bind(this));
     }
     
     handleGameOverClick(e) {
@@ -216,7 +224,7 @@ export class Game {
             this.waitingForInput = true;
 
             // Remove all pointer event listeners
-            this.app.stage.removeAllListeners('pointerdown');
+            this.app.stage.removeAllListeners('pointermove');
 
             console.log('🔄 After state reset:', {
                 gameStarted: this.gameStarted,
@@ -245,14 +253,11 @@ export class Game {
     handleStartInput(e) {
         if (e?.preventDefault) e.preventDefault();
     
-        if (this.isMoving) return; // Sikring
+        if (this.isMoving) return;
     
-        if (e.code === 'Space' || e.type === 'touchstart') {
-            console.log("🚀 Ball start triggered");
-            this.start();
-        }
-    }   
-    
+        console.log("🚀 Ball start triggered");
+        this.start();
+    }
 
     handleGameStart(e) {
         if (this.waitingForInput) {
@@ -564,6 +569,8 @@ export class Game {
         this.lives--;
         this.updateLives();
         this.playSound('lifeLoss');
+        this.waitingForInput = true;
+        this.app.stage.once('pointerdown', this.handleGameStart.bind(this));
     }
     
     nextLevel() {
