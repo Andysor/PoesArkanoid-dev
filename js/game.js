@@ -40,6 +40,9 @@ export class Game {
         this.extraBalls = [];
         this.fallingTexts = [];
         this.waitingForInput = true;
+        this.inputMode = 'waitForStart'; // 'playing', 'gameover', etc.
+        this.boundHandleGameStart = this.handleGameStart.bind(this);
+        this.boundHandlePointerMove = this.handlePointerMove.bind(this);
         
         // Make stage interactive
         this.app.stage.eventMode = 'static';
@@ -101,13 +104,6 @@ export class Game {
             this.ball.game = this;
             this.ball.setLevel(this.levelInstance);
             this.objectsContainer.addChild(this.ball.graphics);
-            
-            // Load initial level and initialize game state
-            this.levelInstance.loadLevel(1).then(() => {
-                this.resetGameState();
-                // Set up initial game start handler
-                this.app.stage.on('pointermove', this.handleGameStart.bind(this));
-            });
         });
         
         // Load sounds
@@ -120,69 +116,124 @@ export class Game {
         
         // Load images
         this.images = {
-            sausage: loadImage(ASSETS.images.items.Sausage),
-            coin: loadImage(ASSETS.images.items.Coin),
-            brannas: loadImage(ASSETS.images.items.Brannas)
+            sausage: loadImage(ASSETS.images.items.sausage),
+            coin: loadImage(ASSETS.images.items.coin),
+            brannas: loadImage(ASSETS.images.items.brannas)
         };
     }
-    
+
+    //Handle pointer move
+    handlePointerMove(e) {
+        if (this.inputMode === 'waitForStart') {
+            // For eksempel: marker at spilleren er klar til å starte
+            this.handleGameStart(e);
+        } else if (this.inputMode === 'playing') {
+            // Flytt padel hvis ønskelig – eller kall paddle.handlePointerMove direkte:
+            if (this.paddle && this.paddle.handlePointerMove) {
+                this.paddle.handlePointerMove(e);
+            }
+        } else if (this.inputMode === 'gameOver') {
+            // Kanskje ikke gjør noe – eller bruk som highscore-bla?
+        }
+    }
+
+    //Center paddle and place ball
+    centerPaddleAndPlaceBall() {
+        // Flytt padelen til midten
+        const paddleStartX = (this.app.screen.width - this.paddle.graphics.width) / 2;
+        const paddleStartY = this.app.screen.height - this.paddle.graphics.height - 20;
+
+        if (!this.paddle || !this.ball) return;
+
+        this.paddle.graphics.x = paddleStartX;
+        this.paddle.graphics.y = paddleStartY;
+
+        // Sett target lik nåværende posisjon for å unngå lerp-glitch
+        this.paddle.targetX = paddleStartX;
+        this.paddle.targetY = paddleStartY;
+
+        // Wait 1 frame before placing ball
+        requestAnimationFrame(() => {
+            console.log('🎬 Calling placeOnPaddle. Paddle at:', {
+                x: this.paddle.graphics.x,
+                y: this.paddle.graphics.y
+            });
+            console.log('🎬 Ball before placeOnPaddle:', {
+                ballX: this.ball.graphics.x,
+                ballY: this.ball.graphics.y,
+                inBallArray: Ball.balls.includes(this.ball)
+            });
+            this.ball.placeOnPaddle(this.paddle);
+
+            console.log('✅ Ball after placeOnPaddle:', {
+                ballX: this.ball.graphics.x,
+                ballY: this.ball.graphics.y
+            });
+        });
+    }
+
+    //Reset game state
     resetGameState() {
         console.log('🎮 Resetting game state...');
         
-        // 🧼 1. Reset game state
+        // 1. Reset state
         this.score = 0;
         this.lives = 3;
         this.level = 1;
         this.gameStarted = false;
         this.gameOver = false;
-        this.waitingForInput = true;
+        this.waitingForInput = false; // <– Ikke true enda
         this.showHighscores = false;
         this.extraBalls = [];
-        
-        // 🔄 2. Reset UI
+        this.levelLoaded = false;
+        this.loadingNextLevel = true;
+    
+        // 2. Reset UI
         this.scoreText.text = `Score: ${this.score}`;
         this.livesText.text = `Lives: ${this.lives}`;
         this.levelText.text = `Level: ${this.level}`;
         this.scoreText.visible = true;
         this.livesText.visible = true;
         this.levelText.visible = true;
-        
-        // 🧱 3. Reset paddle
+    
+        // 3. Paddle til startposisjon
         if (this.paddle) {
             this.paddle.graphics.x = (this.app.screen.width - this.paddle.graphics.width) / 2;
             this.paddle.graphics.y = this.app.screen.height - this.paddle.graphics.height - 20;
         }
-        
-        // 🎾 4. Remove old balls
+    
+        // 4. Fjern gamle baller
         Ball.balls.forEach(ball => {
             if (ball.graphics && this.objectsContainer.children.includes(ball.graphics)) {
                 this.objectsContainer.removeChild(ball.graphics);
             }
         });
-        console.log('🧹 Removed all ball graphics');
-
         Ball.balls = [];
-        this.balls = [];
-        
-        // 🧱 5. Reset level
-        if (this.levelInstance) {
-            this.levelInstance.loadLevel(1);
-        }
-        
-        // 🆕 6. Create and place new main ball
-        this.ball = new Ball(this.app);
-        this.ball.game = this;
-        this.ball.setLevel(this.levelInstance);
-        this.objectsContainer.addChild(this.ball.graphics);
-        this.ball.placeOnPaddle(this.paddle);
-        console.log('🆕 New ball placed on paddle after restart');
-        
-        // 🖼️ 7. Show game elements
-        this.gameContainer.visible = true;
-        
-        // Set up game start handler
-        this.app.stage.on('pointerdown', this.handleGameStart.bind(this));
+    
+        // 5. Last nivå
+        this.levelInstance.loadLevel(this.level).then(() => {
+            this.levelLoaded = true;
+            this.loadingNextLevel = false;
+    
+            // 🆕 6. Lag ny ball og plasser den
+            this.ball = new Ball(this.app);
+            this.ball.game = this;
+            this.ball.setLevel(this.levelInstance);
+            this.objectsContainer.addChild(this.ball.graphics);
+            this.ball.placeOnPaddle(this.paddle);
+    
+            console.log('🆕 New ball placed after resetGameState');
+    
+            // 7. Klar til input
+            this.waitingForInput = true;
+            this.inputMode = 'waitForStart';
+    
+            // Sørg for å lytte på input
+            this.app.stage.off('pointerdown', this.boundHandleGameStart);
+            this.app.stage.on('pointerdown', this.boundHandleGameStart);
+        });
     }
+    
     
     handleGameOverClick(e) {
         if (!this.gameOver) return;
@@ -263,12 +314,17 @@ export class Game {
         if (this.waitingForInput) {
             console.log('🎮 Game Start: Input received, ball will start moving');
             this.waitingForInput = false;
-            this.gameStarted = true;  // Start the game when input is received
-            this.app.stage.removeAllListeners('pointerdown');
-            this.app.stage.on('pointerdown', this.handleGameOverClick.bind(this));
+            this.gameStarted = true;
+            this.inputMode = 'playing'; // 🎮 Viktig!
+    
+            // Start ball
+            const mainBall = Ball.balls.find(b => !b.isExtraBall);
+            if (mainBall && !mainBall.isMoving) {
+                mainBall.start();
+            }
         }
     }
-
+    
     displayHighscores(highscoreList) {
         // Clear existing highscore display
         while (this.gameOverContainer.children.length > 3) {
@@ -447,11 +503,8 @@ export class Game {
         // Start the game loop
         this.app.ticker.start();
         
-        // Start the main ball
-        const mainBall = Ball.balls.find(b => !b.isExtraBall);
-        if (mainBall && !mainBall.isMoving) {
-            mainBall.start();
-        }
+        
+        
     }
     
     restart() {
@@ -480,6 +533,8 @@ export class Game {
             return;
         }
         
+        if(!this.levelLoaded || this.loadingNextLevel) return;
+
         // Update paddle
         if (this.paddle) {
             this.paddle.update();
@@ -507,6 +562,8 @@ export class Game {
         // Handle life lost
         if (lifeLost) {
             this.loseLife();
+            this.inputMode = 'waitForStart';
+            this.waitingForInput = true;
         }
         
         // Handle brick hit
@@ -563,25 +620,35 @@ export class Game {
     
     loseLife() {
         // Remove all extra balls first
-        Ball.resetAll(this.app, this, this.levelInstance);
+        const newBall = Ball.resetAll(this.app, this, this.levelInstance);
+        this.ball = newBall;
         
         // Then update lives and play sound
         this.lives--;
         this.updateLives();
         this.playSound('lifeLoss');
         this.waitingForInput = true;
+
+        //Center paddle and place ball
+        this.centerPaddleAndPlaceBall();
+
         this.app.stage.once('pointerdown', this.handleGameStart.bind(this));
     }
     
     nextLevel() {
         this.level++;
         this.updateLevel();
+        this.levelLoaded = false;
+        this.loadingNextLevel = true;
         
         // Remove all extra balls before loading next level
         Ball.resetAll(this.app, this, this.levelInstance);
         
         // Load the next level
         this.levelInstance.loadLevel(this.level).then(() => {
+            this.levelLoaded = true;
+            this.loadingNextLevel = false;
+
             // Reset ball position and speed
             if (this.ball) {
                 this.ball.reset();

@@ -82,18 +82,30 @@ startButton.addEventListener('click', () => {
 document.querySelectorAll('.char-opt').forEach(img => {
     img.addEventListener('click', function() {
         if (!game || game.characterChosen) return;
+
         game.characterChosen = true;
         game.selectedCharacter = this.dataset.img;
+
+        // Choose character
         document.querySelectorAll('.char-opt').forEach(i => i.style.border = "2px solid #fff");
         this.style.border = "4px solid gold";
-        
+
+        //Hide character select, show canvas
         document.getElementById('character-select').style.display = "none";
         app.view.style.display = 'block';
+
+        //Reset game state
+        game.resetGameState();
+        game.centerPaddleAndPlaceBall();
+
+        //Set input mode to wait for start
+        game.inputMode = 'waitForStart';
+        game.waitingForInput = true;
         
         // Start the game when pointer is down
         app.stage.once('pointerdown', () => {
             if (!game.gameStarted && !game.gameOver) {
-                game.start();
+                game.handleGameStart();
             }
         });
         
