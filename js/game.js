@@ -13,6 +13,7 @@ import { Level } from './level.js';
 import { GameOverManager } from './gameOverManager.js';
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
+import { PowerUp } from './powerup.js';
 
 export class Game {
     constructor(app) {
@@ -51,7 +52,8 @@ export class Game {
         // Create game container
         this.gameContainer = new PIXI.Container();
         this.app.stage.addChild(this.gameContainer);
-        
+
+       
         // Create UI container
         this.uiContainer = new PIXI.Container();
         this.gameContainer.addChild(this.uiContainer);
@@ -89,7 +91,19 @@ export class Game {
         // Create game objects container
         this.objectsContainer = new PIXI.Container();
         this.gameContainer.addChild(this.objectsContainer);
-        
+
+         // Create power-up container
+         this.powerUpContainer = new PIXI.Container();
+         this.objectsContainer.addChild(this.powerUpContainer);
+
+         // Initialize power-ups array
+         this.powerUps = [];
+
+         // Load power-up textures
+         PowerUp.loadTextures().then(() => {
+            console.log('🎮 Power-ups loaded');
+         });
+         
         // Initialize level instance
         this.levelInstance = new Level(app);
         this.objectsContainer.addChild(this.levelInstance.brickContainer);
@@ -584,6 +598,14 @@ export class Game {
         // Check for level completion
         if (this.checkLevelComplete()) {
             this.nextLevel();
+        }
+
+        // Update power-ups
+        if (this.powerUpContainer) {
+            this.powerUps = this.powerUps.filter(powerUp => {
+                powerUp.update();
+                return powerUp.active;
+            });
         }
     }
     

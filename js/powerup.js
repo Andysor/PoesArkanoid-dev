@@ -1,6 +1,29 @@
 import { POWERUPS_PER_LEVEL } from './config.js';
+import { ASSETS, loadImage } from './assets.js';
 
 export class PowerUp {
+    static textures = {};
+
+    static async loadTextures() {
+        // Get all item types from ASSETS.images.items
+        const itemTypes = Object.keys(ASSETS.images.items);
+        
+        // Create an array of promises for loading all textures
+        const loadPromises = itemTypes.map(async (type) => {
+            if (!PowerUp.textures[type]) {
+                const img = loadImage(ASSETS.images.items[type]);
+                PowerUp.textures[type] = await new Promise(resolve => {
+                    img.onload = () => resolve(PIXI.Texture.from(img));
+                });
+                console.log(`✅ Loaded texture for: ${type}`);
+            }
+        });
+
+        // Wait for all textures to load
+        await Promise.all(loadPromises);
+        console.log('✅ All item textures loaded');
+    }
+
     constructor(type, x, y) {
         this.type = type;
         this.x = x;
@@ -11,44 +34,24 @@ export class PowerUp {
         this.active = false;
         this.duration = 0;
         this.endTime = 0;
+
+        // Create PIXI sprite
+        this.sprite = new PIXI.Sprite(PowerUp.textures[this.type.toLowerCase()]);
+        this.sprite.anchor.set(0.5);
+        this.sprite.scale.set(0.3);
+        this.sprite.x = x;
+        this.sprite.y = y;
+        this.sprite.visible = false;
     }
 
-    draw(ctx) {
+    update() {
         if (!this.active) return;
-
-        ctx.beginPath();
-        ctx.rect(this.x, this.y, this.width, this.height);
         
-        // Set color based on power-up type
-        switch(this.type) {
-            case 'BRANNAS':
-                ctx.fillStyle = '#FF0000';
-                break;
-            case 'EXTRA_LIFE':
-                ctx.fillStyle = '#00FF00';
-                break;
-            case 'SKULL':
-                ctx.fillStyle = '#000000';
-                break;
-            case 'COIN':
-                ctx.fillStyle = '#FFD700';
-                break;
-            default:
-                ctx.fillStyle = '#FFFFFF';
-        }
+        this.sprite.y += this.speed;
         
-        ctx.fill();
-        ctx.closePath();
-    }
-
-    update(canvas) {
-        if (!this.active) return;
-
-        this.y += this.speed;
-
         // Check if power-up is out of bounds
-        if (this.y > canvas.height) {
-            this.active = false;
+        if (this.sprite.y > this.sprite.parent.height) {
+            this.deactivate();
         }
     }
 
@@ -56,10 +59,15 @@ export class PowerUp {
         this.active = true;
         this.startTime = Date.now();
         this.endTime = this.startTime + this.duration;
+        this.sprite.visible = true;
     }
 
     deactivate() {
         this.active = false;
+        this.sprite.visible = false;
+        if (this.sprite.parent) {
+            this.sprite.parent.removeChild(this.sprite);
+        }
     }
 
     isExpired() {

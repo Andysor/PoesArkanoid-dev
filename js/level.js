@@ -1,4 +1,5 @@
 import { Brick } from './brick.js';
+import { createPowerUp } from './powerup.js';
 
 export class Level {
     constructor(app) {
@@ -50,6 +51,15 @@ export class Level {
     handleBrickDestroyed(c, r) {
         const brick = this.bricks[c]?.[r];
         if (brick) {
+            // Create power-up if it's a special brick type
+            if (brick.brickInfo && brick.brickInfo.type === 'sausage') {
+                const powerUp = createPowerUp('sausage', brick.x, brick.y);
+                if (this.game && this.game.powerUpContainer) {
+                    this.game.powerUpContainer.addChild(powerUp.sprite);
+                    powerUp.activate();
+                }
+            }
+            
             // Remove brick from array
             this.bricks[c][r] = null;
             

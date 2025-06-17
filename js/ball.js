@@ -2,6 +2,7 @@ import { BASE_INITIAL_SPEED, BASE_MAX_SPEED, LEVEL_SPEED_INCREASE, COMPONENT_SPE
 import { playHitSound } from './audio.js';
 import { BallTrail } from './ballTrail.js';
 import { ASSETS, loadImage } from './assets.js';
+import { createPowerUp } from './powerup.js';
 
 export class Ball {
     static balls = []; // Static array to track all balls
@@ -388,8 +389,14 @@ export class Ball {
                         }
                     }
                 } else if (brick.brickInfo.type === 'sausage') {
-                    // Handle sausage brick effect (bonus score)
+                    // Create falling sausage power-up
                     if (this.game) {
+                        const powerUp = createPowerUp('sausage', brick.x, brick.y);
+                        if (this.game.powerUpContainer) {
+                            this.game.powerUpContainer.addChild(powerUp.sprite);
+                            this.game.powerUps.push(powerUp);
+                            powerUp.activate();
+                        }
                         this.game.addScore(50); // Bonus score for sausage
                     }
                 } else if (brick.brickInfo.type === 'extra') {
