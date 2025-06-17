@@ -13,6 +13,8 @@ import { Level } from './level.js';
 import { GameOverManager } from './gameOverManager.js';
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
+import { eventBus } from './eventBus.js';
+import { PowerUp } from './powerup.js';
 
 export class Game {
     constructor(app) {
@@ -41,8 +43,11 @@ export class Game {
         this.fallingTexts = [];
         this.waitingForInput = true;
         
+        
         // Create game container
         this.gameContainer = new PIXI.Container();
+        
+
         this.app.stage.addChild(this.gameContainer);
         
         // Create UI container
@@ -82,6 +87,8 @@ export class Game {
         // Create game objects container
         this.objectsContainer = new PIXI.Container();
         this.gameContainer.addChild(this.objectsContainer);
+        this.powerUpContainer = new PIXI.Container();
+        this.objectsContainer.addChild(this.powerUpContainer);
         
         // Initialize level instance
         this.levelInstance = new Level(app);
@@ -92,7 +99,8 @@ export class Game {
         this.objectsContainer.addChild(this.paddle.graphics);
         
         // Load ball textures and initialize main ball
-        Ball.loadTextures().then(() => {
+        Ball.loadTextures().then(async () => {
+            await PowerUp.loadTextures();  // Add this line
             this.ball = new Ball(this.app);
             this.ball.game = this;
             this.ball.setLevel(this.levelInstance);
@@ -103,6 +111,8 @@ export class Game {
                 this.resetGameState();
             });
         });
+
+
         
         // Load sounds
         this.sounds = {
@@ -118,6 +128,13 @@ export class Game {
             coin: loadImage(ASSETS.images.items.Coin),
             brannas: loadImage(ASSETS.images.items.Brannas)
         };
+
+        // Listen for level completion
+        eventBus.on('levelComplete', ({ level }) => {
+            if (!this.loadingNextLevel) {
+                this.nextLevel();
+            }
+        });
     }
     
     resetGameState() {
@@ -460,7 +477,6 @@ export class Game {
     update() {
         // Don't process any game logic if showing high scores or game over
         if (this.showHighscores || this.gameOver) {
-            console.log('🎮 Game paused:', { showHighscores: this.showHighscores, gameOver: this.gameOver });
             return;
         }
         
@@ -518,11 +534,6 @@ export class Game {
         this.updateScore();
         this.updateLives();
         this.updateLevel();
-        
-        // Check for level completion
-        if (this.checkLevelComplete()) {
-            this.nextLevel();
-        }
     }
     
     updateScore() {
@@ -556,9 +567,9 @@ export class Game {
         this.updateScore();
     }
     
-    loseLife() {
+    async loseLife() {
         // Remove all extra balls first
-        Ball.resetAll(this.app, this, this.levelInstance);
+        await Ball.resetAll(this.app, this, this.levelInstance);
         
         // Then update lives and play sound
         this.lives--;
@@ -566,12 +577,12 @@ export class Game {
         this.playSound('lifeLoss');
     }
     
-    nextLevel() {
+    async nextLevel() {
         this.level++;
         this.updateLevel();
         
         // Remove all extra balls before loading next level
-        Ball.resetAll(this.app, this, this.levelInstance);
+        await Ball.resetAll(this.app, this, this.levelInstance);
         
         // Load the next level
         this.levelInstance.loadLevel(this.level).then(() => {
@@ -586,14 +597,6 @@ export class Game {
                 this.paddle.graphics.x = (this.app.screen.width - this.paddle.graphics.width) / 2;
             }
         });
-    }
-    
-    checkLevelComplete() {
-        if (!this.levelInstance) return false;
-        
-        // Check if there are any remaining bricks
-        const remainingBricks = this.levelInstance.bricks.flat().filter(brick => brick !== null).length;
-        return remainingBricks === 0;
     }
     
     showGameOver() {

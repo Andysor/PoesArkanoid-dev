@@ -2,6 +2,7 @@ import { BASE_INITIAL_SPEED, BASE_MAX_SPEED, LEVEL_SPEED_INCREASE, COMPONENT_SPE
 import { playHitSound } from './audio.js';
 import { BallTrail } from './ballTrail.js';
 import { ASSETS, loadImage } from './assets.js';
+import { createPowerUp } from './powerup.js';
 
 export class Ball {
     static balls = []; // Static array to track all balls
@@ -416,6 +417,11 @@ export class Ball {
                         }
                     }
                 } else if (brick.brickInfo.type === 'sausage') {
+                    //Handle powerup brick effect
+                    const powerUp = createPowerUp('sausage', brick.x + (this.level.brickWidth / 2), brick.y );
+                    this.game.powerUpContainer.addChild(powerUp.sprite);
+                    powerUp.activate();
+                    
                     // Handle sausage brick effect (bonus score)
                     if (this.game) {
                         this.game.addScore(50); // Bonus score for sausage
@@ -490,13 +496,17 @@ export class Ball {
     }
     
 
-    static resetAll(app, game, levelInstance) {
-        console.log('Before resetAll - Current balls:', Ball.balls.map(b => ({
-            isExtra: b.isExtraBall,
-            isMoving: b.isMoving,
-            dx: b.dx,
-            dy: b.dy
-        })));
+    static async resetAll(app, game, levelInstance) {
+        // First, wait for textures to be loaded
+        if (!Ball.texturesLoaded) {
+            await Ball.loadTextures();
+            console.log('Before resetAll - Current balls:', Ball.balls.map(b => ({
+                isExtra: b.isExtraBall,
+                isMoving: b.isMoving,
+                dx: b.dx,
+                dy: b.dy
+            })));
+        }
     
         // Remove all ball graphics and clear trails
         Ball.balls.forEach(ball => {

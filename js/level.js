@@ -1,4 +1,5 @@
 import { Brick } from './brick.js';
+import { eventBus } from './eventBus.js';
 
 export class Level {
     constructor(app) {
@@ -200,6 +201,11 @@ export class Level {
                 }
             }
         }
+
+        if (allDestroyed) {
+            eventBus.emit('levelComplete', { level: this.currentLevel });
+        }
+
 
         // Force stage update if there were destroyed bricks
         if (destroyedBricks > 0) {

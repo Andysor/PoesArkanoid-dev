@@ -1,3 +1,5 @@
+//Contains the Brick class used for drawing the bricks and handling their destruction
+
 export class Brick {
     constructor(x, y, width, height, type = 'normal') {
         this.x = x;

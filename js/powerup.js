@@ -1,6 +1,19 @@
 import { POWERUPS_PER_LEVEL } from './config.js';
+import { ASSETS, loadImage } from './assets.js';
 
 export class PowerUp {
+    static textures = {};  // Add static textures object
+
+    static async loadTextures() {  // Add static loadTextures method
+        if (!PowerUp.textures.sausage) {
+            const sausageImg = loadImage(ASSETS.images.items.sausage);
+            PowerUp.textures.sausage = await new Promise(resolve => {
+                sausageImg.onload = () => resolve(PIXI.Texture.from(sausageImg));
+            });
+        }
+    }
+
+
     constructor(type, x, y) {
         this.type = type;
         this.x = x;
@@ -11,55 +24,61 @@ export class PowerUp {
         this.active = false;
         this.duration = 0;
         this.endTime = 0;
+    
+
+
+    this.sprite = new PIXI.Sprite(PowerUp.textures[this.type.toLowerCase()]);
+    this.sprite.anchor.set(0.5);
+    this.sprite.scale.set(0.5);
+    this.sprite.x = x;
+    this.sprite.y = y;
+    
+    this.sprite.visible = false;
+    
+}
+ 
+//Load textures
+static textures = {};
+
+static async loadTextures() {
+    if (!PowerUp.textures.sausage) {
+        const sausageImg = loadImage(ASSETS.images.items.sausage);
+        PowerUp.textures.sausage = await new Promise(resolve => {
+            sausageImg.onload = () => resolve(PIXI.Texture.from(sausageImg));
+        });
     }
+}
 
-    draw(ctx) {
-        if (!this.active) return;
+update() {
+    if (!this.active) return;
+    
+    this.sprite.y += this.speed;
+    
 
-        ctx.beginPath();
-        ctx.rect(this.x, this.y, this.width, this.height);
-        
-        // Set color based on power-up type
-        switch(this.type) {
-            case 'BRANNAS':
-                ctx.fillStyle = '#FF0000';
-                break;
-            case 'EXTRA_LIFE':
-                ctx.fillStyle = '#00FF00';
-                break;
-            case 'SKULL':
-                ctx.fillStyle = '#000000';
-                break;
-            case 'COIN':
-                ctx.fillStyle = '#FFD700';
-                break;
-            default:
-                ctx.fillStyle = '#FFFFFF';
+    if (this.sprite.y > this.sprite.parent.height) {
+        this.active = false;
+        this.sprite.visible = false;
+        if (this.sprite.parent) {
+            this.sprite.parent.removeChild(this.sprite);
         }
-        
-        ctx.fill();
-        ctx.closePath();
+    
     }
+}
 
-    update(canvas) {
-        if (!this.active) return;
 
-        this.y += this.speed;
-
-        // Check if power-up is out of bounds
-        if (this.y > canvas.height) {
-            this.active = false;
-        }
-    }
-
-    activate() {
+activate() {
         this.active = true;
         this.startTime = Date.now();
         this.endTime = this.startTime + this.duration;
+        this.sprite.visible = true;
     }
 
     deactivate() {
         this.active = false;
+        this.sprite.visible = false;
+        if (this.sprite.parent) {
+            this.sprite.parent.removeChild(this.sprite);
+        }
     }
 
     isExpired() {
