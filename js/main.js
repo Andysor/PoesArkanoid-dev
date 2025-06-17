@@ -29,8 +29,6 @@ const app = new PIXI.Application({
 // Add canvas to the page
 document.body.appendChild(app.view);
 
-
-
 // Initialize Firebase
 console.log('🔥 Initializing Firebase...');
 loadHighscores().then(() => {
@@ -41,9 +39,6 @@ loadHighscores().then(() => {
 
 // Set canvas style to fill the window while maintaining aspect ratio
 const style = app.view.style;
-//style.position = 'absolute';
-
-
 
 // Hide canvas initially
 app.view.style.display = 'none';
@@ -53,7 +48,6 @@ let gameStarted = false;
 let playerName = '';
 let game = null;
 let paddle = null;
-//let ball = null;
 
 // DOM Elements
 const nameInputContainer = document.getElementById('name-input-container');
@@ -65,10 +59,14 @@ setTimeout(() => {
     if (!game && app.stage) {
         game = new Game(app);
         paddle = game.paddle;
+        
+        // Set up PIXI event handlers
+        app.stage.eventMode = 'static';
+        app.stage.on('pointerdown', handleGameRestart);
     }
-}, 100); // Small delay to ensure PIXI is fully initialized
+}, 100);
 
-// Event Listeners
+// DOM Event Listeners for UI elements
 startButton.addEventListener('click', () => {
     playerName = nameInput.value.trim() || 'Player';
     if (!playerName) {
@@ -84,15 +82,35 @@ startButton.addEventListener('click', () => {
 document.querySelectorAll('.char-opt').forEach(img => {
     img.addEventListener('click', function() {
         if (!game || game.characterChosen) return;
+
         game.characterChosen = true;
         game.selectedCharacter = this.dataset.img;
+
+        // Choose character
         document.querySelectorAll('.char-opt').forEach(i => i.style.border = "2px solid #fff");
         this.style.border = "4px solid gold";
-        
+
+        //Hide character select, show canvas
         document.getElementById('character-select').style.display = "none";
         app.view.style.display = 'block';
+
+        //Reset game state
+        game.resetGameState();
+        game.centerPaddleAndPlaceBall();
+
+        //Set input mode to wait for start
+        game.inputMode = 'waitForStart';
+        game.waitingForInput = true;
+        
+        // Start the game when pointer is down
+        app.stage.once('pointerdown', () => {
+            if (!game.gameStarted && !game.gameOver) {
+                game.handleGameStart();
+            }
+        });
+        
         gameStarted = true;
-        game.start();
+        //game.start();
     });
 });
 
@@ -101,12 +119,11 @@ app.ticker.add(() => {
     if (gameStarted && game) {
         game.update();
         paddle.update();
-                
         game.levelInstance.update();
     }
 });
 
-// Handle window resize
+// Handle window resize (keep as DOM event since it's a window-level event)
 window.addEventListener('resize', () => {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
@@ -161,16 +178,9 @@ window.addEventListener('resize', () => {
     }
 });
 
-// Handle space key to start game
-document.addEventListener('keydown', (e) => {
-    if (e.code === 'Space' && !game.gameStarted && !game.gameOver) {
-        game.start();
-    }
-});
-
-// Handle click to restart
-app.stage.addEventListener('click', () => {
+// PIXI Event Handlers
+function handleGameRestart() {
     if (game.gameOver) {
         game.restart();
     }
-}); 
+} 

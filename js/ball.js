@@ -73,13 +73,6 @@ export class Ball {
 
         // Initialize trail effect with different colors for regular and extra balls
         this.trail = new BallTrail(app, isExtraBall ? 0x42f5f5 : 0xf58a42); // Cyan for extra balls, orange for regular balls
-
-        // Initialize bound handlers and add event listeners for main ball
-        if (!isExtraBall) {
-            console.log('🎯 Setting up input handlers for main ball');
-            this.boundHandleStartInput = this.handleStartInput.bind(this);
-            this.addInputListeners();
-        }
     }
     
     setLevel(level) {
@@ -91,59 +84,50 @@ export class Ball {
             console.error('No paddle provided for ball placement');
             return;
         }
-
+    
         // Reset movement state
         this.isMoving = false;
         this.dx = 0;
         this.dy = 0;
-
+    
         // Calculate position
-        const ballX = paddle.graphics.x + paddle.graphics.width / 2;
-        const ballY = paddle.graphics.y - this.radius;
-        
+        const paddleX = paddle.graphics.x;
+        const paddleY = paddle.graphics.y;
+
+        const ballX = paddleX + (paddle.width - this.graphics.width) / 2;
+        const ballY = paddleY - this.graphics.height - 2;
+    
         // Update graphics position
         this.graphics.x = ballX;
         this.graphics.y = ballY;
-        
+    
         console.log('🎯 placeOnPaddle called', {
             ballX,
             ballY,
             paddleX: paddle.graphics.x,
             paddleY: paddle.graphics.y,
+            time: Date.now(),
             paddleWidth: paddle.graphics.width
         });
     }
     
-    addInputListeners() {
-        if (this.isExtraBall) return;
-        
-        console.log('🎯 Adding input listeners for ball');
-        this.boundHandleStartInput = this.handleStartInput.bind(this);
-        document.addEventListener('keydown', this.boundHandleStartInput);
-        this.app.stage.eventMode = 'static';
-        this.app.stage.addEventListener('pointerdown', this.boundHandleStartInput);
-    }
 
-    removeInputListeners() {
-        if (!this.isExtraBall) {
-            console.log('🎯 Removing input listeners for ball');
-            document.removeEventListener('keydown', this.boundHandleStartInput);
-            this.app.view.removeEventListener('touchstart', this.boundHandleStartInput);
-        }
-    }
+    start() {
+        if (this.isMoving) return;
+        
+        console.log("🚀 Ball start triggered", { isMoving: this.isMoving, isExtraBall: this.isExtraBall });
+        
+        this.speed = BASE_INITIAL_SPEED;
 
-    handleStartInput(e) {
-        if (e?.preventDefault) e.preventDefault();
+        console.log('🎮 Ball START: Resetting speed to', this.speed); // debug
+
+        // Set initial velocity
+        this.dx = this.speed * Math.cos(Math.PI / 4); // 45 degrees
+        this.dy = -this.speed * Math.sin(Math.PI / 4); // Moving upward
+        this.isMoving = true;
         
-        if (this.isMoving) {
-            console.log('🎯 Ball already moving, ignoring input', { isMoving: this.isMoving });
-            return;
-        }
-        
-        if (e.code === 'Space' || e.type === 'pointerdown') {
-            console.log("🚀 Ball start triggered", { isMoving: this.isMoving, isExtraBall: this.isExtraBall });
-            this.start();
-        }
+        // Add some randomness to the initial direction
+        this.addRandomFactor();
     }
     
     update(paddle, level) {
@@ -274,19 +258,6 @@ export class Ball {
         }
     }
     
-    
-
-    start() {
-        if (this.isMoving) {
-            console.log('🎯 Ball already moving, ignoring start');
-            return;
-        }
-        this.isMoving = true;
-        this.dx = COMPONENT_SPEED;
-        this.dy = -COMPONENT_SPEED;
-        console.log("🚀 Ball started", { isMoving: this.isMoving });
-    }
-
     addRandomFactor() {
         const randomFactor = (Math.random() - 0.5) * 0.2;
         this.dx += randomFactor;
@@ -338,6 +309,7 @@ export class Ball {
     increaseSpeed(level) {
         const maxSpeed = BASE_MAX_SPEED * (1 + level * LEVEL_SPEED_INCREASE);
         this.speed = Math.min(this.speed * 1.1, maxSpeed);
+        console.log('🎮 Speed increased to', this.speed); // debug
         const angle = Math.atan2(this.dy, this.dx);
         this.dx = this.speed * Math.cos(angle);
         this.dy = this.speed * Math.sin(angle);
@@ -538,16 +510,27 @@ export class Ball {
 
         // Create new main ball
         const mainBall = new Ball(app, false);
+        Ball.balls.push(mainBall);
         mainBall.speed = BASE_INITIAL_SPEED;
         mainBall.dx = 0;
         mainBall.dy = 0;
         mainBall.isMoving = false;
-        mainBall.graphics.x = app.screen.width / 2;
-        mainBall.graphics.y = app.screen.height / 10;
+        //mainBall.graphics.x = app.screen.width / 2;
+        //mainBall.graphics.y = app.screen.height / 10;
         mainBall.trail.clear();
         mainBall.setLevel(levelInstance);
         mainBall.game = game;
         mainBall.graphics.isBallGraphic = true;
+        Ball.balls = [mainBall]; // Reset balls array
+        
+        console.log('🆕 New main ball created', {
+            graphicsX: mainBall.graphics.x,
+            graphicsY: mainBall.graphics.y,
+            isMoving: mainBall.isMoving,
+            ballsCount: Ball.balls.length
+        });
+        
+        
     
         if (mainBall.game?.objectsContainer) {
             mainBall.game.objectsContainer.addChild(mainBall.graphics);
@@ -562,6 +545,8 @@ export class Ball {
     
         console.log('✔ Objects in container after reset:', game.objectsContainer?.children.length);
         console.log('✔ Balls in memory after reset:', Ball.balls.length);
+
+        return mainBall;
     }
     
     
