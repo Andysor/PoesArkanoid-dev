@@ -14,7 +14,7 @@ import { GameOverManager } from './gameOverManager.js';
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
 import { PowerUp } from './powerup.js';
-import { playHitSound, playLifeLossSound, playPoesklapSound, playBrannasSound } from './audio.js';
+import { playHitSound, playLifeLossSound, playPoesklapSound, playBrannasSound, forceAudioUnlock } from './audio.js';
 
 export class Game {
     constructor(app) {
@@ -561,8 +561,8 @@ export class Game {
         // Start the game loop
         this.app.ticker.start();
         
-        
-        
+        // Force audio unlock
+        forceAudioUnlock();
     }
     
     restart() {

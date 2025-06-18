@@ -30,7 +30,7 @@ export class PowerUp {
         this.y = y;
         this.width = 30;
         this.height = 30;
-        this.speed = 2;
+        this.speed = 4; // 🎯 POWERUP FALLING SPEED - Increase for faster, decrease for slower
         this.active = false;
         this.duration = 0;
         this.endTime = 0;

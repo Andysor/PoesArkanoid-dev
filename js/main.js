@@ -4,7 +4,7 @@ import { Paddle } from './paddle.js';
 import { Ball } from './ball.js';
 import { Level } from './level.js';
 import { db, loadHighscores } from './firebase-init.js';
-import { initializeAudio } from './audio.js';
+import { initializeAudio, forceAudioUnlock } from './audio.js';
 
 // Game configuration
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -40,7 +40,11 @@ loadHighscores().then(() => {
 
 // Initialize Audio System
 console.log('🔊 Initializing Audio System...');
-initializeAudio();
+initializeAudio().then(() => {
+    console.log('✅ Audio system initialized successfully');
+}).catch(error => {
+    console.error('❌ Audio initialization failed:', error);
+});
 
 // Unlock audio on first user interaction (required for mobile)
 function unlockAudio() {
@@ -116,6 +120,9 @@ document.querySelectorAll('.char-opt').forEach(img => {
         //Hide character select, show canvas
         document.getElementById('character-select').style.display = "none";
         app.view.style.display = 'block';
+
+        // Force audio unlock on character selection (important for iOS Safari)
+        forceAudioUnlock();
 
         //Reset game state
         game.resetGameState();
