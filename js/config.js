@@ -35,9 +35,9 @@ export const POWERUPS_PER_LEVEL = {
     EXTRA_LIFE: 1,  // One extra life power-up per level
     SKULL: 1,       // Three skull power-ups per level
     COIN_GOLD: 5,   // Five gold coin power-ups per level
-    COIN_SILVER: 5,  // Five silver coin power-ups per level
-    POWERUP_LARGEPADDLE: 2, // One large paddle power-up per level
-    POWERUP_SMALLPADDLE: 2  // One small paddle power-up per level
+    COIN_SILVER: 10,  // Five silver coin power-ups per level
+    POWERUP_LARGEPADDLE: 3, // One large paddle power-up per level
+    POWERUP_SMALLPADDLE: 3  // One small paddle power-up per level
 };
 
 // Speed-related constants
