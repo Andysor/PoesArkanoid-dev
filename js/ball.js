@@ -394,7 +394,10 @@ export class Ball {
                         const powerUp = createPowerUp('sausage', brick.x, brick.y);
                         if (this.game.powerUpContainer) {
                             this.game.powerUpContainer.addChild(powerUp.sprite);
-                            this.game.powerUps.push(powerUp);
+                            if (!this.game.activePowerUps) {
+                                this.game.activePowerUps = [];
+                            }
+                            this.game.activePowerUps.push(powerUp);
                             powerUp.activate();
                         }
                         this.game.addScore(50); // Bonus score for sausage

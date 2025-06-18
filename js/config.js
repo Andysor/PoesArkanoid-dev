@@ -34,7 +34,8 @@ export const POWERUPS_PER_LEVEL = {
     BRANNAS: 1,     // One brannas power-up per level
     EXTRA_LIFE: 1,  // One extra life power-up per level
     SKULL: 3,       // Three skull power-ups per level
-    COIN: 5         // Five coin power-ups per level
+    COIN_GOLD: 5,   // Five gold coin power-ups per level
+    COIN_SILVER: 5  // Five silver coin power-ups per level
 };
 
 // Speed-related constants

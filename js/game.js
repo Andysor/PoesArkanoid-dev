@@ -95,9 +95,11 @@ export class Game {
          // Create power-up container
          this.powerUpContainer = new PIXI.Container();
          this.objectsContainer.addChild(this.powerUpContainer);
+         console.log('🎮 Power-up container created and added to objects container');
 
          // Initialize power-ups array
-         this.powerUps = [];
+         this.activePowerUps = [];
+         console.log('🎮 Active power-ups array initialized');
 
          // Load power-up textures
          PowerUp.loadTextures().then(() => {
@@ -107,6 +109,7 @@ export class Game {
         // Initialize level instance
         this.levelInstance = new Level(app);
         this.objectsContainer.addChild(this.levelInstance.brickContainer);
+        this.levelInstance.game = this;
         
         // Initialize paddle
         this.paddle = new Paddle(app);
@@ -131,7 +134,8 @@ export class Game {
         // Load images
         this.images = {
             sausage: loadImage(ASSETS.images.items.sausage),
-            coin: loadImage(ASSETS.images.items.coin),
+            coin_gold: loadImage(ASSETS.images.items.coin_gold),
+            coin_silver: loadImage(ASSETS.images.items.coin_silver),
             brannas: loadImage(ASSETS.images.items.brannas)
         };
     }
@@ -187,16 +191,16 @@ export class Game {
     }
 
     //Reset game state
-    resetGameState() {
+    resetGameState(keepScore = false) {
         console.log('🎮 Resetting game state...');
         
         // 1. Reset state
-        this.score = 0;
+        if (!keepScore) this.score = 0;
         this.lives = 3;
-        this.level = 1;
+        if (!keepScore) this.level = 1;
         this.gameStarted = false;
         this.gameOver = false;
-        this.waitingForInput = false; // <– Ikke true enda
+        this.waitingForInput = false;
         this.showHighscores = false;
         this.extraBalls = [];
         this.levelLoaded = false;
@@ -210,39 +214,28 @@ export class Game {
         this.livesText.visible = true;
         this.levelText.visible = true;
     
-        // 3. Paddle til startposisjon
+        // 3. Reset paddle position
         if (this.paddle) {
             this.paddle.graphics.x = (this.app.screen.width - this.paddle.graphics.width) / 2;
             this.paddle.graphics.y = this.app.screen.height - this.paddle.graphics.height - 20;
         }
     
-        // 4. Fjern gamle baller
-        Ball.balls.forEach(ball => {
-            if (ball.graphics && this.objectsContainer.children.includes(ball.graphics)) {
-                this.objectsContainer.removeChild(ball.graphics);
-            }
-        });
-        Ball.balls = [];
-    
-        // 5. Last nivå
+        // 4. Load level
         this.levelInstance.loadLevel(this.level).then(() => {
             this.levelLoaded = true;
             this.loadingNextLevel = false;
     
-            // 🆕 6. Lag ny ball og plasser den
-            this.ball = new Ball(this.app);
-            this.ball.game = this;
-            this.ball.setLevel(this.levelInstance);
-            this.objectsContainer.addChild(this.ball.graphics);
+            // 5. Reset all balls and get new main ball
+            this.ball = Ball.resetAll(this.app, this, this.levelInstance);
             this.ball.placeOnPaddle(this.paddle);
     
             console.log('🆕 New ball placed after resetGameState');
     
-            // 7. Klar til input
+            // 6. Ready for input
             this.waitingForInput = true;
             this.inputMode = 'waitForStart';
     
-            // Sørg for å lytte på input
+            // Ensure we're listening for input
             this.app.stage.off('pointerdown', this.boundHandleGameStart);
             this.app.stage.on('pointerdown', this.boundHandleGameStart);
         });
@@ -601,10 +594,24 @@ export class Game {
         }
 
         // Update power-ups
-        if (this.powerUpContainer) {
-            this.powerUps = this.powerUps.filter(powerUp => {
+        if (this.activePowerUps) {
+            console.log(`🔄 Updating ${this.activePowerUps.length} active power-ups`);
+            this.activePowerUps = this.activePowerUps.filter(powerUp => {
+                if (!powerUp.active) {
+                    console.log(`🗑️ Removing inactive power-up: ${powerUp.type}`);
+                    return false;
+                }
+
                 powerUp.update();
-                return powerUp.active;
+
+                // Check collision with paddle
+                if (this.paddle && this.checkPowerUpCollision(powerUp, this.paddle)) {
+                    console.log(`💫 Power-up ${powerUp.type} collected by paddle`);
+                    this.handlePowerUpCollection(powerUp);
+                    return false;
+                }
+
+                return true;
             });
         }
     }
@@ -660,28 +667,9 @@ export class Game {
     nextLevel() {
         this.level++;
         this.updateLevel();
-        this.levelLoaded = false;
-        this.loadingNextLevel = true;
         
-        // Remove all extra balls before loading next level
-        Ball.resetAll(this.app, this, this.levelInstance);
-        
-        // Load the next level
-        this.levelInstance.loadLevel(this.level).then(() => {
-            this.levelLoaded = true;
-            this.loadingNextLevel = false;
-
-            // Reset ball position and speed
-            if (this.ball) {
-                this.ball.reset();
-                this.ball.setLevel(this.levelInstance);
-            }
-            
-            // Reset paddle position
-            if (this.paddle) {
-                this.paddle.graphics.x = (this.app.screen.width - this.paddle.graphics.width) / 2;
-            }
-        });
+        // Use resetGameState with keepScore=true to preserve score
+        this.resetGameState(true);
     }
     
     checkLevelComplete() {
@@ -773,5 +761,49 @@ export class Game {
         
         // Initialize fresh game state
         this.resetGameState();
+    }
+
+    checkPowerUpCollision(powerUp, paddle) {
+        const powerUpBounds = powerUp.sprite.getBounds();
+        const paddleBounds = paddle.graphics.getBounds();
+
+        const collision = (
+            powerUpBounds.x < paddleBounds.x + paddleBounds.width &&
+            powerUpBounds.x + powerUpBounds.width > paddleBounds.x &&
+            powerUpBounds.y < paddleBounds.y + paddleBounds.height &&
+            powerUpBounds.y + powerUpBounds.height > paddleBounds.y
+        );
+
+        if (collision) {
+            console.log('🎯 Power-up collision detected:', {
+                powerUpType: powerUp.type,
+                powerUpPos: { x: powerUpBounds.x, y: powerUpBounds.y },
+                paddlePos: { x: paddleBounds.x, y: paddleBounds.y }
+            });
+        }
+
+        return collision;
+    }
+
+    handlePowerUpCollection(powerUp) {
+        console.log(`🎉 Handling power-up effect: ${powerUp.type}`);
+        switch(powerUp.type.toLowerCase()) {
+            case 'brannas':
+                // Handle brannas effect
+                break;
+            case 'extra_life':
+                this.lives++;
+                break;
+            case 'skull':
+                // Handle skull effect
+                break;
+            case 'coin_gold':
+                this.addScore(100);
+                break;
+            case 'coin_silver':
+                this.addScore(10);
+                break;
+        }
+        powerUp.deactivate();
     }
 } 

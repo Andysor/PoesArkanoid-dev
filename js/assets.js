@@ -10,10 +10,17 @@ export const ASSETS = {
         },
         items: {
             sausage: './assets/images/items/sausage.png',
-            coin: './assets/images/items/coin.png',
+            coin_gold: './assets/images/items/coin_gold.png',
+            coin_silver: './assets/images/items/coin_silver.png',
             brannas: './assets/images/items/brannas.png',
             ball: './assets/images/items/ball.png',
             extraball: './assets/images/items/extraball.png'
+        },
+        bricks: {
+            brick_normal: './assets/images/bricks/brick_normal.png',
+            brick_special: './assets/images/bricks/brick_special.png',
+            brick_sausage: './assets/images/bricks/brick_sausage.png',
+            brick_extra: './assets/images/bricks/brick_extra.png'
         },
         levels: (name, ext = '.png') => `./assets/images/levels/${name}${ext}`
     },

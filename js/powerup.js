@@ -38,7 +38,7 @@ export class PowerUp {
         // Create PIXI sprite
         this.sprite = new PIXI.Sprite(PowerUp.textures[this.type.toLowerCase()]);
         this.sprite.anchor.set(0.5);
-        this.sprite.scale.set(0.3);
+        this.sprite.scale.set(0.05);
         this.sprite.x = x;
         this.sprite.y = y;
         this.sprite.visible = false;
@@ -50,9 +50,10 @@ export class PowerUp {
         this.sprite.y += this.speed;
         
         // Check if power-up is out of bounds
-        if (this.sprite.y > this.sprite.parent.height) {
-            this.deactivate();
-        }
+        const screenHeight = window.innerHeight || 800;
+        if (this.sprite.y > screenHeight) {
+        this.deactivate();
+    }
     }
 
     activate() {
@@ -80,16 +81,19 @@ export function createPowerUp(type, x, y) {
     
     // Set duration based on type
     switch(type) {
-        case 'BRANNAS':
+        case 'brannas':
             powerUp.duration = 10000; // 10 seconds
             break;
-        case 'EXTRA_LIFE':
+        case 'extra_life':
             powerUp.duration = 0; // Instant
             break;
-        case 'SKULL':
+        case 'skull':
             powerUp.duration = 5000; // 5 seconds
             break;
-        case 'COIN':
+        case 'coin_gold':
+            powerUp.duration = 0; // Instant
+            break;
+        case 'coin_silver':
             powerUp.duration = 0; // Instant
             break;
     }

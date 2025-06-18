@@ -1,3 +1,5 @@
+import { ASSETS } from './assets.js';
+
 export class Brick {
     constructor(x, y, width, height, type = 'normal') {
         this.x = x;
@@ -8,86 +10,63 @@ export class Brick {
         this.status = 1; // 1 = active, 0 = destroyed
         this.column = -1;
         this.row = -1;
-        this.createGraphics();
+
+        this.createSprite();
     }
 
-    createGraphics() {
-        // Create new graphics object
-        this.graphics = new PIXI.Graphics();
-        this.draw();
+    createSprite() {
+        // Create new sprite object
+        const texturePath = this.getTexturePath();
+        const texture = PIXI.Texture.from(texturePath);
+
+        this.sprite = new PIXI.Sprite(texture);
+        this.sprite.x = this.x;
+        this.sprite.y = this.y;
+        this.sprite.width = this.width;
+        this.sprite.height = this.height;
+        this.sprite.visible = this.status === 1;
     }
 
-    draw() {
-        if (!this.graphics) {
-            this.createGraphics();
+    getTexturePath() {
+        switch (this.type) {
+            case 'special': return ASSETS.images.bricks.brick_special;
+            case 'sausage': return ASSETS.images.bricks.brick_sausage;
+            case 'extra': return ASSETS.images.bricks.brick_extra;
+            default: return ASSETS.images.bricks.brick_normal;
         }
-
-        if (this.status === 0) {
-            this.graphics.clear();
-            this.graphics.visible = false;
-            return;
-        }
-
-        const g = this.graphics;
-        g.clear();
-        // Determine color by type
-        let baseColor = 0x0099ff; // default blue
-        if (this.type === 'special') baseColor = 0xff0000;
-        else if (this.type === 'sausage') baseColor = 0xffd700;
-        else if (this.type === 'extra') baseColor = 0x00ff00;
-        // Draw shadow
-        g.beginFill(0x111111, 0.25);
-        g.drawRect(4, 6, this.width, this.height);
-        g.endFill();
-        // Draw main brick
-        g.beginFill(baseColor);
-        g.drawRect(0, 0, this.width, this.height);
-        g.endFill();
-        // Draw highlight
-        g.beginFill(0xffffff, 0.18);
-        g.drawRect(4, 4, this.width - 8, this.height * 0.22);
-        g.endFill();
-        // Set position
-        g.x = this.x;
-        g.y = this.y;
-        g.visible = true;
     }
 
     destroy() {
         this.status = 0;
-        if (this.graphics) {
-            // First remove from parent if it exists
-            if (this.graphics.parent) {
-                this.graphics.parent.removeChild(this.graphics);
-            }
-            
-            // Remove all event listeners and clear graphics
-            this.graphics.removeAllListeners();
-            this.graphics.clear();
-            
-            // Set graphics to null without destroying
-            this.graphics = null;
+        if (this.sprite && this.sprite.parent) {
+            this.sprite.parent.removeChild(this.sprite);
         }
+        this.sprite?.destroy();
+        this.sprite = null;
     }
 
     hide() {
         this.status = 0;
-        if (this.graphics) {
-            this.graphics.clear();
-            this.graphics.visible = false;
+        if (this.sprite) {
+            this.sprite.visible = false;
         }
     }
 
     show() {
         this.status = 1;
-        if (!this.graphics) {
-            this.createGraphics();
+        if (!this.sprite) {
+            this.createSprite();
+        } else {
+            this.sprite.visible = true;
         }
-        this.draw();
     }
 
     reset() {
         this.status = 1;
-        this.createGraphics();
+        if (this.sprite) {
+            this.sprite.visible = true;
+        } else {
+            this.createSprite();
+        }
     }
 } 
