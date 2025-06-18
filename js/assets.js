@@ -14,13 +14,19 @@ export const ASSETS = {
             coin_silver: './assets/images/items/coin_silver.png',
             brannas: './assets/images/items/brannas.png',
             ball: './assets/images/items/ball.png',
-            extraball: './assets/images/items/extraball.png'
+            extraball: './assets/images/items/extraball.png',
+            paddle_main: './assets/images/items/paddle_main.png',
+            powerup_largepaddle: './assets/images/items/powerup_largepaddle.png',
+            powerup_smallpaddle: './assets/images/items/powerup_smallpaddle.png'
         },
         bricks: {
             brick_normal: './assets/images/bricks/brick_normal.png',
             brick_special: './assets/images/bricks/brick_special.png',
             brick_sausage: './assets/images/bricks/brick_sausage.png',
-            brick_extra: './assets/images/bricks/brick_extra.png'
+            brick_extra: './assets/images/bricks/brick_extra.png',
+            brick_glass: './assets/images/bricks/brick_glass.png',
+            brick_glass_broken: './assets/images/bricks/brick_glass_broken.png',
+            
         },
         levels: (name, ext = '.png') => `./assets/images/levels/${name}${ext}`
     },
@@ -28,7 +34,9 @@ export const ASSETS = {
         hit: './assets/sounds/hit.mp3',
         lifeLoss: './assets/sounds/lifeLoss.mp3',
         poesKlap: './assets/sounds/poesKlap.mp3',
-        brannas: './assets/sounds/brannas.mp3'
+        brannas: './assets/sounds/brannas.mp3',
+        brick_glass_break: './assets/sounds/brick_glass_break.mp3',
+        brick_glass_destroyed: './assets/sounds/brick_glass_destroyed.mp3'
     },
     levels: (levelNum) => `./assets/levels/level${levelNum}.json`
 };

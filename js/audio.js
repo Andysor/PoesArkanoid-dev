@@ -1,4 +1,5 @@
 import { POESKLAP_COOLDOWN } from './config.js';
+import { ASSETS } from './assets.js';
 
 // Audio context and state
 let audioContext = null;
@@ -34,32 +35,60 @@ const brannasSoundPool = Array.from({length: 2}, () => {
 });
 let brannasSoundIndex = 0;
 
+const glassBreakSoundPool = Array.from({length: 5}, () => {
+    const a = new Audio();
+    a.volume = 0.6;
+    return a;
+});
+let glassBreakSoundIndex = 0;
+
+const glassDestroyedSoundPool = Array.from({length: 3}, () => {
+    const a = new Audio();
+    a.volume = 0.7;
+    return a;
+});
+let glassDestroyedSoundIndex = 0;
+
 // Initialize audio system
 export function initializeAudio() {
     try {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        // Expose audio context globally for mobile unlock
+        window.audioContext = audioContext;
         audioEnabled = true;
         
         // Preload sounds
         hitSoundPool.forEach(sound => {
-            sound.src = './assets/sounds/hit.mp3';
+            sound.src = ASSETS.sounds.hit;
             sound.load();
         });
         
         lifeLossSoundPool.forEach(sound => {
-            sound.src = './assets/sounds/lifeloss.mp3';
+            sound.src = ASSETS.sounds.lifeLoss;
             sound.load();
         });
         
         poesklapSoundPool.forEach(sound => {
-            sound.src = './assets/sounds/poesklap.mp3';
+            sound.src = ASSETS.sounds.poesKlap;
             sound.load();
         });
         
         brannasSoundPool.forEach(sound => {
-            sound.src = './assets/sounds/brannas.mp3';
+            sound.src = ASSETS.sounds.brannas;
             sound.load();
         });
+        
+        glassBreakSoundPool.forEach(sound => {
+            sound.src = ASSETS.sounds.brick_glass_break;
+            sound.load();
+        });
+        
+        glassDestroyedSoundPool.forEach(sound => {
+            sound.src = ASSETS.sounds.brick_glass_destroyed;
+            sound.load();
+        });
+        
+        console.log('🔊 Audio system initialized successfully');
     } catch (e) {
         console.error('Audio initialization failed:', e);
         audioEnabled = false;
@@ -101,4 +130,20 @@ export function playBrannasSound() {
     sound.currentTime = 0;
     sound.play().catch(e => console.warn('Failed to play brannas sound:', e));
     brannasSoundIndex = (brannasSoundIndex + 1) % brannasSoundPool.length;
+}
+
+export function playGlassBreakSound() {
+    if (!audioEnabled) return;
+    const sound = glassBreakSoundPool[glassBreakSoundIndex];
+    sound.currentTime = 0;
+    sound.play().catch(e => console.warn('Failed to play glass break sound:', e));
+    glassBreakSoundIndex = (glassBreakSoundIndex + 1) % glassBreakSoundPool.length;
+}
+
+export function playGlassDestroyedSound() {
+    if (!audioEnabled) return;
+    const sound = glassDestroyedSoundPool[glassDestroyedSoundIndex];
+    sound.currentTime = 0;
+    sound.play().catch(e => console.warn('Failed to play glass destroyed sound:', e));
+    glassDestroyedSoundIndex = (glassDestroyedSoundIndex + 1) % glassDestroyedSoundPool.length;
 } 

@@ -175,11 +175,22 @@ export class Level {
     }
 
     createBricksFromData(levelData) {
+        // Handle both old format (2D array) and new format (object with bricks property)
+        let bricksData;
+        if (levelData.bricks) {
+            // New format from level editor
+            bricksData = levelData.bricks;
+        } else {
+            // Old format (direct 2D array)
+            bricksData = levelData;
+        }
+
         console.log('Creating bricks from level data:', {
-            rows: levelData.length,
-            columns: levelData[0].length,
+            rows: bricksData.length,
+            columns: bricksData[0]?.length || 0,
             expectedRows: this.brickRowCount,
-            expectedColumns: this.brickColumnCount
+            expectedColumns: this.brickColumnCount,
+            dataFormat: levelData.bricks ? 'new' : 'old'
         });
 
         // Ensure container is empty before creating new bricks
@@ -188,15 +199,21 @@ export class Level {
         }
 
         const normalBricks = [];
+        const glassBricks = [];
 
         // Create bricks based on level data
-        for (let r = 0; r < levelData.length; r++) {
-            for (let c = 0; c < levelData[r].length; c++) {
-                const brickInfo = levelData[r][c];
+        for (let r = 0; r < bricksData.length; r++) {
+            for (let c = 0; c < bricksData[r].length; c++) {
+                const brickInfo = bricksData[r][c];
                 if (!brickInfo.destroyed) {
                     const x = c * (this.brickWidth + this.brickPadding) + this.brickOffsetLeft;
                     const y = r * (this.brickHeight + this.brickPadding) + this.brickOffsetTop;
                     const type = brickInfo.type || 'normal';
+                    
+                    if (type === 'glass') {
+                        console.log('🪟 Creating glass brick at:', { row: r, col: c, x, y, brickInfo });
+                    }
+                    
                     const brick = new Brick(x, y, this.brickWidth, this.brickHeight, type);
                     brick.column = c;
                     brick.row = r;
@@ -206,6 +223,8 @@ export class Level {
 
                     if (type === 'normal') {
                         normalBricks.push(brick);
+                    } else if (type === 'glass') {
+                        glassBricks.push(brick);
                     }
                 }
             }
@@ -217,12 +236,26 @@ export class Level {
             arrayState: this.bricks.map(col => col.map(b => b ? 1 : 0))
         });
     
-    // Fordel powerups i tilfeldige "normal"-brikker
-        const shuffled = normalBricks.sort(() => Math.random() - 0.5);
+    // Fordel powerups i tilfeldige "normal"-brikker og glassbrikker
+        const weightedBricks = [];
+        normalBricks.forEach(brick => {
+            weightedBricks.push(brick); // Normal weight
+        });
+        glassBricks.forEach(brick => {
+            // Add each glass brick 3 times (3x weight)
+            weightedBricks.push(brick);
+            weightedBricks.push(brick);
+            weightedBricks.push(brick);
+        });
+
+        const shuffled = weightedBricks.sort(() => Math.random() - 0.5);
         let index = 0;
 
         console.log('🎲 Distributing power-ups:', POWERUPS_PER_LEVEL);
-        console.log('📦 Available normal bricks:', shuffled.length);
+        console.log('📦 Available normal bricks:', normalBricks.length);
+        console.log('🪟 Available glass bricks:', glassBricks.length);
+        console.log('📦 Total available bricks:', weightedBricks.length);
+        console.log('🎲 Total shuffled bricks:', shuffled.length);
 
         for (const [type, count] of Object.entries(POWERUPS_PER_LEVEL)) {
             console.log(`🎯 Assigning ${count} ${type} power-ups`);

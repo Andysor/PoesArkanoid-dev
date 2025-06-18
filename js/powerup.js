@@ -38,7 +38,7 @@ export class PowerUp {
         // Create PIXI sprite
         this.sprite = new PIXI.Sprite(PowerUp.textures[this.type.toLowerCase()]);
         this.sprite.anchor.set(0.5);
-        this.sprite.scale.set(0.05);
+        this.sprite.scale.set(0.03);
         this.sprite.x = x;
         this.sprite.y = y;
         this.sprite.visible = false;
@@ -94,6 +94,12 @@ export function createPowerUp(type, x, y) {
             powerUp.duration = 0; // Instant
             break;
         case 'coin_silver':
+            powerUp.duration = 0; // Instant
+            break;
+        case 'powerup_largepaddle':
+            powerUp.duration = 0; // Instant
+            break;
+        case 'powerup_smallpaddle':
             powerUp.duration = 0; // Instant
             break;
     }

@@ -10,6 +10,8 @@ export class Brick {
         this.status = 1; // 1 = active, 0 = destroyed
         this.column = -1;
         this.row = -1;
+        this.hitCount = 0; // Track hits for glass bricks
+        this.isBroken = false; // Track broken state for glass bricks
 
         this.createSprite();
     }
@@ -32,6 +34,8 @@ export class Brick {
             case 'special': return ASSETS.images.bricks.brick_special;
             case 'sausage': return ASSETS.images.bricks.brick_sausage;
             case 'extra': return ASSETS.images.bricks.brick_extra;
+            case 'glass': 
+                return this.isBroken ? ASSETS.images.bricks.brick_glass_broken : ASSETS.images.bricks.brick_glass;
             default: return ASSETS.images.bricks.brick_normal;
         }
     }
@@ -63,10 +67,105 @@ export class Brick {
 
     reset() {
         this.status = 1;
+        this.hitCount = 0;
+        this.isBroken = false;
         if (this.sprite) {
             this.sprite.visible = true;
         } else {
             this.createSprite();
+        }
+    }
+
+    hit() {
+        console.log('🎯 Brick.hit() called:', {
+            type: this.type,
+            hitCount: this.hitCount,
+            isBroken: this.isBroken,
+            status: this.status
+        });
+        
+        if (this.type === 'glass') {
+            this.hitCount++;
+            console.log('🪟 Glass brick hit count increased to:', this.hitCount);
+            
+            if (this.hitCount === 1) {
+                // First hit - show broken glass effect
+                console.log('🪟 First hit - creating broken glass effect');
+                this.isBroken = true;
+                this.createBrokenGlassEffect();
+                this.updateSprite();
+                console.log('🪟 Glass brick marked as broken, returning false (don\'t destroy)');
+                return false; // Don't destroy yet
+            } else if (this.hitCount >= 2) {
+                // Second hit - destroy the brick
+                console.log('🪟 Second hit - destroying glass brick');
+                return true; // Destroy the brick
+            }
+        }
+        console.log('🎯 Non-glass brick or default behavior, returning true (destroy)');
+        return true; // Default behavior for other brick types
+    }
+
+    createBrokenGlassEffect() {
+        console.log('💥 Creating broken glass effect for brick at:', { x: this.x, y: this.y });
+        
+        // Create glass shatter effect
+        if (this.sprite && this.sprite.parent) {
+            // Create glass shatter particles
+            const shatterContainer = new PIXI.Container();
+            shatterContainer.x = this.x + this.width / 2;
+            shatterContainer.y = this.y + this.height / 2;
+            
+            console.log('💥 Shatter container created at:', { x: shatterContainer.x, y: shatterContainer.y });
+            
+            // Create multiple small glass pieces
+            for (let i = 0; i < 8; i++) {
+                const shard = new PIXI.Graphics();
+                shard.beginFill(0x87CEEB, 0.8); // Light blue with transparency
+                shard.drawRect(0, 0, 3, 3);
+                shard.endFill();
+                
+                // Random position around the brick
+                shard.x = (Math.random() - 0.5) * this.width;
+                shard.y = (Math.random() - 0.5) * this.height;
+                
+                // Add to shatter container
+                shatterContainer.addChild(shard);
+            }
+            
+            // Add to the same parent as the brick
+            this.sprite.parent.addChild(shatterContainer);
+            console.log('💥 Shatter effect added to parent, total children:', this.sprite.parent.children.length);
+            
+            // Animate the shatter effect
+            let alpha = 1;
+            const fadeOut = () => {
+                alpha -= 0.05;
+                shatterContainer.alpha = alpha;
+                if (alpha > 0) {
+                    requestAnimationFrame(fadeOut);
+                } else {
+                    if (shatterContainer.parent) {
+                        shatterContainer.parent.removeChild(shatterContainer);
+                        console.log('💥 Shatter effect removed from parent');
+                    }
+                }
+            };
+            fadeOut();
+        } else {
+            console.warn('⚠️ Cannot create shatter effect - no sprite or parent');
+        }
+    }
+
+    updateSprite() {
+        console.log('🔄 Updating sprite texture for glass brick');
+        if (this.sprite) {
+            const newTexturePath = this.getTexturePath();
+            console.log('🔄 New texture path:', newTexturePath);
+            this.sprite.texture = PIXI.Texture.from(newTexturePath);
+            console.log('🔄 Sprite texture updated');
+        } else {
+            console.warn('⚠️ Cannot update sprite - no sprite exists');
         }
     }
 } 

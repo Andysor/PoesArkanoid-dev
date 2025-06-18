@@ -18,7 +18,7 @@ canvas.height = totalBricksHeight;
 const offsetLeft = (canvas.width - totalBricksWidth) / 2;
 
 // Mulige typer
-const BRICK_TYPES = ["normal", "special", "sausage", "extra"];
+const BRICK_TYPES = ["normal", "special", "sausage", "extra", "glass"];
 
 // Brettdata
 let bricks = [];
@@ -45,6 +45,7 @@ function drawBricks() {
       if (brick.type === "special") color = "#f00";
       if (brick.type === "sausage") color = "gold";
       if (brick.type === "extra") color = "#0af";
+      if (brick.type === "glass") color = "#87CEEB";
       ctx.fillStyle = color;
       ctx.fillRect(
         offsetLeft + c * (brickWidth + brickPadding),
@@ -100,6 +101,10 @@ canvas.addEventListener('click', function(e) {
         } else if (type === "extra") {
           brick.extraBall = true;
           brick.strength = 1;
+        } else if (type === "glass") {
+          brick.strength = 1;
+          brick.bonusScore = false;
+          brick.extraBall = false;
         }
         bricks[r][c] = brick;
         drawBricks();
@@ -111,9 +116,8 @@ canvas.addEventListener('click', function(e) {
 
 // Eksporter til JSON med alle felter
 window.exportLevel = function() {
-  const bgUrl = document.getElementById('bg-url').value || "";
-  // Ensure background URL is relative if it's a local path
-  const relativeBgUrl = bgUrl.startsWith('/') ? '.' + bgUrl : bgUrl;
+  const bgFile = document.getElementById('bg-file');
+  const bgUrl = bgFile.files.length > 0 ? bgFile.files[0].name : "";
   const level = bricks.map(row => row.map(brick => ({
     type: brick.type,
     destroyed: false,
@@ -124,7 +128,7 @@ window.exportLevel = function() {
     effect: brick.effect
   })));
   const exportObj = {
-    background: relativeBgUrl,
+    background: bgUrl ? `./assets/images/levels/${bgUrl}` : "",
     bricks: level
   };
   const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj, null, 2));

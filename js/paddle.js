@@ -1,77 +1,138 @@
+import { PADDLE_HOVER_OFFSET, PADDLE_BOTTOM_MARGIN, POWER_UP_DURATION } from './config.js';
+import { ASSETS } from './assets.js';
+
 export class Paddle {
     constructor(app) {
         this.app = app;
         this.width = 100;
-        this.height = 20;
-        this.speed = 7;
+        this.height = 50;
+        this.speed = 5;
         this.baseWidth = 100;
 
-        // Create paddle graphics
-        this.graphics = new PIXI.Graphics();
-        this.graphics.beginFill(0x0095DD);
-        this.graphics.drawRect(0, 0, this.width, this.height);
-        this.graphics.endFill();
+        // Power-up duration tracking
+        this.powerUpEndTime = 0;
+        this.isExtended = false;
+        this.isShrunk = false;
 
-        // Set initial position
-        this.graphics.x = (app.screen.width - this.width) / 2;
-        this.graphics.y = app.screen.height - (app.screen.height * 0.1);
+        // Create paddle sprite instead of graphics
+        this.sprite = PIXI.Sprite.from(ASSETS.images.items.paddle_main);
+        this.sprite.width = this.width;
+        this.sprite.height = this.height;
+        this.sprite.anchor.set(0.5, 0.5); // Center the anchor point
 
-        this.graphics.name = 'paddle';
+        // Set initial position using centralized method
+        this.setStartingPosition();
+
+        this.sprite.name = 'paddle';
 
         // Initialize target position for lerp
-        this.targetX = this.graphics.x;
-        this.targetY = this.graphics.y;
+        this.targetX = this.sprite.x;
+        this.targetY = this.sprite.y;
 
-        this.app.stage.eventMode = 'static';
-        this.app.stage.on('pointermove', this.handlePointerMove.bind(this));
+        //this.app.stage.eventMode = 'static';
+        //this.app.stage.on('pointermove', this.handlePointerMove.bind(this));
+    }
+
+    setStartingPosition() {
+        // Center horizontally
+        this.sprite.x = this.app.screen.width / 2;
+        
+        // Position from bottom using config value
+        this.sprite.y = this.app.screen.height - PADDLE_BOTTOM_MARGIN;
+        
+        // Update target positions to match
+        this.targetX = this.sprite.x;
+        this.targetY = this.sprite.y;
     }
 
     handlePointerMove(e) {
-        this.targetX = e.global.x - this.width / 2;
-        this.targetY = e.global.y - this.height / 2;
+        this.targetX = e.global.x;
+        
+       // Set Y position to hover 15% of screen height above the touch point
+        const hoverOffset = this.app.screen.height * PADDLE_HOVER_OFFSET;
+        this.targetY = e.global.y - hoverOffset;
     }
 
     update() {
+        // Check power-up status first
+        this.updatePowerUpStatus();
+
         const lerp = 0.2;
 
         // Lerp toward target
-        this.graphics.x += (this.targetX - this.graphics.x) * lerp;
-        this.graphics.y += (this.targetY - this.graphics.y) * lerp;
+        this.sprite.x += (this.targetX - this.sprite.x) * lerp;
+        this.sprite.y += (this.targetY - this.sprite.y) * lerp;
 
         // Bound X
-        this.graphics.x = Math.max(0, Math.min(this.graphics.x, this.app.screen.width - this.width));
+        const minX = this.width / 2;
+        const maxX = this.app.screen.width - this.width / 2;
+        this.sprite.x = Math.max(minX, Math.min(this.sprite.x, maxX));
 
         // Bound Y
-        const minY = this.app.screen.height * 0.5;
-        const maxY = this.app.screen.height - this.height - 20;
-        this.graphics.y = Math.max(minY, Math.min(this.graphics.y, maxY));
+        const minY = this.app.screen.height * 0.6;
+        const maxY = this.app.screen.height - PADDLE_BOTTOM_MARGIN;
+        this.sprite.y = Math.max(minY, Math.min(this.sprite.y, maxY));
     }
 
     extend() {
         this.width = this.baseWidth * 1.5;
-        this.updateGraphics();
+        this.isExtended = true;
+        this.isShrunk = false;
+        this.powerUpEndTime = Date.now() + POWER_UP_DURATION;
+        this.updateSprite();
+        console.log('🔵 Paddle extended for', POWER_UP_DURATION / 1000, 'seconds');
     }
 
     shrink() {
         this.width = this.baseWidth * 0.75;
-        this.updateGraphics();
+        this.isShrunk = true;
+        this.isExtended = false;
+        this.powerUpEndTime = Date.now() + POWER_UP_DURATION;
+        this.updateSprite();
+        console.log('🔴 Paddle shrunk for', POWER_UP_DURATION / 1000, 'seconds');
     }
 
-    updateGraphics() {
-        this.graphics.clear();
-        this.graphics.beginFill(0x0095DD);
-        this.graphics.drawRect(0, 0, this.width, this.height);
-        this.graphics.endFill();
+    reset() {
+        this.width = this.baseWidth;
+        this.isExtended = false;
+        this.isShrunk = false;
+        this.powerUpEndTime = 0;
+        this.updateSprite();
+    }
 
-        const centerX = this.graphics.x + this.graphics.width / 2;
-        this.graphics.x = centerX - this.width / 2;
+    updateSprite() {
+        // Store current center position
+        const centerX = this.sprite.x;
+        const centerY = this.sprite.y;
+        
+        // Update only sprite width, keep height constant
+        this.sprite.width = this.width;
+        // Keep the original height from the sprite texture
+        this.sprite.height = this.height;
+        
+        // Restore center position
+        this.sprite.x = centerX;
+        this.sprite.y = centerY;
     }
 
     get x() {
-        return this.graphics.x;
+        return this.sprite.x - this.width / 2;
     }
 
     get y() {
-        return this.graphics.y;
+        return this.sprite.y - this.height / 2;
+    }
+
+    get graphics() {
+        // For backward compatibility with existing code
+        return this.sprite;
+    }
+
+    updatePowerUpStatus() {
+        // Check if power-up duration has expired
+        if (this.powerUpEndTime > 0 && Date.now() > this.powerUpEndTime) {
+            console.log('⏰ Power-up expired, resetting paddle to base size');
+            this.reset();
+        }
     }
 }

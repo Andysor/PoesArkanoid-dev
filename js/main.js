@@ -4,6 +4,7 @@ import { Paddle } from './paddle.js';
 import { Ball } from './ball.js';
 import { Level } from './level.js';
 import { db, loadHighscores } from './firebase-init.js';
+import { initializeAudio } from './audio.js';
 
 // Game configuration
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -36,6 +37,28 @@ loadHighscores().then(() => {
 }).catch(error => {
     console.error('❌ Firebase initialization failed:', error);
 });
+
+// Initialize Audio System
+console.log('🔊 Initializing Audio System...');
+initializeAudio();
+
+// Unlock audio on first user interaction (required for mobile)
+function unlockAudio() {
+    console.log('🔊 Unlocking audio on user interaction');
+    // Resume audio context if suspended
+    if (window.audioContext && window.audioContext.state === 'suspended') {
+        window.audioContext.resume();
+    }
+    // Remove event listeners after first interaction
+    document.removeEventListener('touchstart', unlockAudio);
+    document.removeEventListener('mousedown', unlockAudio);
+    document.removeEventListener('keydown', unlockAudio);
+}
+
+// Add event listeners for audio unlock
+document.addEventListener('touchstart', unlockAudio, { once: true });
+document.addEventListener('mousedown', unlockAudio, { once: true });
+document.addEventListener('keydown', unlockAudio, { once: true });
 
 // Set canvas style to fill the window while maintaining aspect ratio
 const style = app.view.style;

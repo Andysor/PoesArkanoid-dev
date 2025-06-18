@@ -14,6 +14,7 @@ import { GameOverManager } from './gameOverManager.js';
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
 import { PowerUp } from './powerup.js';
+import { playHitSound, playLifeLossSound, playPoesklapSound, playBrannasSound } from './audio.js';
 
 export class Game {
     constructor(app) {
@@ -49,6 +50,12 @@ export class Game {
         this.app.stage.eventMode = 'static';
         this.app.stage.hitArea = this.app.screen;
         
+        // Add pointer move listener
+        this.app.stage.on('pointermove', this.boundHandlePointerMove);
+
+        // Add pointer down listener for ball launching
+        this.app.stage.on('pointerdown', this.boundHandleGameStart);
+
         // Create game container
         this.gameContainer = new PIXI.Container();
         this.app.stage.addChild(this.gameContainer);
@@ -123,14 +130,6 @@ export class Game {
             this.objectsContainer.addChild(this.ball.graphics);
         });
         
-        // Load sounds
-        this.sounds = {
-            hit: loadSound(ASSETS.sounds.hit),
-            lifeLoss: loadSound(ASSETS.sounds.lifeLoss),
-            poesklap: loadSound(ASSETS.sounds.poesKlap),
-            brannas: loadSound(ASSETS.sounds.brannas)
-        };
-        
         // Load images
         this.images = {
             sausage: loadImage(ASSETS.images.items.sausage),
@@ -157,24 +156,35 @@ export class Game {
 
     //Center paddle and place ball
     centerPaddleAndPlaceBall() {
-        // Flytt padelen til midten
-        const paddleStartX = (this.app.screen.width - this.paddle.graphics.width) / 2;
-        const paddleStartY = this.app.screen.height - this.paddle.graphics.height - 20;
+        console.log('🎯 centerPaddleAndPlaceBall - Starting ball placement');
+        console.log('🎯 centerPaddleAndPlaceBall - Paddle state:', {
+            paddleExists: !!this.paddle,
+            paddlePosition: this.paddle ? { x: this.paddle.sprite.x, y: this.paddle.sprite.y } : null,
+            paddleSize: this.paddle ? { width: this.paddle.width, height: this.paddle.height } : null
+        });
+        console.log('🎯 centerPaddleAndPlaceBall - Ball state:', {
+            ballExists: !!this.ball,
+            ballIsMoving: this.ball?.isMoving,
+            ballPosition: this.ball ? { x: this.ball.graphics.x, y: this.ball.graphics.y } : null
+        });
+        
+        // Use centralized paddle positioning
+        this.paddle.setStartingPosition();
+        console.log('🎯 centerPaddleAndPlaceBall - Paddle repositioned to:', {
+            x: this.paddle.sprite.x,
+            y: this.paddle.sprite.y
+        });
 
-        if (!this.paddle || !this.ball) return;
-
-        this.paddle.graphics.x = paddleStartX;
-        this.paddle.graphics.y = paddleStartY;
-
-        // Sett target lik nåværende posisjon for å unngå lerp-glitch
-        this.paddle.targetX = paddleStartX;
-        this.paddle.targetY = paddleStartY;
+        if (!this.paddle || !this.ball) {
+            console.error('🎯 centerPaddleAndPlaceBall - Missing paddle or ball!');
+            return;
+        }
 
         // Wait 1 frame before placing ball
         requestAnimationFrame(() => {
             console.log('🎬 Calling placeOnPaddle. Paddle at:', {
-                x: this.paddle.graphics.x,
-                y: this.paddle.graphics.y
+                x: this.paddle.sprite.x,
+                y: this.paddle.sprite.y
             });
             console.log('🎬 Ball before placeOnPaddle:', {
                 ballX: this.ball.graphics.x,
@@ -186,6 +196,11 @@ export class Game {
             console.log('✅ Ball after placeOnPaddle:', {
                 ballX: this.ball.graphics.x,
                 ballY: this.ball.graphics.y
+            });
+            console.log('✅ centerPaddleAndPlaceBall - Final state:', {
+                ballIsMoving: this.ball.isMoving,
+                waitingForInput: this.waitingForInput,
+                gameStarted: this.gameStarted
             });
         });
     }
@@ -216,8 +231,7 @@ export class Game {
     
         // 3. Reset paddle position
         if (this.paddle) {
-            this.paddle.graphics.x = (this.app.screen.width - this.paddle.graphics.width) / 2;
-            this.paddle.graphics.y = this.app.screen.height - this.paddle.graphics.height - 20;
+            this.paddle.setStartingPosition();
         }
     
         // 4. Load level
@@ -301,10 +315,7 @@ export class Game {
                 waitingForInput: this.waitingForInput
             });
 
-            // Add a small delay before setting up the game start listener
-            setTimeout(() => {
-                this.app.stage.on('pointerdown', this.handleGameStart.bind(this));
-            }, 100);
+            // No need to add pointerdown listener here since it's already set up in constructor
         }
     }
 
@@ -318,6 +329,14 @@ export class Game {
     }
 
     handleGameStart(e) {
+        console.log('🎮 handleGameStart - Input received:', {
+            waitingForInput: this.waitingForInput,
+            gameStarted: this.gameStarted,
+            inputMode: this.inputMode,
+            ballExists: !!this.ball,
+            ballIsMoving: this.ball?.isMoving
+        });
+        
         if (this.waitingForInput) {
             console.log('🎮 Game Start: Input received, ball will start moving');
             this.waitingForInput = false;
@@ -326,9 +345,28 @@ export class Game {
     
             // Start ball
             const mainBall = Ball.balls.find(b => !b.isExtraBall);
+            console.log('🎮 handleGameStart - Main ball found:', {
+                mainBallExists: !!mainBall,
+                mainBallIsMoving: mainBall?.isMoving,
+                totalBalls: Ball.balls.length
+            });
+            
             if (mainBall && !mainBall.isMoving) {
+                console.log('🎮 handleGameStart - Starting main ball');
                 mainBall.start();
+                console.log('🎮 handleGameStart - Main ball started:', {
+                    isMoving: mainBall.isMoving,
+                    dx: mainBall.dx,
+                    dy: mainBall.dy
+                });
+            } else {
+                console.warn('🎮 handleGameStart - Cannot start ball:', {
+                    mainBallExists: !!mainBall,
+                    mainBallIsMoving: mainBall?.isMoving
+                });
             }
+        } else {
+            console.log('🎮 handleGameStart - Ignored input (not waiting for input)');
         }
     }
     
@@ -477,8 +515,21 @@ export class Game {
     }
     
     playSound(type) {
-        if (this.sounds[type]) {
-            this.sounds[type].play();
+        switch(type) {
+            case 'hit':
+                playHitSound();
+                break;
+            case 'lifeLoss':
+                playLifeLossSound();
+                break;
+            case 'poesklap':
+                playPoesklapSound();
+                break;
+            case 'brannas':
+                playBrannasSound();
+                break;
+            default:
+                console.warn('Unknown sound type:', type);
         }
     }
     
@@ -648,20 +699,22 @@ export class Game {
     }
     
     loseLife() {
-        // Remove all extra balls first
-        const newBall = Ball.resetAll(this.app, this, this.levelInstance);
-        this.ball = newBall;
+        console.log('💔 LOSE LIFE - Starting life loss process');
         
-        // Then update lives and play sound
+        // First center paddle and place ball
+        this.centerPaddleAndPlaceBall();
+
+        // Then update lives and set waiting state
         this.lives--;
         this.updateLives();
         this.playSound('lifeLoss');
         this.waitingForInput = true;
-
-        //Center paddle and place ball
-        this.centerPaddleAndPlaceBall();
-
-        this.app.stage.once('pointerdown', this.handleGameStart.bind(this));
+        console.log('💔 LOSE LIFE - State updated:', {
+            lives: this.lives,
+            waitingForInput: this.waitingForInput,
+            gameStarted: this.gameStarted,
+            inputMode: this.inputMode
+        });
     }
     
     nextLevel() {
@@ -802,6 +855,12 @@ export class Game {
                 break;
             case 'coin_silver':
                 this.addScore(10);
+                break;
+            case 'powerup_largepaddle':
+                this.paddle.extend();
+                break;
+            case 'powerup_smallpaddle':
+                this.paddle.shrink();
                 break;
         }
         powerUp.deactivate();

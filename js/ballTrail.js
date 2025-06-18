@@ -2,8 +2,8 @@ export class BallTrail {
     constructor(app, trailColor = 0xf58a42) {
         this.app = app;
         this.particles = [];
-        this.maxParticles = 20;
-        this.particleLifetime = 30; // frames
+        this.maxParticles = 15;
+        this.particleLifetime = 15; // frames
         this.trailColor = trailColor;
         this.trailAlpha = 0.5;
         

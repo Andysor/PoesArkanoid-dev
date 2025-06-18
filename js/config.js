@@ -33,9 +33,11 @@ export const POINTS_PER_BRICK = 10;
 export const POWERUPS_PER_LEVEL = {
     BRANNAS: 1,     // One brannas power-up per level
     EXTRA_LIFE: 1,  // One extra life power-up per level
-    SKULL: 3,       // Three skull power-ups per level
+    SKULL: 1,       // Three skull power-ups per level
     COIN_GOLD: 5,   // Five gold coin power-ups per level
-    COIN_SILVER: 5  // Five silver coin power-ups per level
+    COIN_SILVER: 5,  // Five silver coin power-ups per level
+    POWERUP_LARGEPADDLE: 2, // One large paddle power-up per level
+    POWERUP_SMALLPADDLE: 2  // One small paddle power-up per level
 };
 
 // Speed-related constants
@@ -44,8 +46,8 @@ export const SPEED_INCREASE_INTERVAL = 10000; // Every 10 seconds
 export const SPEED_INCREASE_FACTOR = 1.1; // 10% increase
 
 // Paddle constants
-export const PADDLE_BOTTOM_MARGIN = 250; // Distance from bottom of screen to paddle
-export const PADDLE_TOUCH_OFFSET = 150; // Distance from touch point to paddle center
+export const PADDLE_BOTTOM_MARGIN = 100; // Distance from bottom of screen to paddle
+export const PADDLE_HOVER_OFFSET = 0.1; // Screen height from touch point to paddle center
 
 // Audio constants
 export const POESKLAP_COOLDOWN = 500; // milliseconds between poesklap sounds 

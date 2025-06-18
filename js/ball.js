@@ -1,5 +1,8 @@
 import { BASE_INITIAL_SPEED, BASE_MAX_SPEED, LEVEL_SPEED_INCREASE, COMPONENT_SPEED, BALL_RADIUS } from './config.js';
 import { playHitSound } from './audio.js';
+import { playPoesklapSound } from './audio.js';
+import { playGlassBreakSound } from './audio.js';
+import { playGlassDestroyedSound } from './audio.js';
 import { BallTrail } from './ballTrail.js';
 import { ASSETS, loadImage } from './assets.js';
 import { createPowerUp } from './powerup.js';
@@ -85,17 +88,16 @@ export class Ball {
             return;
         }
     
-        // Reset movement state
-        this.isMoving = false;
+        // Only reset if not already moving
+        if (!this.isMoving) {
         this.dx = 0;
         this.dy = 0;
+        }
+        // Don't reset isMoving if ball is already in motion
     
-        // Calculate position
-        const paddleX = paddle.graphics.x;
-        const paddleY = paddle.graphics.y;
-
-        const ballX = paddleX + (paddle.width - this.graphics.width) / 2;
-        const ballY = paddleY - this.graphics.height - 2;
+        // Calculate position using sprite with centered anchor
+        const ballX = paddle.sprite.x;
+        const ballY = paddle.sprite.y - paddle.height / 2 - this.radius - 2;
     
         // Update graphics position
         this.graphics.x = ballX;
@@ -104,16 +106,19 @@ export class Ball {
         console.log('🎯 placeOnPaddle called', {
             ballX,
             ballY,
-            paddleX: paddle.graphics.x,
-            paddleY: paddle.graphics.y,
+            paddleX: paddle.sprite.x,
+            paddleY: paddle.sprite.y,
             time: Date.now(),
-            paddleWidth: paddle.graphics.width
+            paddleWidth: paddle.width
         });
     }
     
 
     start() {
-        if (this.isMoving) return;
+        if (this.isMoving) {
+            console.log("🚀 Ball start ignored - already moving", { isExtraBall: this.isExtraBall });
+            return;
+        }
         
         console.log("🚀 Ball start triggered", { isMoving: this.isMoving, isExtraBall: this.isExtraBall });
         
@@ -126,16 +131,28 @@ export class Ball {
         this.dy = -this.speed * Math.sin(Math.PI / 4); // Moving upward
         this.isMoving = true;
         
+        console.log('🎮 Ball START: Velocity set', { dx: this.dx, dy: this.dy, isMoving: this.isMoving });
+        
         // Add some randomness to the initial direction
         this.addRandomFactor();
+        
+        console.log('🎮 Ball START: Final velocity after random factor', { dx: this.dx, dy: this.dy });
     }
     
     update(paddle, level) {
         if (!this.isMoving) {
             // Keep ball on paddle when not moving
             if (!this.isExtraBall) {
-                this.graphics.x = paddle.graphics.x + (paddle.width / 2);
-                this.graphics.y = paddle.graphics.y - this.radius;
+                const oldX = this.graphics.x;
+                const oldY = this.graphics.y;
+                this.graphics.x = paddle.sprite.x;
+                this.graphics.y = paddle.sprite.y - paddle.height / 2 - this.radius;
+                console.log('🎯 Ball following paddle:', {
+                    oldPosition: { x: oldX, y: oldY },
+                    newPosition: { x: this.graphics.x, y: this.graphics.y },
+                    paddlePosition: { x: paddle.sprite.x, y: paddle.sprite.y },
+                    isExtraBall: this.isExtraBall
+                });
             }
             return { brickHit: false, lifeLost: false };
         }
@@ -174,10 +191,11 @@ export class Ball {
         const ballLeft = this.graphics.x - this.radius;
         const ballRight = this.graphics.x + this.radius;
         
-        const paddleTop = paddle.graphics.y;
-        const paddleBottom = paddle.graphics.y + paddle.height;
-        const paddleLeft = paddle.graphics.x;
-        const paddleRight = paddle.graphics.x + paddle.width;
+        // Paddle bounds using sprite with centered anchor
+        const paddleTop = paddle.sprite.y - paddle.height / 2;
+        const paddleBottom = paddle.sprite.y + paddle.height / 2;
+        const paddleLeft = paddle.sprite.x - paddle.width / 2;
+        const paddleRight = paddle.sprite.x + paddle.width / 2;
         
         // Check if ball is moving downward and is above the paddle
         if (this.dy > 0 && 
@@ -187,7 +205,7 @@ export class Ball {
             ballLeft <= paddleRight) {
             
             // Calculate hit position relative to paddle center
-            const hitPoint = (this.graphics.x - (paddle.graphics.x + paddle.width / 2)) / (paddle.width / 2);
+            const hitPoint = (this.graphics.x - paddle.sprite.x) / (paddle.width / 2);
             
             // Set new direction
             this.dx = hitPoint * this.speed;
@@ -367,25 +385,50 @@ export class Ball {
                 }
             }
             
-            // Notify level to handle brick destruction
-            this.level.handleBrickDestroyed(c, r);
-            
-            // Add score
-            if (this.game) {
-                this.game.addScore(10);
-            }
-            
             // Handle special brick effects
             if (brick.brickInfo) {
-                if (brick.brickInfo.type === 'special') {
-                    // Handle special brick effect
-                    if (brick.brickInfo.effect === 'extend') {
-                        if (this.game && this.game.paddle) {
-                            this.game.paddle.extend();
+                console.log('🔍 Brick collision detected:', {
+                    type: brick.brickInfo.type,
+                    hasBrickInfo: !!brick.brickInfo,
+                    brickType: brick.type,
+                    brickStatus: brick.status
+                });
+                
+                if (brick.brickInfo.type === 'glass') {
+                    console.log('🪟 Glass brick hit!', {
+                        hitCount: brick.hitCount,
+                        isBroken: brick.isBroken,
+                        shouldUseHitMethod: true
+                    });
+                    
+                    // Don't process if brick is already destroyed
+                    if (brick.status !== 1) {
+                        console.log('⚠️ Glass brick already destroyed, skipping hit logic');
+                        return true;
+                    }
+                    
+                    // Handle glass brick hit
+                    const shouldDestroy = brick.hit();
+                    console.log('🪟 Glass brick hit() result:', {
+                        shouldDestroy,
+                        newHitCount: brick.hitCount,
+                        newIsBroken: brick.isBroken
+                    });
+                    
+                    if (shouldDestroy) {
+                        // Second hit - destroy the brick
+                        console.log('💥 Glass brick destroyed on second hit');
+                        playGlassDestroyedSound();
+                        this.level.handleBrickDestroyed(c, r);
+                        if (this.game) {
+                            this.game.addScore(20); // Bonus score for breaking glass
                         }
-                    } else if (brick.brickInfo.effect === 'shrink') {
-                        if (this.game && this.game.paddle) {
-                            this.game.paddle.shrink();
+                    } else {
+                        // First hit - just show broken effect
+                        console.log('🪟 Glass brick broken on first hit, not destroyed');
+                        playGlassBreakSound();
+                        if (this.game) {
+                            this.game.addScore(5); // Small score for first hit
                         }
                     }
                 } else if (brick.brickInfo.type === 'sausage') {
@@ -402,12 +445,31 @@ export class Ball {
                         }
                         this.game.addScore(50); // Bonus score for sausage
                     }
+                    // Destroy the brick
+                    this.level.handleBrickDestroyed(c, r);
                 } else if (brick.brickInfo.type === 'extra') {
                     // Handle extra ball effect
                     if (this.game) {
                         Ball.createExtraBall(this.app, this.graphics.x, this.graphics.y, this.speed, -this.dx, -this.dy);
                         console.log('🎾 Extra ball triggered from special brick'); 
                     }
+                    // Destroy the brick
+                    this.level.handleBrickDestroyed(c, r);
+                    if (this.game) {
+                        this.game.addScore(10);
+                    }
+                } else {
+                    // Default brick destruction
+                    this.level.handleBrickDestroyed(c, r);
+                    if (this.game) {
+                        this.game.addScore(10);
+                    }
+                }
+            } else {
+                // Default brick destruction for bricks without brickInfo
+                this.level.handleBrickDestroyed(c, r);
+                if (this.game) {
+                    this.game.addScore(10);
                 }
             }
             
@@ -428,6 +490,9 @@ export class Ball {
             console.error('❌ Extra ball texture not loaded.');
             return null;
         }
+    
+        // Play poesklap sound for extra ball
+        playPoesklapSound();
     
         const extraBall = new Ball(app, true);
     
