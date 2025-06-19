@@ -14,10 +14,12 @@ export const ASSETS = {
             coin_silver: './assets/images/items/coin_silver.png',
             brannas: './assets/images/items/brannas.png',
             ball: './assets/images/items/ball.png',
-            extraball: './assets/images/items/extraball.png',
+            extraball: './assets/images/items/extra_ball.png',
             paddle_main: './assets/images/items/paddle_main.png',
             powerup_largepaddle: './assets/images/items/powerup_largepaddle.png',
-            powerup_smallpaddle: './assets/images/items/powerup_smallpaddle.png'
+            powerup_smallpaddle: './assets/images/items/powerup_smallpaddle.png',
+            extra_life: './assets/images/items/extra_life.png',
+            skull: './assets/images/items/skull.png',
         },
         bricks: {
             brick_normal: './assets/images/bricks/brick_normal.png',
@@ -33,11 +35,13 @@ export const ASSETS = {
     sounds: {
         hit: './assets/sounds/hit.m4a',
         lifeloss: './assets/sounds/lifeloss.m4a',
-        gameOver1: './assets/sounds/game_over1.m4a',
         poesklap: './assets/sounds/poesklap.m4a',
         brannas: './assets/sounds/brannas.m4a',
         brick_glass_break: './assets/sounds/brick_glass_break.m4a',
-        brick_glass_destroyed: './assets/sounds/brick_glass_destroyed.m4a'
+        brick_glass_destroyed: './assets/sounds/brick_glass_destroyed.m4a',
+        extra_life: './assets/sounds/extra_life.m4a',
+        coin_silver: './assets/sounds/coin_silver.m4a',
+        coin_gold: './assets/sounds/coin_gold.m4a',
     },
     levels: (levelNum) => `./assets/levels/level${levelNum}.json`
 };

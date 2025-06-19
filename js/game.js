@@ -14,7 +14,8 @@ import { GameOverManager } from './gameOverManager.js';
 import { Ball } from './ball.js';
 import { Paddle } from './paddle.js';
 import { PowerUp } from './powerup.js';
-import { playHitSound, playLifeLossSound, playPoesklapSound, playBrannasSound, forceAudioUnlock } from './audio.js';
+import { forceAudioUnlock, playSoundByName } from './audio.js';
+import { getPowerUpConfig } from './powerupConfig.js';
 
 export class Game {
     constructor(app) {
@@ -515,22 +516,8 @@ export class Game {
     }
     
     playSound(type) {
-        switch(type) {
-            case 'hit':
-                playHitSound();
-                break;
-            case 'lifeLoss':
-                playLifeLossSound();
-                break;
-            case 'poesklap':
-                playPoesklapSound();
-                break;
-            case 'brannas':
-                playBrannasSound();
-                break;
-            default:
-                console.warn('Unknown sound type:', type);
-        }
+        // Use the dynamic sound system from audio.js
+        playSoundByName(type);
     }
     
     async loadLevelData(levelNum) {
@@ -603,6 +590,21 @@ export class Game {
         let brickHit = false;
         
         if (Ball.balls && Ball.balls.length > 0) {
+            // Check for expired extra balls and remove them
+            Ball.balls = Ball.balls.filter(ball => {
+                if (ball && ball.isExpired && ball.isExpired()) {
+                    console.log('⏰ Removing expired extra ball');
+                    if (ball.graphics && ball.graphics.parent) {
+                        ball.graphics.parent.removeChild(ball.graphics);
+                    }
+                    if (ball.trail) {
+                        ball.trail.clear();
+                    }
+                    return false;
+                }
+                return true;
+            });
+            
             Ball.balls.forEach(ball => {
                 if (ball && ball.update) {
                     const result = ball.update(this.paddle, this.levelInstance);
@@ -701,14 +703,28 @@ export class Game {
     loseLife() {
         console.log('💔 LOSE LIFE - Starting life loss process');
         
-        // First center paddle and place ball
+        // Clear ALL balls (extra balls + main ball)
+        Ball.clearAll();
+        
+        // Create a new main ball
+        this.ball = new Ball(this.app, false);
+        this.ball.setLevel(this.levelInstance);
+        this.ball.game = this;
+        
+        // Add the new ball to the container
+        if (this.objectsContainer) {
+            this.objectsContainer.addChild(this.ball.graphics);
+        }
+        
+        // Center paddle and place the new ball
         this.centerPaddleAndPlaceBall();
 
-        // Then update lives and set waiting state
+        // Update lives and set waiting state
         this.lives--;
         this.updateLives();
-        this.playSound('lifeLoss');
+        this.playSound('lifeloss');
         this.waitingForInput = true;
+        
         console.log('💔 LOSE LIFE - State updated:', {
             lives: this.lives,
             waitingForInput: this.waitingForInput,
@@ -840,29 +856,52 @@ export class Game {
 
     handlePowerUpCollection(powerUp) {
         console.log(`🎉 Handling power-up effect: ${powerUp.type}`);
+        
+        // Get powerup configuration for scoring
+        const powerupConfig = getPowerUpConfig(powerUp.type);
+        
+        // Play sound using the new configuration-based system
+        playSoundByName(powerUp.type);
+        
+        // Handle powerup effects
         switch(powerUp.type.toLowerCase()) {
             case 'brannas':
                 // Handle brannas effect
+                console.log('🔥 Brannas powerup activated!');
                 break;
             case 'extra_life':
                 this.lives++;
+                console.log('❤️ Extra life gained!');
                 break;
             case 'skull':
-                // Handle skull effect
-                break;
-            case 'coin_gold':
-                this.addScore(100);
-                break;
-            case 'coin_silver':
-                this.addScore(10);
+                // Handle skull effect - cause loss of life
+                console.log('💀 Skull powerup activated!');
+                this.loseLife();
                 break;
             case 'powerup_largepaddle':
                 this.paddle.extend();
+                console.log('📏 Large paddle activated!');
                 break;
             case 'powerup_smallpaddle':
                 this.paddle.shrink();
+                console.log('📏 Small paddle activated!');
+                break;
+            case 'extraball':
+                // Create extra ball with duration from config
+                if (this.ball) {
+                    const duration = powerupConfig?.duration || 0;
+                    Ball.createExtraBall(this.app, this.ball.graphics.x, this.ball.graphics.y, this.ball.speed, this.ball.dx, this.ball.dy, duration);
+                    console.log(`🎾 Extra ball created with duration: ${duration}ms`);
+                }
                 break;
         }
+        
+        // Add score for powerups that have a score configuration
+        if (powerupConfig && powerupConfig.score && powerupConfig.score > 0) {
+            this.addScore(powerupConfig.score);
+            console.log(`💰 ${powerUp.type} powerup collected! +${powerupConfig.score} points`);
+        }
+        
         powerUp.deactivate();
     }
 } 

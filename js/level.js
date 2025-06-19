@@ -1,6 +1,6 @@
 import { Brick } from './brick.js';
-import { createPowerUp } from './powerup.js';
-import { POWERUPS_PER_LEVEL } from './config.js';
+import { createPowerUp, showPowerUpText } from './powerup.js';
+import { POWERUPS_PER_LEVEL } from './powerupConfig.js';
 
 export class Level {
     constructor(app) {
@@ -93,10 +93,18 @@ export class Level {
                     spriteVisible: powerUp.sprite.visible,
                     spritePosition: { x: powerUp.sprite.x, y: powerUp.sprite.y }
                 });
+
+                // Show powerup text with configuration
+                if (powerUp.shouldShowText()) {
+                    const config = powerUp.getConfig();
+                    showPowerUpText(powerUp.getText(), globalX, globalY, this.app, config);
+                }
             } else {
                 console.warn('⚠️ No game or powerUpContainer found for power-up:', info.powerUpType);
             }
         }
+
+      
     
         // Fjern brikkens sprite
         if (brick.sprite?.parent) {

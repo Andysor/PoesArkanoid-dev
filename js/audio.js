@@ -1,5 +1,6 @@
 import { POESKLAP_COOLDOWN } from './config.js';
 import { ASSETS } from './assets.js';
+import { POWERUP_BEHAVIOR_CONFIG, GAME_SOUNDS_CONFIG, getPowerUpConfig } from './powerupConfig.js';
 
 // Enhanced mobile detection for audio optimization
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -43,6 +44,195 @@ const SOUND_THROTTLE_MS = isMobile ? 50 : 0; // 50ms throttle on mobile
 
 // Simple iOS Safari audio fallback using a single audio element
 let iosSafariAudioElement = null;
+
+// Dynamic sound pools based on powerup configuration
+const soundPools = {};
+const soundPoolIndices = {};
+
+// Initialize sound pools from powerup configuration
+function initializePowerUpSoundPools() {
+    console.log('🔊 Initializing powerup sound pools from configuration...');
+    console.log('🔊 POWERUP_BEHAVIOR_CONFIG keys:', Object.keys(POWERUP_BEHAVIOR_CONFIG));
+    console.log('🔊 GAME_SOUNDS_CONFIG keys:', Object.keys(GAME_SOUNDS_CONFIG));
+    console.log('🔊 Initial soundPools state:', Object.keys(soundPools));
+    
+    // Initialize powerup sounds
+    Object.entries(POWERUP_BEHAVIOR_CONFIG).forEach(([powerupType, config]) => {
+        console.log(`🔊 Processing powerup: ${powerupType}`, {
+            playSound: config.playSound,
+            sound: config.sound,
+            hasSound: !!config.sound && config.sound !== null
+        });
+        
+        if (config.playSound && config.sound && config.sound !== null) {
+            createSoundPool(config.sound, 0.5); // Default volume for powerups
+        } else if (config.playSound && (!config.sound || config.sound === null)) {
+            console.log(`🔊 Skipping sound pool for ${powerupType} - no sound configured`);
+        } else if (!config.playSound) {
+            console.log(`🔊 Skipping sound pool for ${powerupType} - sound disabled`);
+        }
+    });
+    
+    // Initialize game sounds
+    Object.entries(GAME_SOUNDS_CONFIG).forEach(([soundType, config]) => {
+        console.log(`🔊 Processing game sound: ${soundType}`, {
+            playSound: config.playSound,
+            sound: config.sound,
+            volume: config.volume,
+            poolSize: config.poolSize
+        });
+        
+        if (config.playSound && config.sound) {
+            createSoundPool(config.sound, config.volume, config.poolSize);
+        }
+    });
+    
+    console.log('🔊 Final sound pools created:', Object.keys(soundPools));
+    console.log('🔊 Sound pool indices:', soundPoolIndices);
+}
+
+// Helper function to create a sound pool
+function createSoundPool(soundName, volume, poolSizeType = 'mobile') {
+    // Check if the sound exists in ASSETS
+    if (!ASSETS.sounds[soundName]) {
+        console.warn(`🔊 Sound not found in ASSETS: ${soundName}`);
+        console.warn(`🔊 Available sounds in ASSETS:`, Object.keys(ASSETS.sounds));
+        return false;
+    }
+    
+    const poolSize = poolSizeType === 'mobile' ? (isMobile ? 2 : 4) : (isMobile ? 4 : 8);
+    
+    console.log(`🔊 Creating sound pool for ${soundName} with ${poolSize} instances at volume ${volume}`);
+    
+    soundPools[soundName] = Array.from({length: poolSize}, () => {
+        const audio = createAudioElement(ASSETS.sounds[soundName]);
+        audio.volume = volume;
+        return audio;
+    });
+    
+    soundPoolIndices[soundName] = 0;
+    
+    console.log(`🔊 Successfully created sound pool for ${soundName} (${poolSize} instances, volume: ${volume})`);
+    return true;
+}
+
+// Get volume for a sound type
+function getSoundVolume(soundType) {
+    const volumeMap = {
+        'hit': 0.1,
+        'lifeloss': 0.3,
+        'poesklap': 0.8,
+        'brannas': 0.8,
+        'brick_glass_break': 0.4,
+        'brick_glass_destroyed': 0.5,
+        'extra_life': 0.6,
+        'gameOver1': 0.7
+    };
+    return volumeMap[soundType] || 0.5;
+}
+
+// Play powerup sound based on configuration
+export function playPowerUpSound(powerupType) {
+    console.log(`🔊 playPowerUpSound called with: "${powerupType}"`);
+    
+    const config = getPowerUpConfig(powerupType);
+    console.log(`🔊 Powerup config result:`, config);
+    
+    if (!config) {
+        console.log(`🔊 No config found for powerup: ${powerupType}`);
+        return;
+    }
+    
+    if (!config.playSound) {
+        console.log(`🔊 Sound disabled for powerup: ${powerupType}`);
+        return;
+    }
+    
+    if (!config.sound || config.sound === null) {
+        console.log(`🔊 No sound configured for powerup: ${powerupType}`);
+        return;
+    }
+    
+    console.log(`🔊 Playing powerup sound: ${config.sound} for ${powerupType}`);
+    playSoundByName(config.sound);
+}
+
+// Generic sound playing function
+export function playSoundByName(soundName) {
+    console.log(`🔊 playSoundByName called with: "${soundName}"`);
+    console.log(`🔊 Audio state check:`, {
+        audioEnabled,
+        userInteracted,
+        isMobile,
+        isIOSSafari,
+        audioContextInitialized,
+        soundPoolsAvailable: Object.keys(soundPools),
+        requestedSoundPool: soundPools[soundName] ? `found (${soundPools[soundName].length} instances)` : 'not found'
+    });
+    
+    if (!audioEnabled) {
+        console.log(`🔊 Audio disabled, skipping sound: ${soundName}`);
+        return;
+    }
+    
+    console.log(`🔊 Platform detection:`, {
+        isIOSSafari,
+        audioContextInitialized,
+        hasAudioContext: !!audioContext,
+        audioContextState: audioContext?.state
+    });
+    
+    // Use Web Audio API for iOS Safari
+    if (isIOSSafari && audioContextInitialized) {
+        console.log(`🔊 Using Web Audio API for: ${soundName}`);
+        const volume = getSoundVolume(soundName);
+        console.log(`🔊 Web Audio volume: ${volume}`);
+        const result = playSoundWithWebAudio(soundName, volume);
+        console.log(`🔊 Web Audio result: ${result ? 'success' : 'failed'}`);
+    } else if (isIOSSafari) {
+        // iOS Safari fallback
+        console.log(`🔊 Using iOS Safari fallback for: ${soundName}`);
+        const volume = getSoundVolume(soundName);
+        console.log(`🔊 iOS Safari fallback volume: ${volume}`);
+        console.log(`🔊 iOS Safari fallback URL: ${ASSETS.sounds[soundName]}`);
+        playSoundWithIOSSafariElement(ASSETS.sounds[soundName], volume);
+    } else {
+        // Traditional audio elements - let playSoundOptimized handle throttling
+        console.log(`🔊 Using traditional audio elements for: ${soundName}`);
+        const pool = soundPools[soundName];
+        console.log(`🔊 Sound pool details:`, {
+            poolExists: !!pool,
+            poolLength: pool?.length || 0,
+            currentIndex: soundPoolIndices[soundName] || 0,
+            availablePools: Object.keys(soundPools)
+        });
+        
+        if (pool && pool.length > 0) {
+            const currentIndex = soundPoolIndices[soundName];
+            const sound = pool[currentIndex];
+            console.log(`🔊 Playing sound from pool: ${soundName} (index: ${currentIndex}/${pool.length})`);
+            console.log(`🔊 Sound element details:`, {
+                hasSound: !!sound,
+                soundType: sound?.constructor?.name,
+                soundSrc: sound?.src,
+                soundVolume: sound?.volume,
+                soundReadyState: sound?.readyState
+            });
+            
+            // Let playSoundOptimized handle throttling like the original functions
+            playSoundOptimized(sound, `${soundName} sound`);
+            soundPoolIndices[soundName] = (currentIndex + 1) % pool.length;
+            console.log(`🔊 Updated pool index to: ${soundPoolIndices[soundName]}`);
+        } else {
+            console.warn(`🔊 No sound pool found for: ${soundName}`);
+            console.warn(`🔊 Available sound pools:`, Object.keys(soundPools));
+            console.warn(`🔊 This might mean the sound pool wasn't created during initialization`);
+            console.warn(`🔊 Check if ${soundName} is defined in GAME_SOUNDS_CONFIG`);
+        }
+    }
+    
+    console.log(`🔊 playSoundByName completed for: ${soundName}`);
+}
 
 function createIOSSafariAudioElement() {
     if (iosSafariAudioElement) return;
@@ -126,53 +316,13 @@ function createAudioElement(src) {
     return audio;
 }
 
-// Optimized sound pools for mobile
-const hitSoundPool = Array.from({length: isMobile ? 8 : 20}, () => {
-    const a = createAudioElement(ASSETS.sounds.hit);
-    a.volume = 0.1;
-    return a;
-});
-let hitSoundIndex = 0;
-
-const lifeLossSoundPool = Array.from({length: isMobile ? 2 : 3}, () => {
-    const a = createAudioElement(ASSETS.sounds.lifeloss);
-    a.volume = 0.3;
-    return a;
-});
-let lifeLossSoundIndex = 0;
-
-const poesklapSoundPool = Array.from({length: isMobile ? 1 : 2}, () => {
-    const a = createAudioElement(ASSETS.sounds.poesklap);
-    a.volume = 1;
-    return a;
-});
-let poesklapSoundIndex = 0;
-
-const brannasSoundPool = Array.from({length: isMobile ? 1 : 2}, () => {
-    const a = createAudioElement(ASSETS.sounds.brannas);
-    a.volume = 0.8;
-    return a;
-});
-let brannasSoundIndex = 0;
-
-const glassBreakSoundPool = Array.from({length: isMobile ? 2 : 5}, () => {
-    const a = createAudioElement(ASSETS.sounds.brick_glass_break);
-    a.volume = 0.4;
-    return a;
-});
-let glassBreakSoundIndex = 0;
-
-const glassDestroyedSoundPool = Array.from({length: isMobile ? 1 : 3}, () => {
-    const a = createAudioElement(ASSETS.sounds.brick_glass_destroyed);
-    a.volume = 0.5;
-    return a;
-});
-let glassDestroyedSoundIndex = 0;
-
 // Initialize audio system
 async function initAudio() {
     console.log('🔊 Initializing audio system...');
     console.log(`🔊 Platform: iOS=${isIOS}, Safari=${isSafari}, iOS Safari=${isIOSSafari}, Edge=${isEdge}, Mobile=${isMobile}`);
+    
+    // Initialize powerup sound pools from configuration
+    initializePowerUpSoundPools();
     
     // For iOS Safari, use Web Audio API
     if (isIOSSafari) {
@@ -181,7 +331,7 @@ async function initAudio() {
     } else {
         // For other browsers, use traditional Audio elements
         console.log('🔊 Using traditional Audio elements');
-        // Sound pools are already created above using Array.from
+        // Sound pools are created dynamically by initializePowerUpSoundPools()
     }
     
     // iOS Safari specific initialization
@@ -236,105 +386,6 @@ export function isAudioEnabled() {
     return audioEnabled;
 }
 
-// Sound playing functions
-export function playHitSound() {
-    if (!audioEnabled) return;
-    
-    if (isIOSSafari) {
-        if (audioContextInitialized) {
-            playSoundWithWebAudio('hit', 0.1);
-        } else {
-            playSoundWithIOSSafariElement(ASSETS.sounds.hit, 0.1);
-        }
-    } else {
-        const sound = hitSoundPool[hitSoundIndex];
-        playSoundOptimized(sound, 'hit sound');
-        hitSoundIndex = (hitSoundIndex + 1) % hitSoundPool.length;
-    }
-}
-
-export function playLifeLossSound() {
-    if (!audioEnabled) return;
-    
-    if (isIOSSafari) {
-        if (audioContextInitialized) {
-            playSoundWithWebAudio('lifeloss', 0.3);
-        } else {
-            playSoundWithIOSSafariElement(ASSETS.sounds.lifeloss, 0.3);
-        }
-    } else {
-        const sound = lifeLossSoundPool[lifeLossSoundIndex];
-        playSoundOptimized(sound, 'life loss sound');
-        lifeLossSoundIndex = (lifeLossSoundIndex + 1) % lifeLossSoundPool.length;
-    }
-}
-
-export function playPoesklapSound() {
-    if (!audioEnabled) return;
-    const now = Date.now();
-    if (now - lastPoesklapTime < POESKLAP_COOLDOWN) return;
-    
-    if (isIOSSafari) {
-        if (audioContextInitialized) {
-            playSoundWithWebAudio('poesklap', 0.8);
-        } else {
-            playSoundWithIOSSafariElement(ASSETS.sounds.poesklap, 0.8);
-        }
-    } else {
-        const sound = poesklapSoundPool[poesklapSoundIndex];
-        playSoundOptimized(sound, 'poesklap sound');
-        poesklapSoundIndex = (poesklapSoundIndex + 1) % poesklapSoundPool.length;
-    }
-    lastPoesklapTime = now;
-}
-
-export function playBrannasSound() {
-    if (!audioEnabled) return;
-    
-    if (isIOSSafari) {
-        if (audioContextInitialized) {
-            playSoundWithWebAudio('brannas', 0.8);
-        } else {
-            playSoundWithIOSSafariElement(ASSETS.sounds.brannas, 0.8);
-        }
-    } else {
-        const sound = brannasSoundPool[brannasSoundIndex];
-        playSoundOptimized(sound, 'brannas sound');
-        brannasSoundIndex = (brannasSoundIndex + 1) % brannasSoundPool.length;
-    }
-}
-
-export function playGlassBreakSound() {
-    if (!audioEnabled) return;
-    
-    if (isIOSSafari) {
-        if (audioContextInitialized) {
-            playSoundWithWebAudio('glassBreak', 0.6);
-        } else {
-            playSoundWithIOSSafariElement(ASSETS.sounds.brick_glass_break, 0.6);
-        }
-    } else {
-        const sound = glassBreakSoundPool[glassBreakSoundIndex];
-        playSoundOptimized(sound, 'glass break sound');
-        glassBreakSoundIndex = (glassBreakSoundIndex + 1) % glassBreakSoundPool.length;
-    }
-}
-
-export function playGlassDestroyedSound() {
-    if (!audioEnabled) return;
-    
-    if (isIOSSafari) {
-        if (audioContextInitialized) {
-            playSoundWithWebAudio('glassDestroyed', 0.7);
-        } else {
-            playSoundWithIOSSafariElement(ASSETS.sounds.brick_glass_destroyed, 0.7);
-        }
-    } else {
-        const sound = glassDestroyedSoundPool[glassDestroyedSoundIndex];
-        playSoundOptimized(sound, 'glass destroyed sound');
-        glassDestroyedSoundIndex = (glassDestroyedSoundIndex + 1) % glassDestroyedSoundPool.length;
-    }
-}
 
 function playSoundOptimized(sound, soundName) {
     if (!audioEnabled) return;
@@ -649,49 +700,16 @@ function attemptAudioRecovery() {
 function refreshSoundPools() {
     console.log('🔊 Refreshing sound pools...');
     
-    // Refresh hit sound pool
-    hitSoundPool.forEach((sound, index) => {
-        const newSound = createAudioElement(ASSETS.sounds.hit);
-        newSound.volume = 0.1;
-        hitSoundPool[index] = newSound;
+    // Refresh dynamic powerup sound pools
+    Object.entries(soundPools).forEach(([soundName, pool]) => {
+        pool.forEach((sound, index) => {
+            const newSound = createAudioElement(ASSETS.sounds[soundName]);
+            newSound.volume = getSoundVolume(soundName);
+            pool[index] = newSound;
+        });
     });
     
-    // Refresh life loss sound pool
-    lifeLossSoundPool.forEach((sound, index) => {
-        const newSound = createAudioElement(ASSETS.sounds.lifeloss);
-        newSound.volume = 0.3;
-        lifeLossSoundPool[index] = newSound;
-    });
-    
-    // Refresh poesklap sound pool
-    poesklapSoundPool.forEach((sound, index) => {
-        const newSound = createAudioElement(ASSETS.sounds.poesklap);
-        newSound.volume = 0.8;
-        poesklapSoundPool[index] = newSound;
-    });
-    
-    // Refresh brannas sound pool
-    brannasSoundPool.forEach((sound, index) => {
-        const newSound = createAudioElement(ASSETS.sounds.brannas);
-        newSound.volume = 0.8;
-        brannasSoundPool[index] = newSound;
-    });
-    
-    // Refresh glass break sound pool
-    glassBreakSoundPool.forEach((sound, index) => {
-        const newSound = createAudioElement(ASSETS.sounds.brick_glass_break);
-        newSound.volume = 0.6;
-        glassBreakSoundPool[index] = newSound;
-    });
-    
-    // Refresh glass destroyed sound pool
-    glassDestroyedSoundPool.forEach((sound, index) => {
-        const newSound = createAudioElement(ASSETS.sounds.brick_glass_destroyed);
-        newSound.volume = 0.7;
-        glassDestroyedSoundPool[index] = newSound;
-    });
-    
-    console.log('🔊 Sound pools refreshed');
+    console.log('🔊 Sound pools refreshed (dynamic powerup pools)');
 }
 
 // Cleanup function to stop health monitoring
@@ -728,17 +746,26 @@ async function initializeWebAudioAPI() {
 
 // Load audio files as buffers
 async function loadAudioBuffers() {
-    const soundFiles = [
-        { name: 'hit', url: ASSETS.sounds.hit },
-        { name: 'lifeloss', url: ASSETS.sounds.lifeloss },
-        { name: 'poesklap', url: ASSETS.sounds.poesklap },
-        { name: 'brannas', url: ASSETS.sounds.brannas },
-        { name: 'glassBreak', url: ASSETS.sounds.brick_glass_break },
-        { name: 'glassDestroyed', url: ASSETS.sounds.brick_glass_destroyed },
-        { name: 'gameOver', url: ASSETS.sounds.gameOver1 }
-    ];
+    // Load all sounds from GAME_SOUNDS_CONFIG dynamically
+    const soundFiles = Object.entries(GAME_SOUNDS_CONFIG).map(([soundType, config]) => ({
+        name: config.sound,
+        url: ASSETS.sounds[config.sound]
+    }));
     
-    for (const sound of soundFiles) {
+    // Also load any sounds that might not be in GAME_SOUNDS_CONFIG but are in ASSETS
+    const assetSounds = Object.entries(ASSETS.sounds).filter(([soundName, url]) => {
+        // Only include sounds that aren't already being loaded
+        return !soundFiles.some(sf => sf.name === soundName);
+    }).map(([soundName, url]) => ({
+        name: soundName,
+        url: url
+    }));
+    
+    const allSoundFiles = [...soundFiles, ...assetSounds];
+    
+    console.log(`🔊 Loading ${allSoundFiles.length} audio buffers for Web Audio API...`);
+    
+    for (const sound of allSoundFiles) {
         try {
             const response = await fetch(sound.url);
             const arrayBuffer = await response.arrayBuffer();
@@ -749,12 +776,18 @@ async function loadAudioBuffers() {
             console.warn(`🔊 Failed to load audio buffer: ${sound.name}`, e.message);
         }
     }
+    
+    console.log(`🔊 Web Audio buffers loaded:`, Object.keys(audioBuffers));
 }
 
 // Play sound using Web Audio API
 function playSoundWithWebAudio(soundName, volume = 0.5) {
-    if (!audioContext || !audioBuffers[soundName]) {
-        console.warn(`🔊 Web Audio not available for: ${soundName}`);
+    // Use the sound name directly - no more hardcoded mapping
+    const bufferName = soundName;
+    
+    if (!audioContext || !audioBuffers[bufferName]) {
+        console.warn(`🔊 Web Audio not available for: ${soundName} (buffer: ${bufferName})`);
+        console.warn(`🔊 Available Web Audio buffers:`, Object.keys(audioBuffers));
         return false;
     }
     
@@ -768,7 +801,7 @@ function playSoundWithWebAudio(soundName, volume = 0.5) {
         const source = audioContext.createBufferSource();
         const gainNode = audioContext.createGain();
         
-        source.buffer = audioBuffers[soundName];
+        source.buffer = audioBuffers[bufferName];
         gainNode.gain.value = volume;
         
         // Connect nodes
@@ -778,7 +811,7 @@ function playSoundWithWebAudio(soundName, volume = 0.5) {
         // Play the sound
         source.start(0);
         
-        console.log(`🔊 Web Audio played: ${soundName}`);
+        console.log(`🔊 Web Audio played: ${soundName} (buffer: ${bufferName})`);
         lastSuccessfulPlay = Date.now();
         audioFailureCount = 0;
         return true;
@@ -787,4 +820,88 @@ function playSoundWithWebAudio(soundName, volume = 0.5) {
         audioFailureCount++;
         return false;
     }
+}
+
+// Dynamic function to add new powerup sounds
+export function addPowerUpSound(powerupType, soundName, volume = 0.5) {
+    console.log(`🔊 Adding new powerup sound: ${powerupType} -> ${soundName} (volume: ${volume})`);
+    
+    // Check if the sound exists in ASSETS
+    if (!ASSETS.sounds[soundName]) {
+        console.warn(`🔊 Sound not found in ASSETS: ${soundName}`);
+        return false;
+    }
+    
+    const poolSize = isMobile ? 2 : 4;
+    
+    // Create traditional audio pool
+    soundPools[soundName] = Array.from({length: poolSize}, () => {
+        const audio = createAudioElement(ASSETS.sounds[soundName]);
+        audio.volume = volume;
+        return audio;
+    });
+    
+    soundPoolIndices[soundName] = 0;
+    
+    // Also load Web Audio API buffer if available
+    if (audioContext && audioContextInitialized) {
+        loadAudioBufferForSound(soundName);
+    }
+    
+    console.log(`🔊 Successfully added sound pool for ${soundName} (${poolSize} instances)`);
+    return true;
+}
+
+// Load audio buffer for Web Audio API
+async function loadAudioBufferForSound(soundName) {
+    if (!audioContext || !ASSETS.sounds[soundName]) {
+        return false;
+    }
+    
+    try {
+        const response = await fetch(ASSETS.sounds[soundName]);
+        const arrayBuffer = await response.arrayBuffer();
+        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+        audioBuffers[soundName] = audioBuffer;
+        console.log(`🔊 Loaded Web Audio buffer for: ${soundName}`);
+        return true;
+    } catch (e) {
+        console.warn(`🔊 Failed to load Web Audio buffer for: ${soundName}`, e.message);
+        return false;
+    }
+}
+
+// Function to remove a powerup sound
+export function removePowerUpSound(soundName) {
+    if (soundPools[soundName]) {
+        delete soundPools[soundName];
+        delete soundPoolIndices[soundName];
+        console.log(`🔊 Removed sound pool for: ${soundName}`);
+        return true;
+    }
+    return false;
+}
+
+// Function to list all available powerup sounds
+export function listPowerUpSounds() {
+    return {
+        soundPools: Object.keys(soundPools),
+        soundPoolIndices: soundPoolIndices,
+        totalPools: Object.keys(soundPools).length
+    };
+}
+
+// Export function to dynamically load Web Audio buffer
+export async function loadWebAudioBuffer(soundName) {
+    if (!audioContextInitialized) {
+        console.warn(`🔊 Web Audio API not initialized, cannot load buffer for: ${soundName}`);
+        return false;
+    }
+    
+    return await loadAudioBufferForSound(soundName);
+}
+
+// Export function to get available Web Audio buffers
+export function getAvailableWebAudioBuffers() {
+    return Object.keys(audioBuffers);
 } 

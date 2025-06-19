@@ -1,11 +1,9 @@
 import { BASE_INITIAL_SPEED, BASE_MAX_SPEED, LEVEL_SPEED_INCREASE, COMPONENT_SPEED, BALL_RADIUS } from './config.js';
-import { playHitSound } from './audio.js';
-import { playPoesklapSound } from './audio.js';
-import { playGlassBreakSound } from './audio.js';
-import { playGlassDestroyedSound } from './audio.js';
+import { playSoundByName } from './audio.js';
 import { BallTrail } from './ballTrail.js';
 import { ASSETS, loadImage } from './assets.js';
-import { createPowerUp } from './powerup.js';
+import { createPowerUp, showPowerUpText } from './powerup.js';
+import { getPowerUpConfig, BRICK_SCORE_CONFIG } from './powerupConfig.js';
 
 export class Ball {
     static balls = []; // Static array to track all balls
@@ -52,6 +50,11 @@ export class Ball {
         this.isMoving = false;
         this.level = null; // Initialize level reference
         this.isExtraBall = isExtraBall;
+        
+        // Duration tracking for extra balls
+        this.duration = 0;
+        this.startTime = 0;
+        this.endTime = 0;
         
         // Create ball sprite
         const texture = isExtraBall ? Ball.textures.extra : Ball.textures.main;
@@ -418,17 +421,17 @@ export class Ball {
                     if (shouldDestroy) {
                         // Second hit - destroy the brick
                         console.log('💥 Glass brick destroyed on second hit');
-                        playGlassDestroyedSound();
+                        playSoundByName('brick_glass_destroyed');
                         this.level.handleBrickDestroyed(c, r);
                         if (this.game) {
-                            this.game.addScore(20); // Bonus score for breaking glass
+                            this.game.addScore(BRICK_SCORE_CONFIG.glass_destroyed || 20);
                         }
                     } else {
                         // First hit - just show broken effect
                         console.log('🪟 Glass brick broken on first hit, not destroyed');
-                        playGlassBreakSound();
+                        playSoundByName('brick_glass_break');
                         if (this.game) {
-                            this.game.addScore(5); // Small score for first hit
+                            this.game.addScore(BRICK_SCORE_CONFIG.glass_first_hit || 5);
                         }
                     }
                 } else if (brick.brickInfo.type === 'sausage') {
@@ -443,33 +446,55 @@ export class Ball {
                             this.game.activePowerUps.push(powerUp);
                             powerUp.activate();
                         }
-                        this.game.addScore(50); // Bonus score for sausage
+                        this.game.addScore(BRICK_SCORE_CONFIG.sausage || 50);
                     }
                     // Destroy the brick
                     this.level.handleBrickDestroyed(c, r);
                 } else if (brick.brickInfo.type === 'extra') {
                     // Handle extra ball effect
+                    // Get extra ball configuration from powerupConfig
+                    const extraBallConfig = getPowerUpConfig('extraball');
+                    
                     if (this.game) {
-                        Ball.createExtraBall(this.app, this.graphics.x, this.graphics.y, this.speed, -this.dx, -this.dy);
+                        const duration = extraBallConfig?.duration || 0;
+                        
+                        Ball.createExtraBall(this.app, this.graphics.x, this.graphics.y, this.speed, -this.dx, -this.dy, duration);
                         console.log('🎾 Extra ball triggered from special brick'); 
                     }
+                    // Show extra ball text effect if configured to show text
+                    if (extraBallConfig && extraBallConfig.showText && this.game) {
+                    // Calculate text position based on config
+                        let textX, textY;
+                        if (extraBallConfig.textPosition === 'center') {
+                            textX = this.game.app.screen.width / 2;
+                            textY = this.game.app.screen.height / 2;
+                        } else {
+                            // Show at brick location
+                            textX = brick.x + this.level.brickWidth / 2;
+                            textY = brick.y + this.level.brickHeight / 2;
+                        }
+        
+                    showPowerUpText(extraBallConfig.text, textX, textY, this.game.app, extraBallConfig);
+    }
                     // Destroy the brick
                     this.level.handleBrickDestroyed(c, r);
                     if (this.game) {
-                        this.game.addScore(10);
+                        // Get score from extraball powerup config
+                        const extraBallScore = extraBallConfig?.score || BRICK_SCORE_CONFIG.extra || 10;
+                        this.game.addScore(extraBallScore);
                     }
                 } else {
                     // Default brick destruction
                     this.level.handleBrickDestroyed(c, r);
                     if (this.game) {
-                        this.game.addScore(10);
+                        this.game.addScore(BRICK_SCORE_CONFIG.normal || 10);
                     }
                 }
             } else {
                 // Default brick destruction for bricks without brickInfo
                 this.level.handleBrickDestroyed(c, r);
                 if (this.game) {
-                    this.game.addScore(10);
+                    this.game.addScore(BRICK_SCORE_CONFIG.default || 10);
                 }
             }
             
@@ -478,11 +503,12 @@ export class Ball {
         return false;
     }
 
-    static createExtraBall(app, x, y, speed, dx, dy) {
+    static createExtraBall(app, x, y, speed, dx, dy, duration = 0) {
         console.log('Creating extra ball:', {
             position: { x, y },
             speed,
             direction: { dx, dy },
+            duration,
             currentBalls: Ball.balls.length
         });
     
@@ -492,7 +518,7 @@ export class Ball {
         }
     
         // Play poesklap sound for extra ball
-        playPoesklapSound();
+        playSoundByName('poesklap');
     
         const extraBall = new Ball(app, true);
     
@@ -500,6 +526,11 @@ export class Ball {
         extraBall.graphics.y = y;
         extraBall.speed = speed;
         extraBall.graphics.isBallGraphic = true; // For korrekt opprydding
+    
+        // Set duration if provided
+        if (duration > 0) {
+            extraBall.setDuration(duration);
+        }
     
         // Spre litt på retningen
         const currentAngle = Math.atan2(dy, dx);
@@ -530,6 +561,7 @@ export class Ball {
             speed: extraBall.speed,
             direction: { dx: extraBall.dx, dy: extraBall.dy },
             isMoving: extraBall.isMoving,
+            duration: extraBall.duration,
             totalBalls: Ball.balls.length
         });
     
@@ -614,5 +646,23 @@ export class Ball {
         return mainBall;
     }
     
-    
+    // Get activation point
+    getActivationPoint() {
+        return this.config?.activateOn || 'paddle';
+    }
+
+    // Set duration for extra balls
+    setDuration(duration) {
+        this.duration = duration;
+        this.startTime = Date.now();
+        this.endTime = this.startTime + duration;
+    }
+
+    // Check if extra ball has expired
+    isExpired() {
+        if (!this.isExtraBall || this.duration === 0) {
+            return false; // Main balls and permanent extra balls don't expire
+        }
+        return Date.now() > this.endTime;
+    }
 } 
