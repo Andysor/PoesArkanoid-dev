@@ -1,4 +1,5 @@
-import { loadHighscores } from './firebase-init.js';
+import { loadHighscores, saveHighscore } from './firebase-init.js';
+import { ASSETS, loadImage } from './assets.js';
 
 export class GameOverManager {
     constructor(app) {
@@ -37,6 +38,10 @@ export class GameOverManager {
         // Initialize state
         this.currentScore = 0;
         
+        // Pre-load character images for high score display
+        this.characterImages = {};
+        this.loadCharacterImages();
+        
         console.log('🎮 GameOverManager: Initialized with canvases', {
             width: app.screen.width,
             height: app.screen.height,
@@ -45,7 +50,21 @@ export class GameOverManager {
         });
     }
     
-    handleGameOver = (score, game) => {
+    async loadCharacterImages() {
+        const characterKeys = Object.keys(ASSETS.images.characters);
+        for (const key of characterKeys) {
+            const img = loadImage(ASSETS.images.characters[key]);
+            await new Promise((resolve) => {
+                img.onload = () => {
+                    this.characterImages[key] = img;
+                    resolve();
+                };
+            });
+        }
+        console.log('🎮 Character images loaded for high score display');
+    }
+    
+    handleGameOver = async (score, game) => {
         console.log('💀 Game Over: Lives depleted');
         
         // Store game instance
@@ -63,6 +82,27 @@ export class GameOverManager {
         
         // Update score
         this.currentScore = score;
+        
+        // Save high score to Firebase
+        try {
+            const playerName = game.playerName || 'Player';
+            const level = game.level || 1;
+            const character = game.selectedCharacter || 'rugbyball';
+            
+            console.log('🔥 Attempting to save high score:', {
+                playerName,
+                score,
+                level,
+                character
+            });
+            
+            await saveHighscore(playerName, score, level, character);
+            console.log('✅ High score saved successfully');
+        } catch (error) {
+            console.error('❌ Failed to save high score:', error);
+            // Don't break the game flow - continue to show game over screen
+            console.log('⚠️ Continuing with game over screen despite save failure');
+        }
         
         // Show game over screen
         this.showGameOverScreen();
@@ -120,19 +160,88 @@ export class GameOverManager {
         const highscores = await loadHighscores();
         console.log('📊 High scores loaded:', highscores);
         
-        // Display high scores
-        this.highscoreCtx.font = '24px Arial';
+        // Draw column headers
+        this.highscoreCtx.font = '16px Arial';
+        this.highscoreCtx.fillStyle = '#ffff00';
         this.highscoreCtx.textAlign = 'left';
+        
+        const startX = 20;
+        const charX = startX + 30;
+        const nameX = charX + 50;
+        const scoreX = nameX + 120;
+        const levelX = scoreX + 80;
+        const dateX = levelX + 80;
+        
+        this.highscoreCtx.fillText('', startX, 110);
+        this.highscoreCtx.fillText('Char.', charX, 110);
+        this.highscoreCtx.fillText('Name', nameX, 110);
+        this.highscoreCtx.fillText('Score', scoreX, 110);
+        this.highscoreCtx.fillText('Level', levelX, 110);
+        this.highscoreCtx.fillText('Date', dateX, 110);
+        
+        // Display high scores
+        this.highscoreCtx.font = '14px Arial';
         highscores.forEach((score, index) => {
+            const yPos = 150 + index * 45;
+            
+            // Draw rank
+            this.highscoreCtx.fillStyle = '#ffffff';
+            this.highscoreCtx.fillText(`${index + 1}.`, startX, yPos);
+            
+            // Draw character image if available
+            if (score.character && this.characterImages[score.character]) {
+                const charImg = this.characterImages[score.character];
+                const charSize = 30;
+                this.highscoreCtx.drawImage(
+                    charImg, 
+                    charX, 
+                    yPos - charSize + 10, 
+                    charSize, 
+                    charSize
+                );
+            }
+            
+            // Draw name
+            this.highscoreCtx.fillStyle = '#ffffff';
             this.highscoreCtx.fillText(
-                `${index + 1}. ${score.name}: ${score.score}`,
-                this.highscoreCanvas.width / 2 - 100,
-                100 + index * 30
+                score.name || 'Unknown',
+                nameX,
+                yPos
             );
+            
+            // Draw score
+            this.highscoreCtx.fillStyle = '#ffff00';
+            this.highscoreCtx.fillText(
+                score.score || 0,
+                scoreX,
+                yPos
+            );
+            
+            // Draw level
+            this.highscoreCtx.fillStyle = '#00ffff';
+            this.highscoreCtx.fillText(
+                score.level || 1,
+                levelX,
+                yPos
+            );
+            
+            // Draw date
+            if (score.date) {
+                this.highscoreCtx.fillStyle = '#cccccc';
+                const date = score.date.toDate ? score.date.toDate() : new Date(score.date);
+                const dateStr = date.toLocaleDateString();
+                this.highscoreCtx.fillText(
+                    dateStr,
+                    dateX,
+                    yPos
+                );
+            }
         });
         
         // Draw click to continue text
         this.highscoreCtx.textAlign = 'center';
+        this.highscoreCtx.fillStyle = '#ffffff';
+        this.highscoreCtx.font = '18px Arial';
         this.highscoreCtx.fillText(
             'Click to continue',
             this.highscoreCanvas.width / 2,

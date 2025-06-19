@@ -56,6 +56,28 @@ const nameInput = document.getElementById('name-input');
 const startButton = document.getElementById('start-button');
 const iosAudioNotice = document.getElementById('ios-audio-notice');
 
+// Add character counter element
+const characterCounter = document.createElement('div');
+characterCounter.id = 'character-counter';
+characterCounter.style.cssText = 'font-size: 12px; color: #888; margin-top: 5px; text-align: center;';
+characterCounter.textContent = '0/10 characters';
+nameInputContainer.appendChild(characterCounter);
+
+// Update character counter on input
+nameInput.addEventListener('input', () => {
+    const currentLength = nameInput.value.length;
+    characterCounter.textContent = `${currentLength}/10 characters`;
+    
+    // Change color based on length
+    if (currentLength === 10) {
+        characterCounter.style.color = '#ff6b6b';
+    } else if (currentLength >= 8) {
+        characterCounter.style.color = '#ffa500';
+    } else {
+        characterCounter.style.color = '#888';
+    }
+});
+
 // Show iOS audio notice on mobile devices
 if (isMobile) {
     iosAudioNotice.style.display = 'block';
@@ -83,12 +105,28 @@ startButton.addEventListener('click', () => {
     // Test audio unlock on button click
     forceAudioUnlock();
     
-    playerName = nameInput.value.trim() || 'Player';
-    if (!playerName) {
+    const enteredName = nameInput.value.trim();
+    
+    // Validate name length
+    if (!enteredName) {
         alert("Please enter your name!");
         nameInput.focus();
         return;
     }
+    
+    if (enteredName.length > 10) {
+        alert("Name must be 10 characters or less!");
+        nameInput.focus();
+        return;
+    }
+    
+    playerName = enteredName;
+    
+    // Set player name in game if it exists
+    if (game) {
+        game.playerName = playerName;
+    }
+    
     nameInputContainer.style.display = 'none';
     document.getElementById('character-select').style.display = 'block';
 });
@@ -100,6 +138,9 @@ document.querySelectorAll('.char-opt').forEach(img => {
 
         game.characterChosen = true;
         game.selectedCharacter = this.dataset.img;
+        
+        // Ensure player name is set in game
+        game.playerName = playerName;
 
         // Choose character
         document.querySelectorAll('.char-opt').forEach(i => i.style.border = "2px solid #fff");
