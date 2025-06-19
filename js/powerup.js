@@ -15,13 +15,11 @@ export class PowerUp {
                 PowerUp.textures[type] = await new Promise(resolve => {
                     img.onload = () => resolve(PIXI.Texture.from(img));
                 });
-                console.log(`✅ Loaded texture for: ${type}`);
             }
         });
 
         // Wait for all textures to load
         await Promise.all(loadPromises);
-        console.log('✅ All item textures loaded');
     }
 
     constructor(type, x, y) {
@@ -40,7 +38,7 @@ export class PowerUp {
         const spriteKey = getPowerUpSpriteKey(type);
         this.sprite = new PIXI.Sprite(PowerUp.textures[spriteKey]);
         this.sprite.anchor.set(0.5);
-        this.sprite.scale.set(0.03);
+        this.sprite.scale.set(0.3);
         this.sprite.x = x;
         this.sprite.y = y;
         this.sprite.visible = false;

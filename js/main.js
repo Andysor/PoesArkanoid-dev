@@ -4,7 +4,7 @@ import { Paddle } from './paddle.js';
 import { Ball } from './ball.js';
 import { Level } from './level.js';
 import { db, loadHighscores } from './firebase-init.js';
-import { initializeAudio, forceAudioUnlock } from './audio.js';
+import { initializeAudio, forceAudioUnlock, playSoundByName, testAudioAtMaxVolume } from './audio.js';
 
 // Game configuration
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -38,32 +38,6 @@ loadHighscores().then(() => {
     console.error('❌ Firebase initialization failed:', error);
 });
 
-// Initialize Audio System
-console.log('🔊 Initializing Audio System...');
-initializeAudio().then(() => {
-    console.log('✅ Audio system initialized successfully');
-}).catch(error => {
-    console.error('❌ Audio initialization failed:', error);
-});
-
-// Unlock audio on first user interaction (required for mobile)
-function unlockAudio() {
-    console.log('🔊 Unlocking audio on user interaction');
-    // Resume audio context if suspended
-    if (window.audioContext && window.audioContext.state === 'suspended') {
-        window.audioContext.resume();
-    }
-    // Remove event listeners after first interaction
-    document.removeEventListener('touchstart', unlockAudio);
-    document.removeEventListener('mousedown', unlockAudio);
-    document.removeEventListener('keydown', unlockAudio);
-}
-
-// Add event listeners for audio unlock
-document.addEventListener('touchstart', unlockAudio, { once: true });
-document.addEventListener('mousedown', unlockAudio, { once: true });
-document.addEventListener('keydown', unlockAudio, { once: true });
-
 // Set canvas style to fill the window while maintaining aspect ratio
 const style = app.view.style;
 
@@ -80,6 +54,17 @@ let paddle = null;
 const nameInputContainer = document.getElementById('name-input-container');
 const nameInput = document.getElementById('name-input');
 const startButton = document.getElementById('start-button');
+const iosAudioNotice = document.getElementById('ios-audio-notice');
+
+// Show iOS audio notice on mobile devices
+if (isMobile) {
+    iosAudioNotice.style.display = 'block';
+    
+    // Hide notice after 10 seconds
+    setTimeout(() => {
+        iosAudioNotice.style.display = 'none';
+    }, 10000);
+}
 
 // Initialize game components after PIXI is ready
 setTimeout(() => {
@@ -95,6 +80,9 @@ setTimeout(() => {
 
 // DOM Event Listeners for UI elements
 startButton.addEventListener('click', () => {
+    // Test audio unlock on button click
+    forceAudioUnlock();
+    
     playerName = nameInput.value.trim() || 'Player';
     if (!playerName) {
         alert("Please enter your name!");

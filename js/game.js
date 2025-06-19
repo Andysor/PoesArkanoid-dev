@@ -103,15 +103,13 @@ export class Game {
          // Create power-up container
          this.powerUpContainer = new PIXI.Container();
          this.objectsContainer.addChild(this.powerUpContainer);
-         console.log('🎮 Power-up container created and added to objects container');
 
          // Initialize power-ups array
          this.activePowerUps = [];
-         console.log('🎮 Active power-ups array initialized');
 
          // Load power-up textures
          PowerUp.loadTextures().then(() => {
-            console.log('🎮 Power-ups loaded');
+            // Power-ups loaded
          });
          
         // Initialize level instance
@@ -648,10 +646,8 @@ export class Game {
 
         // Update power-ups
         if (this.activePowerUps) {
-            console.log(`🔄 Updating ${this.activePowerUps.length} active power-ups`);
             this.activePowerUps = this.activePowerUps.filter(powerUp => {
                 if (!powerUp.active) {
-                    console.log(`🗑️ Removing inactive power-up: ${powerUp.type}`);
                     return false;
                 }
 
@@ -659,7 +655,6 @@ export class Game {
 
                 // Check collision with paddle
                 if (this.paddle && this.checkPowerUpCollision(powerUp, this.paddle)) {
-                    console.log(`💫 Power-up ${powerUp.type} collected by paddle`);
                     this.handlePowerUpCollection(powerUp);
                     return false;
                 }
@@ -843,20 +838,10 @@ export class Game {
             powerUpBounds.y + powerUpBounds.height > paddleBounds.y
         );
 
-        if (collision) {
-            console.log('🎯 Power-up collision detected:', {
-                powerUpType: powerUp.type,
-                powerUpPos: { x: powerUpBounds.x, y: powerUpBounds.y },
-                paddlePos: { x: paddleBounds.x, y: paddleBounds.y }
-            });
-        }
-
         return collision;
     }
 
     handlePowerUpCollection(powerUp) {
-        console.log(`🎉 Handling power-up effect: ${powerUp.type}`);
-        
         // Get powerup configuration for scoring
         const powerupConfig = getPowerUpConfig(powerUp.type);
         
@@ -867,31 +852,25 @@ export class Game {
         switch(powerUp.type.toLowerCase()) {
             case 'brannas':
                 // Handle brannas effect
-                console.log('🔥 Brannas powerup activated!');
                 break;
             case 'extra_life':
                 this.lives++;
-                console.log('❤️ Extra life gained!');
                 break;
             case 'skull':
                 // Handle skull effect - cause loss of life
-                console.log('💀 Skull powerup activated!');
                 this.loseLife();
                 break;
             case 'powerup_largepaddle':
                 this.paddle.extend();
-                console.log('📏 Large paddle activated!');
                 break;
             case 'powerup_smallpaddle':
                 this.paddle.shrink();
-                console.log('📏 Small paddle activated!');
                 break;
             case 'extraball':
                 // Create extra ball with duration from config
                 if (this.ball) {
                     const duration = powerupConfig?.duration || 0;
                     Ball.createExtraBall(this.app, this.ball.graphics.x, this.ball.graphics.y, this.ball.speed, this.ball.dx, this.ball.dy, duration);
-                    console.log(`🎾 Extra ball created with duration: ${duration}ms`);
                 }
                 break;
         }
@@ -899,7 +878,6 @@ export class Game {
         // Add score for powerups that have a score configuration
         if (powerupConfig && powerupConfig.score && powerupConfig.score > 0) {
             this.addScore(powerupConfig.score);
-            console.log(`💰 ${powerUp.type} powerup collected! +${powerupConfig.score} points`);
         }
         
         powerUp.deactivate();

@@ -69,7 +69,7 @@ export class Paddle {
         this.sprite.x = Math.max(minX, Math.min(this.sprite.x, maxX));
 
         // Bound Y
-        const minY = this.app.screen.height * 0.6;
+        const minY = this.app.screen.height * 0.45;
         const maxY = this.app.screen.height - PADDLE_BOTTOM_MARGIN;
         this.sprite.y = Math.max(minY, Math.min(this.sprite.y, maxY));
     }
@@ -80,7 +80,6 @@ export class Paddle {
         this.isShrunk = false;
         this.powerUpEndTime = Date.now() + POWER_UP_DURATION;
         this.updateSprite();
-        console.log('🔵 Paddle extended for', POWER_UP_DURATION / 1000, 'seconds');
     }
 
     shrink() {
@@ -89,7 +88,6 @@ export class Paddle {
         this.isExtended = false;
         this.powerUpEndTime = Date.now() + POWER_UP_DURATION;
         this.updateSprite();
-        console.log('🔴 Paddle shrunk for', POWER_UP_DURATION / 1000, 'seconds');
     }
 
     reset() {
@@ -131,7 +129,6 @@ export class Paddle {
     updatePowerUpStatus() {
         // Check if power-up duration has expired
         if (this.powerUpEndTime > 0 && Date.now() > this.powerUpEndTime) {
-            console.log('⏰ Power-up expired, resetting paddle to base size');
             this.reset();
         }
     }

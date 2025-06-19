@@ -113,20 +113,22 @@ export function playSoundByName(soundName) {
 
 // Initialize audio system
 async function initAudio() {
-    // Initialize powerup sound pools from configuration
-    initializePowerUpSoundPools();
-    
-    // Try to initialize Web Audio API
-    try {
-        await initializeWebAudioAPI();
-    } catch (e) {
-        // Fallback to traditional audio elements
-    }
-    
     // Set up user interaction listeners for audio unlock
-    const unlockAudio = () => {
+    const unlockAudio = async () => {
         if (!userInteracted) {
             userInteracted = true;
+            
+            // Initialize audio after user interaction
+            initializePowerUpSoundPools();
+            
+            // Try to initialize Web Audio API
+            try {
+                await initializeWebAudioAPI();
+            } catch (e) {
+                // Fallback to traditional audio elements
+            }
+            
+            audioEnabled = true;
         }
     };
     
@@ -134,8 +136,6 @@ async function initAudio() {
     document.addEventListener('mousedown', unlockAudio, { once: true });
     document.addEventListener('keydown', unlockAudio, { once: true });
     document.addEventListener('click', unlockAudio, { once: true });
-    
-    audioEnabled = true;
 }
 
 // Toggle audio for mobile users
@@ -226,8 +226,68 @@ export async function initializeAudio() {
 export function forceAudioUnlock() {
     userInteracted = true;
     
+    // Initialize audio if not already done
+    if (!audioEnabled) {
+        initializePowerUpSoundPools();
+        initializeWebAudioAPI().then(() => {
+            audioEnabled = true;
+        }).catch(() => {
+            audioEnabled = true;
+        });
+    }
+    
     // Try to resume audio context if suspended
     if (audioContext && audioContext.state === 'suspended') {
         audioContext.resume();
+    }
+}
+
+// Test function to play sound at maximum volume
+export function testAudioAtMaxVolume(soundName = 'poesklap') {
+    if (!audioEnabled) {
+        return;
+    }
+    
+    // Try Web Audio API with max volume
+    if (audioContextInitialized && audioContext && audioBuffers[soundName]) {
+        try {
+            const source = audioContext.createBufferSource();
+            const gainNode = audioContext.createGain();
+            
+            source.buffer = audioBuffers[soundName];
+            gainNode.gain.value = 1.0; // Maximum volume
+            
+            source.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            source.start(0);
+            
+            // Check if audio is actually playing after a short delay
+            setTimeout(() => {
+                checkAudioPlayback();
+            }, 100);
+            
+        } catch (e) {
+            // Silent fail
+        }
+    }
+}
+
+// Function to check if audio is actually playing
+function checkAudioPlayback() {
+    if (audioContext && audioContext.state === 'running') {
+        // Show a message to the user if they're on iOS
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        if (isIOS) {
+            const notice = document.getElementById('ios-audio-notice');
+            if (notice) {
+                notice.innerHTML = `
+                    <strong>🔊 Audio is Working!</strong><br>
+                    If you can't hear sounds, turn off silent mode on your iPhone
+                    <button onclick="this.parentElement.style.display='none'" style="background: white; color: #ff6b6b; border: none; padding: 5px 10px; border-radius: 4px; margin-top: 10px; font-weight: bold;">Got it</button>
+                `;
+                notice.style.display = 'block';
+            }
+        }
     }
 } 

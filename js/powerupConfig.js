@@ -196,14 +196,12 @@ export function getPowerUpConfig(type) {
     if (powerupTypeMapping[normalizedType]) {
         const mappedType = powerupTypeMapping[normalizedType];
         if (POWERUP_BEHAVIOR_CONFIG[mappedType]) {
-            console.log(`🔍 Powerup config found via mapping: "${type}" -> "${normalizedType}" -> "${mappedType}"`);
             return POWERUP_BEHAVIOR_CONFIG[mappedType];
         }
     }
     
     // Try to find the config directly first
     if (POWERUP_BEHAVIOR_CONFIG[normalizedType]) {
-        console.log(`🔍 Powerup config found: "${type}" -> "${normalizedType}"`);
         return POWERUP_BEHAVIOR_CONFIG[normalizedType];
     }
     
@@ -218,13 +216,10 @@ export function getPowerUpConfig(type) {
     
     for (const variation of variations) {
         if (POWERUP_BEHAVIOR_CONFIG[variation]) {
-            console.log(`🔍 Powerup config found via variation: "${type}" -> "${variation}"`);
             return POWERUP_BEHAVIOR_CONFIG[variation];
         }
     }
     
-    console.log(`🔍 No powerup config found for: "${type}" (tried: ${variations.join(', ')})`);
-    console.log(`🔍 Available config keys:`, Object.keys(POWERUP_BEHAVIOR_CONFIG));
     return null;
 }
 

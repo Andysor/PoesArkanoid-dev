@@ -20,17 +20,6 @@ export class Level {
         this.brickOffsetLeft = (this.app.screen.width - totalBrickAreaWidth) / 2;
         this.brickOffsetTop = this.app.screen.height * 0.05; // 5% from top
         
-        console.log('Brick dimensions:', {
-            screenWidth: this.app.screen.width,
-            screenHeight: this.app.screen.height,
-            brickWidth: this.brickWidth,
-            brickHeight: this.brickHeight,
-            totalBrickAreaWidth,
-            brickOffsetLeft: this.brickOffsetLeft,
-            brickOffsetTop: this.brickOffsetTop,
-            totalHeight: (this.brickHeight * this.brickRowCount) + (this.brickPadding * (this.brickRowCount - 1))
-        });
-        
         this.currentLevel = 1;
         
         // Create brick container
@@ -41,12 +30,6 @@ export class Level {
         for (let c = 0; c < this.brickColumnCount; c++) {
             this.bricks[c] = new Array(this.brickRowCount).fill(null);
         }
-        console.log('Brick array initialized:', {
-            columns: this.bricks.length,
-            rows: this.bricks[0].length,
-            totalCells: this.bricks.length * this.bricks[0].length,
-            nullCells: this.bricks.flat().filter(b => b === null).length
-        });
     }
     
     handleBrickDestroyed(c, r) {
@@ -56,56 +39,31 @@ export class Level {
         const { x, y } = brick;
         const info = brick.brickInfo || {};
     
-        console.log('💥 Brick destroyed:', {
-            position: { c, r },
-            info: info,
-            hasPowerUp: !!info.powerUpType
-        });
-    
         // 🔥 Sjekk om brikken inneholder powerup
         if (info.powerUpType) {
-            console.log(`🎁 Creating power-up: ${info.powerUpType} at (${x}, ${y})`);
             // Transform coordinates to be relative to objectsContainer
             const globalX = x + brick.width / 2 + this.brickContainer.x;
             const globalY = y + brick.height / 2 + this.brickContainer.y;
             const powerUp = createPowerUp(info.powerUpType.toLowerCase(), globalX, globalY);
             
             if (this.game && this.game.powerUpContainer) {
-                console.log('🎯 Adding power-up to container:', {
-                    type: info.powerUpType,
-                    container: this.game.powerUpContainer,
-                    containerChildren: this.game.powerUpContainer.children.length,
-                    position: { x: globalX, y: globalY }
-                });
-                
                 this.game.powerUpContainer.addChild(powerUp.sprite);
                 powerUp.activate();
     
                 // Legg til i spill-liste hvis du ønsker å oppdatere dem løpende
                 if (!this.game.activePowerUps) {
-                    console.log('⚠️ Creating new activePowerUps array');
                     this.game.activePowerUps = [];
                 }
                 this.game.activePowerUps.push(powerUp);
-                console.log('✨ Power-up activated and added to game:', {
-                    type: info.powerUpType,
-                    activePowerUps: this.game.activePowerUps.length,
-                    spriteVisible: powerUp.sprite.visible,
-                    spritePosition: { x: powerUp.sprite.x, y: powerUp.sprite.y }
-                });
 
                 // Show powerup text with configuration
                 if (powerUp.shouldShowText()) {
                     const config = powerUp.getConfig();
                     showPowerUpText(powerUp.getText(), globalX, globalY, this.app, config);
                 }
-            } else {
-                console.warn('⚠️ No game or powerUpContainer found for power-up:', info.powerUpType);
             }
         }
 
-      
-    
         // Fjern brikkens sprite
         if (brick.sprite?.parent) {
             brick.sprite.parent.removeChild(brick.sprite);
@@ -113,13 +71,9 @@ export class Level {
     
         brick.destroy();
         this.bricks[c][r] = null;
-    
-        console.log('✅ Brick destruction complete, container children:', this.brickContainer.children.length);
     }
     
     async loadLevel(levelNumber) {
-        console.log('Loading level:', levelNumber);
-        
         // Only clear if we have bricks
         if (this.bricks.flat().some(b => b !== null)) {
             this.clearBricks();
@@ -138,21 +92,13 @@ export class Level {
             
             // Create new bricks from level data
             this.createBricksFromData(levelData);
-            
-            console.log(`Loaded level ${levelNumber} with ${this.brickContainer.children.length} bricks`);
         } catch (error) {
-            console.error('Error loading level:', error);
             // Create a default level if loading fails
             this.createDefaultLevel();
         }
     }
 
     clearBricks() {
-        console.log('Clearing bricks:', {
-            beforeBrickCount: this.bricks.flat().filter(b => b !== null).length,
-            beforeContainerChildren: this.brickContainer.children.length
-        });
-
         // Destroy all brick graphics
         for (let c = 0; c < this.brickColumnCount; c++) {
             for (let r = 0; r < this.brickRowCount; r++) {
@@ -175,11 +121,6 @@ export class Level {
         for (let c = 0; c < this.brickColumnCount; c++) {
             this.bricks[c] = new Array(this.brickRowCount).fill(null);
         }
-
-        console.log('Bricks cleared:', {
-            afterBrickCount: this.bricks.flat().filter(b => b !== null).length,
-            afterContainerChildren: this.brickContainer.children.length
-        });
     }
 
     createBricksFromData(levelData) {
@@ -192,14 +133,6 @@ export class Level {
             // Old format (direct 2D array)
             bricksData = levelData;
         }
-
-        console.log('Creating bricks from level data:', {
-            rows: bricksData.length,
-            columns: bricksData[0]?.length || 0,
-            expectedRows: this.brickRowCount,
-            expectedColumns: this.brickColumnCount,
-            dataFormat: levelData.bricks ? 'new' : 'old'
-        });
 
         // Ensure container is empty before creating new bricks
         while (this.brickContainer.children.length > 0) {
@@ -219,7 +152,7 @@ export class Level {
                     const type = brickInfo.type || 'normal';
                     
                     if (type === 'glass') {
-                        console.log('🪟 Creating glass brick at:', { row: r, col: c, x, y, brickInfo });
+                        // Create glass brick at:
                     }
                     
                     const brick = new Brick(x, y, this.brickWidth, this.brickHeight, type);
@@ -238,13 +171,7 @@ export class Level {
             }
         }
 
-        console.log('Brick array after creation:', {
-            totalBricks: this.bricks.flat().filter(b => b !== null).length,
-            containerChildren: this.brickContainer.children.length,
-            arrayState: this.bricks.map(col => col.map(b => b ? 1 : 0))
-        });
-    
-    // Fordel powerups i tilfeldige "normal"-brikker og glassbrikker
+        // Fordel powerups i tilfeldige "normal"-brikker og glassbrikker
         const weightedBricks = [];
         normalBricks.forEach(brick => {
             weightedBricks.push(brick); // Normal weight
@@ -259,28 +186,17 @@ export class Level {
         const shuffled = weightedBricks.sort(() => Math.random() - 0.5);
         let index = 0;
 
-        console.log('🎲 Distributing power-ups:', POWERUPS_PER_LEVEL);
-        console.log('📦 Available normal bricks:', normalBricks.length);
-        console.log('🪟 Available glass bricks:', glassBricks.length);
-        console.log('📦 Total available bricks:', weightedBricks.length);
-        console.log('🎲 Total shuffled bricks:', shuffled.length);
-
         for (const [type, count] of Object.entries(POWERUPS_PER_LEVEL)) {
-            console.log(`🎯 Assigning ${count} ${type} power-ups`);
             for (let i = 0; i < count && index < shuffled.length; i++, index++) {
                 const targetBrick = shuffled[index];
                 if (!targetBrick.brickInfo) {
                     targetBrick.brickInfo = {};
                 }
                 targetBrick.brickInfo.powerUpType = type;
-                console.log(`📍 Assigned ${type} to brick at (${targetBrick.column}, ${targetBrick.row})`);
             }
         }
     }
 
-
-
-    
     createDefaultLevel() {
         for (let c = 0; c < this.brickColumnCount; c++) {
             for (let r = 0; r < this.brickRowCount; r++) {

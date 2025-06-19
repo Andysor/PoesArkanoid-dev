@@ -390,37 +390,17 @@ export class Ball {
             
             // Handle special brick effects
             if (brick.brickInfo) {
-                console.log('🔍 Brick collision detected:', {
-                    type: brick.brickInfo.type,
-                    hasBrickInfo: !!brick.brickInfo,
-                    brickType: brick.type,
-                    brickStatus: brick.status
-                });
-                
                 if (brick.brickInfo.type === 'glass') {
-                    console.log('🪟 Glass brick hit!', {
-                        hitCount: brick.hitCount,
-                        isBroken: brick.isBroken,
-                        shouldUseHitMethod: true
-                    });
-                    
                     // Don't process if brick is already destroyed
                     if (brick.status !== 1) {
-                        console.log('⚠️ Glass brick already destroyed, skipping hit logic');
                         return true;
                     }
                     
                     // Handle glass brick hit
                     const shouldDestroy = brick.hit();
-                    console.log('🪟 Glass brick hit() result:', {
-                        shouldDestroy,
-                        newHitCount: brick.hitCount,
-                        newIsBroken: brick.isBroken
-                    });
                     
                     if (shouldDestroy) {
                         // Second hit - destroy the brick
-                        console.log('💥 Glass brick destroyed on second hit');
                         playSoundByName('brick_glass_destroyed');
                         this.level.handleBrickDestroyed(c, r);
                         if (this.game) {
@@ -428,7 +408,6 @@ export class Ball {
                         }
                     } else {
                         // First hit - just show broken effect
-                        console.log('🪟 Glass brick broken on first hit, not destroyed');
                         playSoundByName('brick_glass_break');
                         if (this.game) {
                             this.game.addScore(BRICK_SCORE_CONFIG.glass_first_hit || 5);
@@ -459,7 +438,6 @@ export class Ball {
                         const duration = extraBallConfig?.duration || 0;
                         
                         Ball.createExtraBall(this.app, this.graphics.x, this.graphics.y, this.speed, -this.dx, -this.dy, duration);
-                        console.log('🎾 Extra ball triggered from special brick'); 
                     }
                     // Show extra ball text effect if configured to show text
                     if (extraBallConfig && extraBallConfig.showText && this.game) {
@@ -504,16 +482,7 @@ export class Ball {
     }
 
     static createExtraBall(app, x, y, speed, dx, dy, duration = 0) {
-        console.log('Creating extra ball:', {
-            position: { x, y },
-            speed,
-            direction: { dx, dy },
-            duration,
-            currentBalls: Ball.balls.length
-        });
-    
         if (!Ball.textures.extra) {
-            console.error('❌ Extra ball texture not loaded.');
             return null;
         }
     
@@ -546,7 +515,6 @@ export class Ball {
             extraBall.level = mainBall.level;
             extraBall.game = mainBall.game;
         } else {
-            console.warn('⚠️ No mainBall found — setting level and game to null');
             extraBall.level = null;
             extraBall.game = null;
         }
@@ -557,26 +525,11 @@ export class Ball {
             app.stage.addChild(extraBall.graphics); // Fallback hvis game mangler
         }
     
-        console.log('Extra ball created:', {
-            speed: extraBall.speed,
-            direction: { dx: extraBall.dx, dy: extraBall.dy },
-            isMoving: extraBall.isMoving,
-            duration: extraBall.duration,
-            totalBalls: Ball.balls.length
-        });
-    
         return extraBall;
     }
     
 
     static resetAll(app, game, levelInstance) {
-        console.log('Before resetAll - Current balls:', Ball.balls.map(b => ({
-            isExtra: b.isExtraBall,
-            isMoving: b.isMoving,
-            dx: b.dx,
-            dy: b.dy
-        })));
-    
         // Remove all ball graphics and clear trails
         Ball.balls.forEach(ball => {
             if (ball.graphics && ball.graphics.parent) {
@@ -620,28 +573,9 @@ export class Ball {
         mainBall.graphics.isBallGraphic = true;
         Ball.balls = [mainBall]; // Reset balls array
         
-        console.log('🆕 New main ball created', {
-            graphicsX: mainBall.graphics.x,
-            graphicsY: mainBall.graphics.y,
-            isMoving: mainBall.isMoving,
-            ballsCount: Ball.balls.length
-        });
-        
-        
-    
         if (mainBall.game?.objectsContainer) {
             mainBall.game.objectsContainer.addChild(mainBall.graphics);
         }
-    
-        console.log('After resetAll - Current balls:', Ball.balls.map(b => ({
-            isExtra: b.isExtraBall,
-            isMoving: b.isMoving,
-            dx: b.dx,
-            dy: b.dy
-        })));
-    
-        console.log('✔ Objects in container after reset:', game.objectsContainer?.children.length);
-        console.log('✔ Balls in memory after reset:', Ball.balls.length);
 
         return mainBall;
     }

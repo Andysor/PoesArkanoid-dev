@@ -5,8 +5,8 @@ export const GAME_VERSION = '0.1.0';
 export const TEST_MODE = false;
 
 // Ball settings
-export const BASE_INITIAL_SPEED = 8;
-export const BASE_MAX_SPEED = 24;
+export const BASE_INITIAL_SPEED = 6;
+export const BASE_MAX_SPEED = 18;
 export const LEVEL_SPEED_INCREASE = 0.1;
 export const BALL_RADIUS = window.innerWidth * 0.02; // 1% of screen width
 
