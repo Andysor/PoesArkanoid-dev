@@ -4,14 +4,14 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         showSprite: true,
         showText: true,
         text: 'BRANNAS!',
-        textPosition: 'brick',             // 'center' eller 'brick'
+        textPosition: 'center',             // 'center' eller 'brick'
         textSize: 32,
         textBlink: true,
         playSound: true,
         sound: 'brannas',                  // Fixed: use brannas sound instead of brick_glass_break
         activateOn: 'screen',              // 'brick', 'paddle', 'screen'
-        duration: 10000,
-        score: 25,
+        duration: 5000,
+        score: 100,
     },
     extraball: {
         spriteKey: 'extraball',
@@ -25,12 +25,12 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         sound: 'poesklap',
         activateOn: 'screen',
         duration: 10000,
-        score: 15,
+        score: 100,
     },
     large_paddle: {
         spriteKey: 'powerup_largepaddle',
         showSprite: true,
-        showText: true,
+        showText: false,
         text: 'GROOT!',
         textPosition: 'center',
         textSize: 28,
@@ -44,7 +44,7 @@ export const POWERUP_BEHAVIOR_CONFIG = {
     small_paddle: {
         spriteKey: 'powerup_smallpaddle',
         showSprite: true,
-        showText: true,
+        showText: false,
         text: 'KLEIN!',
         textPosition: 'center',
         textSize: 28,
@@ -58,7 +58,7 @@ export const POWERUP_BEHAVIOR_CONFIG = {
     extra_life: {
         spriteKey: 'extra_life',
         showSprite: true,
-        showText: true,
+        showText: false,
         text: 'LIEFLING!',
         textPosition: 'center',
         textSize: 28,
@@ -72,7 +72,7 @@ export const POWERUP_BEHAVIOR_CONFIG = {
     skull: {
         spriteKey: 'skull',
         showSprite: true,
-        showText: true,
+        showText: false,
         text: 'DOOD!',
         textPosition: 'center',
         textSize: 28,
@@ -127,9 +127,9 @@ export const BRICK_SCORE_CONFIG = {
 export const POWERUPS_PER_LEVEL = {
     BRANNAS: 1,     // One brannas power-up per level
     EXTRA_LIFE: 1,  // One extra life power-up per level
-    SKULL: 1,       // One skull power-up per level
-    COIN_GOLD: 5,   // Five gold coin power-ups per level
-    COIN_SILVER: 10,  // Ten silver coin power-ups per level
+    SKULL: 3,       // One skull power-up per level
+    COIN_GOLD: 10,   // Five gold coin power-ups per level
+    COIN_SILVER: 20,  // Ten silver coin power-ups per level
     POWERUP_LARGEPADDLE: 3, // Three large paddle power-ups per level
     POWERUP_SMALLPADDLE: 3  // Three small paddle power-ups per level
 };

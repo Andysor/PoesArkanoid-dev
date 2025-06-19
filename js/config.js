@@ -7,7 +7,7 @@ export const TEST_MODE = false;
 // Ball settings
 export const BASE_INITIAL_SPEED = 6;
 export const BASE_MAX_SPEED = 18;
-export const LEVEL_SPEED_INCREASE = 0.1;
+export const LEVEL_SPEED_INCREASE = 0.15;
 export const BALL_RADIUS = window.innerWidth * 0.02; // 1% of screen width
 
 // Paddle settings
@@ -23,6 +23,7 @@ export const BRICK_PADDING = window.innerWidth * 0.01; // 1% of screen width
 // Power-up settings
 export const POWER_UP_CHANCE = 0.2;
 export const POWER_UP_DURATION = 10000; // 10 seconds
+export const POWER_UP_FALLING_SPEED = 6; // 🎯 POWERUP FALLING SPEED - Increase for faster, decrease for slower
 
 // Game settings
 export const MAX_LEVEL = 100;

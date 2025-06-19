@@ -219,6 +219,8 @@ export class Game {
         this.extraBalls = [];
         this.levelLoaded = false;
         this.loadingNextLevel = true;
+        this.brannasActive = false;
+        this.brannasEndTime = 0;
     
         // 2. Reset UI
         this.scoreText.text = `Score: ${this.score}`;
@@ -662,6 +664,11 @@ export class Game {
                 return true;
             });
         }
+        
+        // Check brannas effect expiration
+        if (this.brannasActive && Date.now() > this.brannasEndTime) {
+            this.brannasActive = false;
+        }
     }
     
     updateScore() {
@@ -819,6 +826,10 @@ export class Game {
         this.ball.dy = speed * Math.sin(currentAngle);
     }
 
+    isBrannasActive() {
+        return this.brannasActive && Date.now() <= this.brannasEndTime;
+    }
+
     handleCharacterSelect() {
         // Hide character select screen
         this.characterSelectContainer.visible = false;
@@ -851,7 +862,9 @@ export class Game {
         // Handle powerup effects
         switch(powerUp.type.toLowerCase()) {
             case 'brannas':
-                // Handle brannas effect
+                // Activate brannas effect - balls destroy all bricks without deflection
+                this.brannasActive = true;
+                this.brannasEndTime = Date.now() + (powerupConfig?.duration || 10000);
                 break;
             case 'extra_life':
                 this.lives++;

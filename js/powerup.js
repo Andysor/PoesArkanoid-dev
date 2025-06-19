@@ -1,5 +1,6 @@
 import { POWERUPS_PER_LEVEL, getPowerUpConfig, getPowerUpSpriteKey } from './powerupConfig.js';
 import { ASSETS, loadImage } from './assets.js';
+import { POWER_UP_FALLING_SPEED } from './config.js';
 
 export class PowerUp {
     static textures = {};
@@ -28,7 +29,7 @@ export class PowerUp {
         this.y = y;
         this.width = 30;
         this.height = 30;
-        this.speed = 4; // 🎯 POWERUP FALLING SPEED - Increase for faster, decrease for slower
+        this.speed = POWER_UP_FALLING_SPEED;
         this.active = false;
         this.duration = 0;
         this.endTime = 0;

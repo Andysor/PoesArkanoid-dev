@@ -359,34 +359,40 @@ export class Ball {
             ballBottom >= brickTop && 
             ballTop <= brickBottom) {
             
-            // Determine which side of the brick was hit
-            const ballCenterX = this.graphics.x;
-            const ballCenterY = this.graphics.y;
-            const brickCenterX = brick.x + this.level.brickWidth / 2;
-            const brickCenterY = brick.y + this.level.brickHeight / 2;
+            // Check if brannas effect is active
+            const brannasActive = this.game && this.game.isBrannasActive();
             
-            // Calculate collision side
-            const dx = ballCenterX - brickCenterX;
-            const dy = ballCenterY - brickCenterY;
-            
-            // Position correction based on collision side
-            if (Math.abs(dx) > Math.abs(dy)) {
-                // Horizontal collision
-                this.dx = -this.dx;
-                if (dx > 0) {
-                    this.graphics.x = brickRight + this.radius;
+            if (!brannasActive) {
+                // Normal collision - determine which side of the brick was hit
+                const ballCenterX = this.graphics.x;
+                const ballCenterY = this.graphics.y;
+                const brickCenterX = brick.x + this.level.brickWidth / 2;
+                const brickCenterY = brick.y + this.level.brickHeight / 2;
+                
+                // Calculate collision side
+                const dx = ballCenterX - brickCenterX;
+                const dy = ballCenterY - brickCenterY;
+                
+                // Position correction based on collision side
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    // Horizontal collision
+                    this.dx = -this.dx;
+                    if (dx > 0) {
+                        this.graphics.x = brickRight + this.radius;
+                    } else {
+                        this.graphics.x = brickLeft - this.radius;
+                    }
                 } else {
-                    this.graphics.x = brickLeft - this.radius;
-                }
-            } else {
-                // Vertical collision
-                this.dy = -this.dy;
-                if (dy > 0) {
-                    this.graphics.y = brickBottom + this.radius;
-                } else {
-                    this.graphics.y = brickTop - this.radius;
+                    // Vertical collision
+                    this.dy = -this.dy;
+                    if (dy > 0) {
+                        this.graphics.y = brickBottom + this.radius;
+                    } else {
+                        this.graphics.y = brickTop - this.radius;
+                    }
                 }
             }
+            // If brannas is active, no deflection occurs - ball continues straight through
             
             // Handle special brick effects
             if (brick.brickInfo) {
