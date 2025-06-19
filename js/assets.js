@@ -42,6 +42,7 @@ export const ASSETS = {
         extra_life: './assets/sounds/extra_life.m4a',
         coin_silver: './assets/sounds/coin_silver.m4a',
         coin_gold: './assets/sounds/coin_gold.m4a',
+        gameOver1: './assets/sounds/game_over1.m4a'
     },
     levels: (levelNum) => `./assets/levels/level${levelNum}.json`
 };
