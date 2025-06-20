@@ -14,6 +14,10 @@ export class Paddle {
         this.isExtended = false;
         this.isShrunk = false;
 
+        // Movement tracking for ball collision
+        this.lastX = 0;
+        this.velocityX = 0;
+
         // Create paddle sprite instead of graphics
         this.sprite = PIXI.Sprite.from(ASSETS.images.items.paddle_main);
         this.sprite.width = this.width;
@@ -57,11 +61,17 @@ export class Paddle {
         // Check power-up status first
         this.updatePowerUpStatus();
 
+        // Store previous position for velocity calculation
+        this.lastX = this.sprite.x;
+
         const lerp = 0.2;
 
         // Lerp toward target
         this.sprite.x += (this.targetX - this.sprite.x) * lerp;
         this.sprite.y += (this.targetY - this.sprite.y) * lerp;
+
+        // Calculate velocity
+        this.velocityX = this.sprite.x - this.lastX;
 
         // Bound X
         const minX = this.width / 2;

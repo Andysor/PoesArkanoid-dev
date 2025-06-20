@@ -12,6 +12,7 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         activateOn: 'screen',              // 'brick', 'paddle', 'screen'
         duration: 5000,
         score: 100,
+        canBreakStrongBricks: true,        // Brannas can break strong bricks
     },
     extraball: {
         spriteKey: 'extraball',
@@ -26,34 +27,37 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         activateOn: 'screen',
         duration: 10000,
         score: 100,
+        canBreakStrongBricks: false,       // Extra ball cannot break strong bricks
     },
     large_paddle: {
         spriteKey: 'powerup_largepaddle',
         showSprite: true,
-        showText: false,
+        showText: true,
         text: 'GROOT!',
         textPosition: 'center',
         textSize: 28,
         textBlink: false,
         playSound: false,                   // No sound for paddle powerups
         sound: null,
-        activateOn: 'paddle',
+        activateOn: 'screen',
         duration: 10000,
         score: 0,
+        canBreakStrongBricks: false,       // Paddle powerups cannot break strong bricks
     },
     small_paddle: {
         spriteKey: 'powerup_smallpaddle',
         showSprite: true,
-        showText: false,
+        showText: true,
         text: 'KLEIN!',
         textPosition: 'center',
         textSize: 28,
         textBlink: false,
         playSound: false,                   // No sound for paddle powerups
         sound: null,
-        activateOn: 'paddle',
+        activateOn: 'screen',
         duration: 10000,
         score: 0,
+        canBreakStrongBricks: false,       // Paddle powerups cannot break strong bricks
     },
     extra_life: {
         spriteKey: 'extra_life',
@@ -68,6 +72,7 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         activateOn: 'brick',
         duration: 0,
         score: 0,
+        canBreakStrongBricks: false,       // Extra life cannot break strong bricks
     },
     skull: {
         spriteKey: 'skull',
@@ -82,6 +87,7 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         activateOn: 'brick',
         duration: 0,
         score: 0,
+        canBreakStrongBricks: false,       // Skull cannot break strong bricks
     },
     coin_gold: {
         spriteKey: 'coin_gold',
@@ -96,6 +102,7 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         activateOn: 'paddle',
         duration: 0,
         score: 100,
+        canBreakStrongBricks: false,       // Coins cannot break strong bricks
     },
     coin_silver: {
         spriteKey: 'coin_silver',
@@ -110,6 +117,7 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         activateOn: 'paddle',
         duration: 0,
         score: 25,
+        canBreakStrongBricks: false,       // Coins cannot break strong bricks
     },
 };
 
@@ -120,6 +128,7 @@ export const BRICK_SCORE_CONFIG = {
     glass_destroyed: 20,
     sausage: 50,
     extra: 50,
+    strong: 30,  // Strong bricks give more points when destroyed
     default: 10
 };
 
@@ -128,8 +137,8 @@ export const POWERUPS_PER_LEVEL = {
     BRANNAS: 1,     // One brannas power-up per level
     EXTRA_LIFE: 1,  // One extra life power-up per level
     SKULL: 3,       // One skull power-up per level
-    COIN_GOLD: 10,   // Five gold coin power-ups per level
-    COIN_SILVER: 20,  // Ten silver coin power-ups per level
+    COIN_GOLD: 20,   // Five gold coin power-ups per level
+    COIN_SILVER: 40,  // Ten silver coin power-ups per level
     POWERUP_LARGEPADDLE: 3, // Three large paddle power-ups per level
     POWERUP_SMALLPADDLE: 3  // Three small paddle power-ups per level
 };

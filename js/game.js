@@ -7,7 +7,10 @@ import {
     LEVEL_SPEED_INCREASE, 
     SPEED_INCREASE_INTERVAL, 
     SPEED_INCREASE_FACTOR,
-    COMPONENT_SPEED
+    COMPONENT_SPEED,
+    getScreenRelativeSpeed,
+    BASE_INITIAL_SPEED_PERCENT,
+    BASE_MAX_SPEED_PERCENT
 } from './config.js';
 import { Level } from './level.js';
 import { GameOverManager } from './gameOverManager.js';
@@ -61,8 +64,11 @@ export class Game {
         this.gameContainer = new PIXI.Container();
         this.app.stage.addChild(this.gameContainer);
 
-       
-        // Create UI container
+        // Create game objects container (for background, bricks, paddle, ball)
+        this.objectsContainer = new PIXI.Container();
+        this.gameContainer.addChild(this.objectsContainer);
+        
+        // Create UI container (for score, lives, level) - add after objects so it renders on top
         this.uiContainer = new PIXI.Container();
         this.gameContainer.addChild(this.uiContainer);
         
@@ -96,26 +102,27 @@ export class Game {
         // Create game over manager
         this.gameOverManager = new GameOverManager(app);
         
-        // Create game objects container
-        this.objectsContainer = new PIXI.Container();
-        this.gameContainer.addChild(this.objectsContainer);
+        // Create power-up container
+        this.powerUpContainer = new PIXI.Container();
+        this.objectsContainer.addChild(this.powerUpContainer);
 
-         // Create power-up container
-         this.powerUpContainer = new PIXI.Container();
-         this.objectsContainer.addChild(this.powerUpContainer);
+        // Initialize power-ups array
+        this.activePowerUps = [];
 
-         // Initialize power-ups array
-         this.activePowerUps = [];
-
-         // Load power-up textures
-         PowerUp.loadTextures().then(() => {
-            // Power-ups loaded
-         });
-         
+        // Load power-up textures
+        PowerUp.loadTextures().then(() => {
+           // Power-ups loaded
+        });
+        
         // Initialize level instance
         this.levelInstance = new Level(app);
         this.objectsContainer.addChild(this.levelInstance.brickContainer);
         this.levelInstance.game = this;
+        
+        // Initialize level background
+        this.levelBackground = null;
+        this.levelBackgroundContainer = new PIXI.Container();
+        this.objectsContainer.addChildAt(this.levelBackgroundContainer, 0); // Add at bottom layer
         
         // Initialize paddle
         this.paddle = new Paddle(app);
@@ -140,17 +147,13 @@ export class Game {
 
     //Handle pointer move
     handlePointerMove(e) {
-        if (this.inputMode === 'waitForStart') {
-            // For eksempel: marker at spilleren er klar til å starte
-            this.handleGameStart(e);
-        } else if (this.inputMode === 'playing') {
-            // Flytt padel hvis ønskelig – eller kall paddle.handlePointerMove direkte:
+        if (this.inputMode === 'playing') {
+            // Move paddle if in playing mode
             if (this.paddle && this.paddle.handlePointerMove) {
                 this.paddle.handlePointerMove(e);
             }
-        } else if (this.inputMode === 'gameOver') {
-            // Kanskje ikke gjør noe – eller bruk som highscore-bla?
         }
+        // Removed the handleGameStart call from waitForStart mode to prevent auto-start
     }
 
     //Center paddle and place ball
@@ -222,7 +225,11 @@ export class Game {
         this.brannasActive = false;
         this.brannasEndTime = 0;
     
-        // 2. Reset UI
+        // 2. Reset ball speed (important: reset speed increases)
+        // When keeping score (level progression), preserve time-based increases
+        this.resetBallSpeed(!keepScore);
+    
+        // 3. Reset UI
         this.scoreText.text = `Score: ${this.score}`;
         this.livesText.text = `Lives: ${this.lives}`;
         this.levelText.text = `Level: ${this.level}`;
@@ -230,23 +237,26 @@ export class Game {
         this.livesText.visible = true;
         this.levelText.visible = true;
     
-        // 3. Reset paddle position
+        // 4. Reset paddle position
         if (this.paddle) {
             this.paddle.setStartingPosition();
         }
     
-        // 4. Load level
-        this.levelInstance.loadLevel(this.level).then(() => {
+        // 5. Load level
+        this.levelInstance.loadLevel(this.level).then(async () => {
+            // Load level background
+            await this.loadLevelBackground(this.level);
+            
             this.levelLoaded = true;
             this.loadingNextLevel = false;
     
-            // 5. Reset all balls and get new main ball
+            // 6. Reset all balls and get new main ball
             this.ball = Ball.resetAll(this.app, this, this.levelInstance);
             this.ball.placeOnPaddle(this.paddle);
     
             console.log('🆕 New ball placed after resetGameState');
     
-            // 6. Ready for input
+            // 7. Ready for input
             this.waitingForInput = true;
             this.inputMode = 'waitForStart';
     
@@ -341,8 +351,10 @@ export class Game {
         if (this.waitingForInput) {
             console.log('🎮 Game Start: Input received, ball will start moving');
             this.waitingForInput = false;
-            this.gameStarted = true;
             this.inputMode = 'playing'; // 🎮 Viktig!
+    
+            // Start the game (this sets up speed increase timer)
+            this.start();
     
             // Start ball
             const mainBall = Ball.balls.find(b => !b.isExtraBall);
@@ -524,11 +536,71 @@ export class Game {
         return await loadLevel(levelNum);
     }
     
+    async loadLevelBackground(levelNum) {
+        // Clear existing background
+        if (this.levelBackground) {
+            this.levelBackgroundContainer.removeChild(this.levelBackground);
+            this.levelBackground = null;
+        }
+        
+        // Try to load the level background
+        const imageExtensions = ['png', 'jpg', 'jpeg', 'gif', 'webp'];
+        let backgroundLoaded = false;
+        
+        for (const ext of imageExtensions) {
+            try {
+                const imagePath = `./assets/images/levels/level${levelNum}.${ext}`;
+                
+                // Create background sprite using PIXI's texture loading
+                const texture = PIXI.Texture.from(imagePath);
+                
+                // Wait for texture to load
+                await new Promise((resolve, reject) => {
+                    if (texture.baseTexture.valid) {
+                        resolve();
+                    } else {
+                        texture.baseTexture.once('loaded', resolve);
+                        texture.baseTexture.once('error', reject);
+                    }
+                });
+                
+                this.levelBackground = new PIXI.Sprite(texture);
+                
+                // Scale background to match screen dimensions exactly (like bricks do)
+                this.levelBackground.width = this.app.screen.width;
+                this.levelBackground.height = this.app.screen.height;
+                this.levelBackground.x = 0;
+                this.levelBackground.y = 0;
+                
+                this.levelBackgroundContainer.addChild(this.levelBackground);
+                backgroundLoaded = true;
+                console.log(`🎨 Level ${levelNum} background loaded: level${levelNum}.${ext}`);
+                break;
+                
+            } catch (error) {
+                // Continue to next extension
+                console.log(`🎨 Failed to load level${levelNum}.${ext}:`, error.message);
+                continue;
+            }
+        }
+        
+        // If no background found for this level, try level1 as fallback
+        if (!backgroundLoaded && levelNum !== 1) {
+            console.log(`🎨 Level ${levelNum} background not found, trying level1 as fallback`);
+            await this.loadLevelBackground(1);
+        } else if (!backgroundLoaded) {
+            console.log(`🎨 No background found for level ${levelNum}, using default background`);
+        }
+    }
+    
     start() {
         if (this.gameStarted) return;
         this.gameStarted = true;
         this.waitingForInput = false;
         console.log('🎮 Starting game...');
+        
+        // Start speed increase timer
+        this.lastSpeedIncreaseTime = Date.now();
         
         // Show UI elements
         if (this.scoreText) this.scoreText.visible = true;
@@ -641,6 +713,9 @@ export class Game {
         this.updateLives();
         this.updateLevel();
         
+        // Maintain ball speed (apply time-based increases)
+        this.maintainBallSpeed();
+        
         // Check for level completion
         if (this.checkLevelComplete()) {
             this.nextLevel();
@@ -705,6 +780,9 @@ export class Game {
     loseLife() {
         console.log('💔 LOSE LIFE - Starting life loss process');
         
+        // Reset speed increases (start fresh with new life)
+        this.resetBallSpeed(true);
+        
         // Clear ALL balls (extra balls + main ball)
         Ball.clearAll();
         
@@ -741,6 +819,33 @@ export class Game {
         
         // Use resetGameState with keepScore=true to preserve score
         this.resetGameState(true);
+        
+        // Apply level speed increase after reset
+        this.applyLevelSpeedIncrease();
+    }
+    
+    applyLevelSpeedIncrease() {
+        // Get the new level's speed settings
+        const speeds = this.getMaxSpeedForLevel(this.level);
+        
+        // Set the ball to the new level's initial speed
+        if (this.ball) {
+            this.ball.speedPercent = speeds.initial;
+            this.ball.speed = getScreenRelativeSpeed(this.ball.speedPercent, this.app);
+            
+            // Update ball velocity if it's moving
+            if (this.ball.isMoving) {
+                const angle = Math.atan2(this.ball.dy, this.ball.dx);
+                this.ball.dx = this.ball.speed * Math.cos(angle);
+                this.ball.dy = this.ball.speed * Math.sin(angle);
+            }
+        }
+        
+        console.log(`🎮 Level ${this.level} speed applied:`, {
+            initialSpeedPercent: speeds.initial,
+            maxSpeedPercent: speeds.max,
+            actualSpeed: this.ball?.speed
+        });
     }
     
     checkLevelComplete() {
@@ -774,21 +879,26 @@ export class Game {
         });
     }
 
-    resetBallSpeed() {
-        // Reset to base speed
-        this.initialSpeed = BASE_INITIAL_SPEED;
-        this.maxSpeed = BASE_MAX_SPEED;
-        this.componentSpeed = COMPONENT_SPEED;
+    resetBallSpeed(resetTimeBasedIncreases = true) {
+        // Reset to base speed using percentage-based system
+        this.initialSpeedPercent = BASE_INITIAL_SPEED_PERCENT;
+        this.maxSpeedPercent = BASE_MAX_SPEED_PERCENT;
         
-        // Reset speed timer and multiplier
-        this.lastSpeedIncreaseTime = null;
-        this.speedMultiplier = 1;
+        // Reset speed timer and multiplier only if requested
+        if (resetTimeBasedIncreases) {
+            this.lastSpeedIncreaseTime = null;
+            this.speedMultiplier = 1;
+        } else {
+            // If keeping time-based increases, update the timer to current time
+            // so the speed calculation is based on the current moment
+            this.lastSpeedIncreaseTime = Date.now();
+        }
     }
 
     getMaxSpeedForLevel(level) {
         return {
-            initial: BASE_INITIAL_SPEED,
-            max: BASE_MAX_SPEED * (1 + (level - 1) * LEVEL_SPEED_INCREASE)
+            initial: BASE_INITIAL_SPEED_PERCENT * (1 + (level - 1) * LEVEL_SPEED_INCREASE),
+            max: BASE_MAX_SPEED_PERCENT * (1 + (level - 1) * LEVEL_SPEED_INCREASE)
         };
     }
 
@@ -801,26 +911,59 @@ export class Game {
         const timeBasedMultiplier = this.lastSpeedIncreaseTime ? 
             Math.pow(SPEED_INCREASE_FACTOR, Math.floor((Date.now() - this.lastSpeedIncreaseTime) / SPEED_INCREASE_INTERVAL)) : 1;
         
-        // Get speeds for current level
+        // Get speeds for current level (now in percentages)
         const speeds = this.getMaxSpeedForLevel(this.level);
         
-        // Calculate target speed with time multiplier
-        const targetSpeed = speeds.initial * timeBasedMultiplier;
+        // Calculate target speed percentage with time multiplier
+        const targetSpeedPercent = speeds.initial * timeBasedMultiplier;
         
-        // Cap at maximum allowed speed for level
-        const finalTargetSpeed = Math.min(targetSpeed, speeds.max);
+        // Cap at maximum allowed speed percentage for level
+        const finalTargetSpeedPercent = Math.min(targetSpeedPercent, speeds.max);
+        
+        // Convert to actual pixels per frame
+        const finalTargetSpeed = getScreenRelativeSpeed(finalTargetSpeedPercent, this.app);
 
         const currentSpeed = Math.sqrt(this.ball.dx * this.ball.dx + this.ball.dy * this.ball.dy);
+        
+        // Debug logging every 5 seconds
+        const now = Date.now();
+        if (!this.lastSpeedDebugTime || now - this.lastSpeedDebugTime > 5000) {
+            console.log('🎮 Speed Debug:', {
+                gameStarted: this.gameStarted,
+                lastSpeedIncreaseTime: this.lastSpeedIncreaseTime,
+                timeSinceStart: this.lastSpeedIncreaseTime ? now - this.lastSpeedIncreaseTime : 'N/A',
+                timeBasedMultiplier: timeBasedMultiplier,
+                speeds: speeds,
+                targetSpeedPercent: targetSpeedPercent,
+                finalTargetSpeedPercent: finalTargetSpeedPercent,
+                finalTargetSpeed: finalTargetSpeed,
+                currentSpeed: currentSpeed,
+                ballSpeedPercent: this.ball.speedPercent,
+                ballSpeed: this.ball.speed
+            });
+            this.lastSpeedDebugTime = now;
+        }
         
         // Only adjust speed if difference is significant (more than 1%)
         if (Math.abs(currentSpeed - finalTargetSpeed) > finalTargetSpeed * 0.01) {
             const angle = Math.atan2(this.ball.dy, this.ball.dx);
             this.ball.dx = finalTargetSpeed * Math.cos(angle);
             this.ball.dy = finalTargetSpeed * Math.sin(angle);
+            
+            // Update ball's speed properties to keep them in sync
+            this.ball.speed = finalTargetSpeed;
+            this.ball.speedPercent = finalTargetSpeedPercent;
+            
+            console.log('🎮 Speed adjusted:', {
+                from: currentSpeed,
+                to: finalTargetSpeed,
+                multiplier: timeBasedMultiplier
+            });
         }
     }
 
-    setBallSpeed(speed) {
+    setBallSpeed(speedPercent) {
+        const speed = getScreenRelativeSpeed(speedPercent, this.app);
         const currentAngle = Math.atan2(this.ball.dy, this.ball.dx);
         this.ball.dx = speed * Math.cos(currentAngle);
         this.ball.dy = speed * Math.sin(currentAngle);
@@ -839,15 +982,49 @@ export class Game {
     }
 
     checkPowerUpCollision(powerUp, paddle) {
-        const powerUpBounds = powerUp.sprite.getBounds();
-        const paddleBounds = paddle.graphics.getBounds();
+        // Use actual paddle dimensions (consistent with ball collision detection)
+        const paddleTop = paddle.sprite.y - paddle.height / 2;
+        const paddleBottom = paddle.sprite.y + paddle.height / 2;
+        const paddleLeft = paddle.sprite.x - paddle.width / 2;
+        const paddleRight = paddle.sprite.x + paddle.width / 2;
+
+        // Use logical power-up bounds (since sprite has anchor at 0.5)
+        const powerUpSize = 30 * 0.3; // 30px * 0.3 scale = 9px
+        const powerUpTop = powerUp.sprite.y - powerUpSize / 2;
+        const powerUpBottom = powerUp.sprite.y + powerUpSize / 2;
+        const powerUpLeft = powerUp.sprite.x - powerUpSize / 2;
+        const powerUpRight = powerUp.sprite.x + powerUpSize / 2;
 
         const collision = (
-            powerUpBounds.x < paddleBounds.x + paddleBounds.width &&
-            powerUpBounds.x + powerUpBounds.width > paddleBounds.x &&
-            powerUpBounds.y < paddleBounds.y + paddleBounds.height &&
-            powerUpBounds.y + powerUpBounds.height > paddleBounds.y
+            powerUpLeft < paddleRight &&
+            powerUpRight > paddleLeft &&
+            powerUpTop < paddleBottom &&
+            powerUpBottom > paddleTop
         );
+
+        // Debug collision detection
+        if (powerUp.sprite.y < paddleBottom + 50 && powerUp.sprite.y > paddleTop - 50) {
+            console.log('🎯 Power-up collision debug:', {
+                powerUpType: powerUp.type,
+                powerUpLogicalBounds: {
+                    x: powerUp.sprite.x,
+                    y: powerUp.sprite.y,
+                    size: powerUpSize,
+                    top: powerUpTop,
+                    bottom: powerUpBottom,
+                    left: powerUpLeft,
+                    right: powerUpRight
+                },
+                paddleBounds: {
+                    top: paddleTop,
+                    bottom: paddleBottom,
+                    left: paddleLeft,
+                    right: paddleRight
+                },
+                collision: collision,
+                distance: paddleTop - powerUpBottom
+            });
+        }
 
         return collision;
     }

@@ -1,4 +1,4 @@
-import { BASE_INITIAL_SPEED, BASE_MAX_SPEED, LEVEL_SPEED_INCREASE, COMPONENT_SPEED, BALL_RADIUS } from './config.js';
+import { BASE_INITIAL_SPEED, BASE_MAX_SPEED, LEVEL_SPEED_INCREASE, COMPONENT_SPEED, BALL_RADIUS, getScreenRelativeSpeed, BASE_INITIAL_SPEED_PERCENT, BASE_MAX_SPEED_PERCENT } from './config.js';
 import { playSoundByName } from './audio.js';
 import { BallTrail } from './ballTrail.js';
 import { ASSETS, loadImage } from './assets.js';
@@ -44,7 +44,8 @@ export class Ball {
     constructor(app, isExtraBall = false) {
         this.app = app;
         this.radius = BALL_RADIUS;
-        this.speed = BASE_INITIAL_SPEED;
+        this.speedPercent = BASE_INITIAL_SPEED_PERCENT; // Store percentage speed
+        this.speed = getScreenRelativeSpeed(this.speedPercent, this.app); // Convert to pixels per frame
         this.dx = 0; // Start with no movement
         this.dy = 0;
         this.isMoving = false;
@@ -125,9 +126,10 @@ export class Ball {
         
         console.log("🚀 Ball start triggered", { isMoving: this.isMoving, isExtraBall: this.isExtraBall });
         
-        this.speed = BASE_INITIAL_SPEED;
+        this.speedPercent = BASE_INITIAL_SPEED_PERCENT;
+        this.speed = getScreenRelativeSpeed(this.speedPercent, this.app);
 
-        console.log('🎮 Ball START: Resetting speed to', this.speed); // debug
+        console.log('🎮 Ball START: Resetting speed to', this.speed, 'pixels/frame (', this.speedPercent * 100, '% of screen width/second)'); // debug
 
         // Set initial velocity
         this.dx = this.speed * Math.cos(Math.PI / 4); // 45 degrees
@@ -210,9 +212,17 @@ export class Ball {
             // Calculate hit position relative to paddle center
             const hitPoint = (this.graphics.x - paddle.sprite.x) / (paddle.width / 2);
             
-            // Set new direction
-            this.dx = hitPoint * this.speed;
+            // Add paddle velocity influence to the ball direction
+            const paddleVelocityInfluence = paddle.velocityX * 0.5; // Adjust this multiplier as needed
+            
+            // Set new direction with paddle movement influence
+            this.dx = hitPoint * this.speed + paddleVelocityInfluence;
             this.dy = -Math.abs(this.dy);
+            
+            // Normalize speed to maintain consistent ball velocity
+            const currentSpeed = Math.sqrt(this.dx * this.dx + this.dy * this.dy);
+            this.dx = (this.dx / currentSpeed) * this.speed;
+            this.dy = (this.dy / currentSpeed) * this.speed;
             
             // Ensure ball is above paddle
             this.graphics.y = paddleTop - this.radius;
@@ -254,7 +264,8 @@ export class Ball {
         this.isMoving = false;
         this.dx = 0;
         this.dy = 0;
-        this.speed = BASE_INITIAL_SPEED;
+        this.speedPercent = BASE_INITIAL_SPEED_PERCENT;
+        this.speed = getScreenRelativeSpeed(this.speedPercent, this.app);
     
         if (this.trail) {
             this.trail.clear();
@@ -328,9 +339,10 @@ export class Ball {
     }
 
     increaseSpeed(level) {
-        const maxSpeed = BASE_MAX_SPEED * (1 + level * LEVEL_SPEED_INCREASE);
-        this.speed = Math.min(this.speed * 1.1, maxSpeed);
-        console.log('🎮 Speed increased to', this.speed); // debug
+        const maxSpeedPercent = BASE_MAX_SPEED_PERCENT * (1 + level * LEVEL_SPEED_INCREASE);
+        this.speedPercent = Math.min(this.speedPercent * 1.1, maxSpeedPercent);
+        this.speed = getScreenRelativeSpeed(this.speedPercent, this.app);
+        console.log('🎮 Speed increased to', this.speed, 'pixels/frame (', this.speedPercent * 100, '% of screen width/second)'); // debug
         const angle = Math.atan2(this.dy, this.dx);
         this.dx = this.speed * Math.cos(angle);
         this.dy = this.speed * Math.sin(angle);
@@ -419,6 +431,22 @@ export class Ball {
                             this.game.addScore(BRICK_SCORE_CONFIG.glass_first_hit || 5);
                         }
                     }
+                } else if (brick.brickInfo.type === 'strong') {
+                    // Strong bricks are unbreakable by normal hits
+                    // They can only be destroyed by specific powerups like brannas
+                    console.log('💪 Strong brick hit - unbreakable by normal hits');
+                    
+                    // Check if brannas effect is active
+                    if (this.game && this.game.isBrannasActive()) {
+                        console.log('🔥 Brannas active - destroying strong brick!');
+                        this.level.handleBrickDestroyed(c, r);
+                        if (this.game) {
+                            this.game.addScore(BRICK_SCORE_CONFIG.strong || 30);
+                        }
+                        return true; // Allow destruction
+                    }
+                    
+                    return false; // Don't destroy the brick
                 } else if (brick.brickInfo.type === 'sausage') {
                     // Create falling sausage power-up
                     if (this.game) {
@@ -567,7 +595,8 @@ export class Ball {
         // Create new main ball
         const mainBall = new Ball(app, false);
         Ball.balls.push(mainBall);
-        mainBall.speed = BASE_INITIAL_SPEED;
+        mainBall.speedPercent = BASE_INITIAL_SPEED_PERCENT;
+        mainBall.speed = getScreenRelativeSpeed(mainBall.speedPercent, app);
         mainBall.dx = 0;
         mainBall.dy = 0;
         mainBall.isMoving = false;

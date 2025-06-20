@@ -4,11 +4,24 @@ export const GAME_VERSION = '0.1.0';
 // Test mode flag
 export const TEST_MODE = false;
 
-// Ball settings
-export const BASE_INITIAL_SPEED = 6;
-export const BASE_MAX_SPEED = 18;
-export const LEVEL_SPEED_INCREASE = 0.15;
+// Ball settings - now in percentage of screen width per second
+export const BASE_INITIAL_SPEED_PERCENT = 0.4; // 80% of screen width per second
+export const BASE_MAX_SPEED_PERCENT = 2; // 200% of screen width per second
+export const LEVEL_SPEED_INCREASE = 0.2; // 20% increase per level
 export const BALL_RADIUS = window.innerWidth * 0.02; // 1% of screen width
+
+// Function to convert percentage speed to actual pixels per frame
+export function getScreenRelativeSpeed(percentSpeed, app) {
+    const screenWidth = app.screen.width;
+    const targetPixelsPerSecond = screenWidth * percentSpeed;
+    const targetPixelsPerFrame = targetPixelsPerSecond / 60; // Assuming 60 FPS
+    return targetPixelsPerFrame;
+}
+
+// Legacy speed constants for backward compatibility (will be converted)
+export const BASE_INITIAL_SPEED = 8;
+export const BASE_MAX_SPEED = 24;
+export const COMPONENT_SPEED = BASE_INITIAL_SPEED / Math.sqrt(2);
 
 // Paddle settings
 export const PADDLE_WIDTH = window.innerWidth * 0.2; // 20% of screen width
@@ -31,7 +44,6 @@ export const INITIAL_LIVES = 3;
 export const POINTS_PER_BRICK = 10;
 
 // Speed-related constants
-export const COMPONENT_SPEED = BASE_INITIAL_SPEED / Math.sqrt(2);
 export const SPEED_INCREASE_INTERVAL = 10000; // Every 10 seconds
 export const SPEED_INCREASE_FACTOR = 1.1; // 10% increase
 

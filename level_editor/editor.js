@@ -2,8 +2,8 @@ const canvas = document.getElementById('editor-canvas');
 const ctx = canvas.getContext('2d');
 
 // Brettoppsett
-const rows = 9;
-const cols = 15;
+let rows = 15;
+let cols = 15;
 const brickWidth = 60;
 const brickHeight = 30;
 const brickPadding = 6;
@@ -15,10 +15,10 @@ const totalBricksHeight = rows * brickHeight + (rows - 1) * brickPadding + offse
 
 canvas.width = totalBricksWidth + 40; // 20px margin på hver side
 canvas.height = totalBricksHeight;
-const offsetLeft = (canvas.width - totalBricksWidth) / 2;
+let offsetLeft = (canvas.width - totalBricksWidth) / 2;
 
 // Mulige typer
-const BRICK_TYPES = ["normal", "special", "sausage", "extra", "glass"];
+const BRICK_TYPES = ["normal", "special", "sausage", "extra", "glass", "strong"];
 
 // Brettdata
 let bricks = [];
@@ -46,6 +46,7 @@ function drawBricks() {
       if (brick.type === "sausage") color = "gold";
       if (brick.type === "extra") color = "#0af";
       if (brick.type === "glass") color = "#87CEEB";
+      if (brick.type === "strong") color = "#8B4513";
       ctx.fillStyle = color;
       ctx.fillRect(
         offsetLeft + c * (brickWidth + brickPadding),
@@ -103,6 +104,10 @@ canvas.addEventListener('click', function(e) {
           brick.strength = 1;
         } else if (type === "glass") {
           brick.strength = 1;
+          brick.bonusScore = false;
+          brick.extraBall = false;
+        } else if (type === "strong") {
+          brick.strength = 2;
           brick.bonusScore = false;
           brick.extraBall = false;
         }
@@ -166,22 +171,72 @@ document.getElementById('level-file').addEventListener('change', function(e) {
   reader.onload = function(evt) {
     try {
       const data = JSON.parse(evt.target.result);
-      // Støtter både nytt og gammelt format
+      
+      // Detect array size from loaded data
       let loadedBricks = data.bricks || data;
+      const detectedRows = loadedBricks.length;
+      const detectedCols = loadedBricks[0] ? loadedBricks[0].length : 15;
+      
+      console.log(`Loaded level size: ${detectedRows}x${detectedCols}, upgrading to 15x15...`);
+      
+      // Always upgrade to 15x15
+      rows = 15;
+      cols = 15;
+      
+      // Recalculate canvas dimensions for 15x15
+      const totalBricksWidth = cols * brickWidth + (cols - 1) * brickPadding;
+      const totalBricksHeight = rows * brickHeight + (rows - 1) * brickPadding + offsetTop + 20;
+      
+      canvas.width = totalBricksWidth + 40;
+      canvas.height = totalBricksHeight;
+      
+      // Update offset
+      offsetLeft = (canvas.width - totalBricksWidth) / 2;
+      
+      // Reinitialize bricks array with 15x15 size
+      initBricks();
+      
+      // Load bricks data and upgrade to 15x15
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
-          if (loadedBricks[r] && loadedBricks[r][c]) {
-            bricks[r][c] = { ...bricks[r][c], ...loadedBricks[r][c] };
+          if (r < detectedRows && c < detectedCols && loadedBricks[r] && loadedBricks[r][c]) {
+            // Copy existing brick data
+            const loadedBrick = loadedBricks[r][c];
+            bricks[r][c] = {
+              type: loadedBrick.type || "normal",
+              destroyed: loadedBrick.destroyed || false,
+              strength: loadedBrick.strength || 1,
+              bonusScore: loadedBrick.bonusScore || false,
+              extraBall: loadedBrick.extraBall || false,
+              special: loadedBrick.special || false,
+              effect: loadedBrick.effect || null
+            };
+          } else {
+            // Fill expanded areas with normal bricks
+            bricks[r][c] = {
+              type: "normal",
+              destroyed: false,
+              strength: 1,
+              bonusScore: false,
+              extraBall: false,
+              special: false,
+              effect: null
+            };
           }
         }
       }
-      // Sett bakgrunnsbilde hvis feltet finnes
+      
+      // Set background image if field exists
       if (data.background) {
         document.getElementById('bg-url').value = data.background;
       }
+      
       drawBricks();
+      console.log(`Successfully upgraded level to 15x15. Original: ${detectedRows}x${detectedCols}`);
+      
     } catch (err) {
       alert("Kunne ikke laste level: " + err.message);
+      console.error("Error loading level:", err);
     }
   };
   reader.readAsText(file);

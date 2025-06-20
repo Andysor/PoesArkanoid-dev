@@ -5,7 +5,7 @@ import { POWERUPS_PER_LEVEL } from './powerupConfig.js';
 export class Level {
     constructor(app) {
         this.app = app;
-        this.brickRowCount = 9;
+        this.brickRowCount = 15; // Default to 15x15
         this.brickColumnCount = 15;
         
         // Calculate brick dimensions
@@ -29,6 +29,31 @@ export class Level {
         this.bricks = new Array(this.brickColumnCount);
         for (let c = 0; c < this.brickColumnCount; c++) {
             this.bricks[c] = new Array(this.brickRowCount).fill(null);
+        }
+    }
+    
+    adjustGridSize(rows, cols) {
+        // Only adjust if the size is different
+        if (rows !== this.brickRowCount || cols !== this.brickColumnCount) {
+            console.log(`Adjusting grid size from ${this.brickRowCount}x${this.brickColumnCount} to ${rows}x${cols}`);
+            
+            this.brickRowCount = rows;
+            this.brickColumnCount = cols;
+            
+            // Recalculate brick dimensions for new grid size
+            const totalBrickAreaWidth = this.app.screen.width * 0.9;
+            this.brickWidth = (totalBrickAreaWidth - (this.brickPadding * (this.brickColumnCount - 1))) / this.brickColumnCount;
+            this.brickHeight = this.brickWidth;
+            
+            // Recalculate offsets
+            this.brickOffsetLeft = (this.app.screen.width - totalBrickAreaWidth) / 2;
+            this.brickOffsetTop = this.app.screen.height * 0.05;
+            
+            // Reinitialize brick array with new size
+            this.bricks = new Array(this.brickColumnCount);
+            for (let c = 0; c < this.brickColumnCount; c++) {
+                this.bricks[c] = new Array(this.brickRowCount).fill(null);
+            }
         }
     }
     
@@ -117,7 +142,7 @@ export class Level {
             this.brickContainer.removeChild(this.brickContainer.children[0]);
         }
         
-        // Reset the brick array
+        // Reset the brick array with current grid size
         for (let c = 0; c < this.brickColumnCount; c++) {
             this.bricks[c] = new Array(this.brickRowCount).fill(null);
         }
@@ -129,10 +154,21 @@ export class Level {
         if (levelData.bricks) {
             // New format from level editor
             bricksData = levelData.bricks;
+            console.log('Loading level with new format (object with bricks property)');
         } else {
             // Old format (direct 2D array)
             bricksData = levelData;
+            console.log('Loading level with old format (direct 2D array)');
         }
+
+        // Detect level size from loaded data
+        const detectedRows = bricksData.length;
+        const detectedCols = bricksData[0] ? bricksData[0].length : 15;
+        
+        console.log(`Detected level size: ${detectedRows}x${detectedCols}`);
+        
+        // Adjust grid size if needed
+        this.adjustGridSize(detectedRows, detectedCols);
 
         // Ensure container is empty before creating new bricks
         while (this.brickContainer.children.length > 0) {
@@ -141,6 +177,7 @@ export class Level {
 
         const normalBricks = [];
         const glassBricks = [];
+        const strongBricks = [];
 
         // Create bricks based on level data
         for (let r = 0; r < bricksData.length; r++) {
@@ -166,10 +203,14 @@ export class Level {
                         normalBricks.push(brick);
                     } else if (type === 'glass') {
                         glassBricks.push(brick);
+                    } else if (type === 'strong') {
+                        strongBricks.push(brick);
                     }
                 }
             }
         }
+
+        console.log(`Created ${normalBricks.length} normal bricks, ${glassBricks.length} glass bricks, and ${strongBricks.length} strong bricks`);
 
         // Fordel powerups i tilfeldige "normal"-brikker og glassbrikker
         const weightedBricks = [];
@@ -182,6 +223,7 @@ export class Level {
             weightedBricks.push(brick);
             weightedBricks.push(brick);
         });
+        // Note: Strong bricks are not included in powerup distribution as they are unbreakable
 
         const shuffled = weightedBricks.sort(() => Math.random() - 0.5);
         let index = 0;
@@ -195,6 +237,8 @@ export class Level {
                 targetBrick.brickInfo.powerUpType = type;
             }
         }
+        
+        console.log(`Level loaded successfully with grid size: ${this.brickRowCount}x${this.brickColumnCount}`);
     }
 
     createDefaultLevel() {
@@ -213,12 +257,19 @@ export class Level {
         let allDestroyed = true;
         let activeBricks = 0;
         let destroyedBricks = 0;
+        let strongBricks = 0;
 
         // First pass: count bricks and mark destroyed ones
         for (let c = 0; c < this.brickColumnCount; c++) {
             for (let r = 0; r < this.brickRowCount; r++) {
                 const brick = this.bricks[c]?.[r];
                 if (brick) {
+                    // Skip strong bricks in level completion check - they don't block progression
+                    if (brick.brickInfo && brick.brickInfo.type === 'strong') {
+                        strongBricks++;
+                        continue;
+                    }
+                    
                     if (brick.status === 1) {
                         allDestroyed = false;
                         activeBricks++;
@@ -228,6 +279,11 @@ export class Level {
                     }
                 }
             }
+        }
+
+        // Log level completion status
+        if (strongBricks > 0) {
+            console.log(`🏗️ Level completion check: ${activeBricks} active bricks, ${strongBricks} strong bricks (excluded from completion)`);
         }
 
         // Force stage update if there were destroyed bricks

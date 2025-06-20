@@ -1,4 +1,5 @@
 import { ASSETS } from './assets.js';
+import { getPowerUpConfig } from './powerupConfig.js';
 
 export class Brick {
     constructor(x, y, width, height, type = 'normal') {
@@ -33,7 +34,8 @@ export class Brick {
         switch (this.type) {
             case 'special': return ASSETS.images.bricks.brick_special;
             case 'sausage': return ASSETS.images.bricks.brick_sausage;
-            case 'extra': return ASSETS.images.bricks.brick_extra;
+            case 'extra': return ASSETS.images.bricks.brick_extra; 
+            case 'strong': return ASSETS.images.bricks.brick_strong;
             case 'glass': 
                 return this.isBroken ? ASSETS.images.bricks.brick_glass_broken : ASSETS.images.bricks.brick_glass;
             default: return ASSETS.images.bricks.brick_normal;
@@ -77,7 +79,10 @@ export class Brick {
     }
 
     hit() {
-        if (this.type === 'glass') {
+        if (this.type === 'strong') {
+            // Strong bricks are unbreakable by normal hits
+            return false; // Don't destroy the brick
+        } else if (this.type === 'glass') {
             this.hitCount++;
             
             if (this.hitCount === 1) {
@@ -92,6 +97,20 @@ export class Brick {
             }
         }
         return true; // Default behavior for other brick types
+    }
+
+    // Method to handle strong brick destruction by powerups
+    hitByPowerup(powerupType) {
+        if (this.type === 'strong') {
+            // Import the powerup config to check if this powerup can break strong bricks
+            const config = getPowerUpConfig(powerupType);
+            if (config && config.canBreakStrongBricks) {
+                // This powerup can break strong bricks
+                return true; // Allow destruction
+            }
+            return false; // Default: don't destroy strong bricks
+        }
+        return this.hit(); // Use normal hit logic for other brick types
     }
 
     createBrokenGlassEffect() {

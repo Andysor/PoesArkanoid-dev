@@ -168,7 +168,7 @@ export class GameOverManager {
         const startX = 20;
         const charX = startX + 30;
         const nameX = charX + 50;
-        const scoreX = nameX + 120;
+        const scoreX = nameX + 100;
         const levelX = scoreX + 80;
         const dateX = levelX + 80;
         

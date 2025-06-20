@@ -28,6 +28,7 @@ export const ASSETS = {
             brick_extra: './assets/images/bricks/brick_extra.png',
             brick_glass: './assets/images/bricks/brick_glass.png',
             brick_glass_broken: './assets/images/bricks/brick_glass_broken.png',
+            brick_strong: './assets/images/bricks/brick_strong.png',
             
         },
         levels: (name, ext = '.png') => `./assets/images/levels/${name}${ext}`
