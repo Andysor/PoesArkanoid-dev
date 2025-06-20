@@ -434,7 +434,11 @@ export class Ball {
                 } else if (brick.brickInfo.type === 'strong') {
                     // Strong bricks are unbreakable by normal hits
                     // They can only be destroyed by specific powerups like brannas
-                    console.log('💪 Strong brick hit - unbreakable by normal hits');
+                    console.log('💪 Strong brick hit - unbreakable by normal hits', {
+                        brickPosition: { x: brick.x, y: brick.y },
+                        ballPosition: { x: this.graphics.x, y: this.graphics.y },
+                        brannasActive: this.game ? this.game.isBrannasActive() : false
+                    });
                     
                     // Check if brannas effect is active
                     if (this.game && this.game.isBrannasActive()) {
@@ -446,7 +450,9 @@ export class Ball {
                         return true; // Allow destruction
                     }
                     
-                    return false; // Don't destroy the brick
+                    // Ball bounces off strong brick but doesn't destroy it
+                    console.log('💪 Strong brick collision - ball bouncing off');
+                    return true; // Return true to indicate collision occurred
                 } else if (brick.brickInfo.type === 'sausage') {
                     // Create falling sausage power-up
                     if (this.game) {
@@ -548,6 +554,11 @@ export class Ball {
         if (mainBall) {
             extraBall.level = mainBall.level;
             extraBall.game = mainBall.game;
+            
+            // Trigger powerup effects for extra ball creation
+            if (extraBall.game && extraBall.game.powerupEffects) {
+                extraBall.game.powerupEffects.triggerPowerupEffect('extraball', x, y);
+            }
         } else {
             extraBall.level = null;
             extraBall.game = null;

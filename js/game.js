@@ -19,6 +19,7 @@ import { Paddle } from './paddle.js';
 import { PowerUp } from './powerup.js';
 import { forceAudioUnlock, playSoundByName } from './audio.js';
 import { getPowerUpConfig } from './powerupConfig.js';
+import { PowerupEffects } from './powerupEffects.js';
 
 export class Game {
     constructor(app) {
@@ -108,6 +109,9 @@ export class Game {
 
         // Initialize power-ups array
         this.activePowerUps = [];
+
+        // Initialize powerup effects system
+        this.powerupEffects = new PowerupEffects(app);
 
         // Load power-up textures
         PowerUp.loadTextures().then(() => {
@@ -209,57 +213,101 @@ export class Game {
 
     //Reset game state
     resetGameState(keepScore = false) {
-        console.log('🎮 Resetting game state...');
-        
-        // 1. Reset state
-        if (!keepScore) this.score = 0;
-        this.lives = 3;
-        if (!keepScore) this.level = 1;
+        // Reset game state
         this.gameStarted = false;
+        this.readyToStart = false;
         this.gameOver = false;
-        this.waitingForInput = false;
         this.showHighscores = false;
-        this.extraBalls = [];
         this.levelLoaded = false;
-        this.loadingNextLevel = true;
+        this.loadingNextLevel = false;
+        this.characterChosen = false;
+        this.waitingForInput = true;
+        this.inputMode = 'waitForStart';
+        
+        // Clear powerup effects
+        if (this.powerupEffects) {
+            this.powerupEffects.clearAllEffects();
+        }
+        
+        // Reset brannas effect
         this.brannasActive = false;
         this.brannasEndTime = 0;
-    
-        // 2. Reset ball speed (important: reset speed increases)
-        // When keeping score (level progression), preserve time-based increases
-        this.resetBallSpeed(!keepScore);
-    
-        // 3. Reset UI
-        this.scoreText.text = `Score: ${this.score}`;
-        this.livesText.text = `Lives: ${this.lives}`;
-        this.levelText.text = `Level: ${this.level}`;
+        
+        // Reset score if not keeping it
+        if (!keepScore) {
+            this.score = 0;
+        }
+        
+        // Reset lives
+        this.lives = 3;
+        
+        // Reset level if not keeping score (new game)
+        if (!keepScore) {
+            this.level = 1;
+        }
+        
+        // Reset ball speed
+        this.resetBallSpeed(true);
+        
+        // Clear all balls
+        Ball.clearAll();
+        
+        // Clear power-ups
+        if (this.activePowerUps) {
+            this.activePowerUps.forEach(powerUp => {
+                if (powerUp && powerUp.deactivate) {
+                    powerUp.deactivate();
+                }
+            });
+            this.activePowerUps = [];
+        }
+        
+        // Clear falling texts
+        this.fallingTexts = [];
+        
+        // Reset paddle
+        if (this.paddle) {
+            this.paddle.reset();
+        }
+        
+        // Clear level
+        if (this.levelInstance) {
+            this.levelInstance.clearBricks();
+        }
+        
+        // Clear background
+        if (this.levelBackgroundContainer) {
+            this.levelBackgroundContainer.removeChildren();
+        }
+        
+        // Show UI elements
         this.scoreText.visible = true;
         this.livesText.visible = true;
         this.levelText.visible = true;
-    
-        // 4. Reset paddle position
-        if (this.paddle) {
-            this.paddle.setStartingPosition();
-        }
-    
-        // 5. Load level
+        
+        // Update UI
+        this.updateScore();
+        this.updateLives();
+        this.updateLevel();
+        
+        // Load level and initialize game
         this.levelInstance.loadLevel(this.level).then(async () => {
             // Load level background
             await this.loadLevelBackground(this.level);
             
             this.levelLoaded = true;
             this.loadingNextLevel = false;
-    
-            // 6. Reset all balls and get new main ball
+
+            // Create new main ball
             this.ball = Ball.resetAll(this.app, this, this.levelInstance);
             this.ball.placeOnPaddle(this.paddle);
-    
+
             console.log('🆕 New ball placed after resetGameState');
-    
-            // 7. Ready for input
+            
+            // Ready for input
             this.waitingForInput = true;
             this.inputMode = 'waitForStart';
-    
+
             // Ensure we're listening for input
             this.app.stage.off('pointerdown', this.boundHandleGameStart);
             this.app.stage.on('pointerdown', this.boundHandleGameStart);
@@ -744,6 +792,11 @@ export class Game {
         if (this.brannasActive && Date.now() > this.brannasEndTime) {
             this.brannasActive = false;
         }
+        
+        // Update powerup effects
+        if (this.powerupEffects) {
+            this.powerupEffects.update();
+        }
     }
     
     updateScore() {
@@ -1034,6 +1087,11 @@ export class Game {
         
         // Play sound using the new configuration-based system
         playSoundByName(powerUp.type);
+        
+        // Trigger powerup effects
+        if (this.powerupEffects) {
+            this.powerupEffects.triggerPowerupEffect(powerUp.type, powerUp.sprite.x, powerUp.sprite.y);
+        }
         
         // Handle powerup effects
         switch(powerUp.type.toLowerCase()) {
