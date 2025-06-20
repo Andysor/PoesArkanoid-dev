@@ -851,9 +851,8 @@ export class Game {
     checkLevelComplete() {
         if (!this.levelInstance) return false;
         
-        // Check if there are any remaining bricks
-        const remainingBricks = this.levelInstance.bricks.flat().filter(brick => brick !== null).length;
-        return remainingBricks === 0;
+        // Use the level's update method which properly excludes strong bricks
+        return this.levelInstance.update();
     }
     
     showGameOver() {
