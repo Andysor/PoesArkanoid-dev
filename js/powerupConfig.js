@@ -97,7 +97,7 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         textPosition: 'paddle',
         textSize: 28,
         textBlink: false,
-        playSound: true,                   // No sound for coin powerups
+        playSound: true,                   
         sound: 'coin_gold',
         activateOn: 'paddle',
         duration: 0,
@@ -112,7 +112,7 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         textPosition: 'paddle',
         textSize: 28,
         textBlink: false,
-        playSound: true,                   // No sound for coin powerups
+        playSound: true,                   
         sound: 'coin_silver',
         activateOn: 'paddle',
         duration: 0,
@@ -142,6 +142,125 @@ export const POWERUPS_PER_LEVEL = {
     POWERUP_LARGEPADDLE: 3, // Three large paddle power-ups per level
     POWERUP_SMALLPADDLE: 3  // Three small paddle power-ups per level
 };
+
+// Smart powerup distribution configuration
+export const POWERUP_DISTRIBUTION_CONFIG = {
+    // Maximum percentage of bricks that can have powerups
+    MAX_POWERUP_PERCENTAGE: 0.4, // 40% of bricks can have powerups
+    
+    // Minimum powerups to place (even in tiny levels)
+    MIN_POWERUPS: 1,
+    
+    // Powerup distribution ratios (percentages of max powerups)
+    RATIOS: {
+        BRANNAS: 0.03,        // 3% - rare
+        EXTRA_LIFE: 0.01,     // 1% - rare
+        SKULL: 0.03,          // 3% - uncommon
+        COIN_GOLD: 0.1,      // 10% - common
+        COIN_SILVER: 0.2,    // 20% - common
+        POWERUP_LARGEPADDLE: 0.05, // 5% - rare
+        POWERUP_SMALLPADDLE: 0.05  // 5% - rare
+    },
+    
+    // Fallback powerup type if no powerups are placed due to rounding
+    FALLBACK_POWERUP: 'COIN_SILVER'
+};
+
+// Smart powerup distribution function
+export function distributePowerups(normalBricks, glassBricks) {
+    // Create weighted brick array for powerup distribution
+    const weightedBricks = [];
+    normalBricks.forEach(brick => {
+        weightedBricks.push(brick); // Normal weight
+    });
+    glassBricks.forEach(brick => {
+        // Add each glass brick 3 times (3x weight)
+        weightedBricks.push(brick);
+        weightedBricks.push(brick);
+        weightedBricks.push(brick);
+    });
+
+    if (weightedBricks.length === 0) {
+        console.log('No bricks available for powerup distribution');
+        return;
+    }
+
+    // Shuffle the weighted bricks
+    const shuffled = weightedBricks.sort(() => Math.random() - 0.5);
+    
+    // Calculate how many powerups we can reasonably place
+    const totalBricks = weightedBricks.length;
+    const maxPowerups = Math.max(
+        POWERUP_DISTRIBUTION_CONFIG.MIN_POWERUPS, 
+        Math.min(totalBricks, Math.floor(totalBricks * POWERUP_DISTRIBUTION_CONFIG.MAX_POWERUP_PERCENTAGE))
+    );
+    
+    console.log(`Distributing powerups: ${totalBricks} weighted bricks available, max ${maxPowerups} powerups`);
+
+    let powerupIndex = 0;
+    let totalPlaced = 0;
+    const powerupComposition = {}; // Track what powerups were placed
+    
+    // Distribute powerups based on ratios
+    for (const [type, ratio] of Object.entries(POWERUP_DISTRIBUTION_CONFIG.RATIOS)) {
+        const count = Math.max(0, Math.floor(maxPowerups * ratio));
+        
+        if (count > 0) {
+            console.log(`Placing ${count} ${type} powerups`);
+            powerupComposition[type] = count;
+            
+            for (let i = 0; i < count && powerupIndex < shuffled.length; i++, powerupIndex++) {
+                const targetBrick = shuffled[powerupIndex];
+                if (!targetBrick.brickInfo) {
+                    targetBrick.brickInfo = {};
+                }
+                targetBrick.brickInfo.powerUpType = type;
+                totalPlaced++;
+            }
+        } else {
+            powerupComposition[type] = 0;
+        }
+    }
+
+    // If no powerups were placed due to rounding, place at least one fallback powerup
+    if (totalPlaced === 0 && shuffled.length > 0) {
+        console.log(`No powerups placed due to rounding, placing at least one ${POWERUP_DISTRIBUTION_CONFIG.FALLBACK_POWERUP}`);
+        const targetBrick = shuffled[0];
+        if (!targetBrick.brickInfo) {
+            targetBrick.brickInfo = {};
+        }
+        targetBrick.brickInfo.powerUpType = POWERUP_DISTRIBUTION_CONFIG.FALLBACK_POWERUP;
+        totalPlaced = 1;
+        powerupComposition[POWERUP_DISTRIBUTION_CONFIG.FALLBACK_POWERUP] = 1;
+    }
+
+    // Log the powerup composition breakdown
+    console.log('🎯 LEVEL POWERUP COMPOSITION:');
+    console.log('═'.repeat(50));
+    console.log(`📊 Total Powerups: ${totalPlaced} / ${maxPowerups} maximum`);
+    console.log(`🧱 Available Bricks: ${totalBricks} (${normalBricks.length} normal, ${glassBricks.length} glass)`);
+    console.log('─'.repeat(50));
+    
+    // Sort powerups by count (highest first)
+    const sortedPowerups = Object.entries(powerupComposition)
+        .sort(([,a], [,b]) => b - a)
+        .filter(([,count]) => count > 0);
+    
+    if (sortedPowerups.length === 0) {
+        console.log('❌ No powerups placed');
+    } else {
+        sortedPowerups.forEach(([type, count]) => {
+            const percentage = ((count / totalPlaced) * 100).toFixed(1);
+            const ratio = POWERUP_DISTRIBUTION_CONFIG.RATIOS[type];
+            const ratioPercent = (ratio * 100).toFixed(1);
+            console.log(`🎁 ${type.padEnd(20)}: ${count.toString().padStart(2)} (${percentage}% of placed, ${ratioPercent}% target)`);
+        });
+    }
+    
+    console.log('═'.repeat(50));
+
+    console.log(`Total powerups placed: ${totalPlaced} out of ${maxPowerups} maximum`);
+}
 
 // Game sounds that aren't powerups but need sound pools
 export const GAME_SOUNDS_CONFIG = {

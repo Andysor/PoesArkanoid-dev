@@ -4,14 +4,18 @@ const ctx = canvas.getContext('2d');
 // Brettoppsett
 let rows = 15;
 let cols = 15;
-const brickWidth = 60;
-const brickHeight = 30;
-const brickPadding = 6;
+const brickWidth = 50;
+const brickHeight = 50;
+const brickPadding = 4;
 const offsetTop = 60;
 
 // Track last imported file directory
 let lastImportedDirectory = null;
 let lastImportedFilename = null;
+
+// Painting state
+let isPainting = false;
+let lastPaintedBrick = null;
 
 // Beregn nødvendig bredde og høyde
 const totalBricksWidth = cols * brickWidth + (cols - 1) * brickPadding;
@@ -22,7 +26,7 @@ canvas.height = totalBricksHeight;
 let offsetLeft = (canvas.width - totalBricksWidth) / 2;
 
 // Mulige typer
-const BRICK_TYPES = ["normal", "special", "sausage", "extra", "glass", "strong"];
+const BRICK_TYPES = ["normal", "special", "sausage", "extra", "glass", "strong", "empty", "finishlevel", "bigbonus"];
 
 // Brettdata
 let bricks = [];
@@ -45,12 +49,18 @@ function drawBricks() {
     for (let c = 0; c < cols; c++) {
       const brick = bricks[r][c];
       if (brick.destroyed) continue;
+      
+      // Skip drawing empty bricks (holes)
+      if (brick.type === "empty") continue;
+      
       let color = "#fff";
       if (brick.type === "special") color = "#f00";
       if (brick.type === "sausage") color = "gold";
       if (brick.type === "extra") color = "#0af";
       if (brick.type === "glass") color = "#87CEEB";
       if (brick.type === "strong") color = "#8B4513";
+      if (brick.type === "finishlevel") color = "#FF1493"; // Deep pink
+      if (brick.type === "bigbonus") color = "#FFD700"; // Gold
       ctx.fillStyle = color;
       ctx.fillRect(
         offsetLeft + c * (brickWidth + brickPadding),
@@ -65,18 +75,28 @@ function drawBricks() {
       );
     }
   }
+  
+  // Draw grid lines to show empty spaces
+  ctx.strokeStyle = "#444";
+  ctx.lineWidth = 1;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const brick = bricks[r][c];
+      if (brick.type === "empty") {
+        // Draw a subtle grid outline for empty spaces
+        ctx.strokeRect(
+          offsetLeft + c * (brickWidth + brickPadding),
+          offsetTop + r * (brickHeight + brickPadding),
+          brickWidth, brickHeight
+        );
+      }
+    }
+  }
 }
 drawBricks();
 
-// Klikk for å sette/endre murstein
-// ...eksisterende kode...
-
-// Oppdatert: Sett riktige felter når du endrer type
-canvas.addEventListener('click', function(e) {
-  const rect = canvas.getBoundingClientRect();
-  const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-  const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-
+// Helper function to get brick at coordinates
+function getBrickAtPosition(x, y) {
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       const bx = offsetLeft + c * (brickWidth + brickPadding);
@@ -85,43 +105,160 @@ canvas.addEventListener('click', function(e) {
         x > bx && x < bx + brickWidth &&
         y > by && y < by + brickHeight
       ) {
-        const type = document.getElementById('brick-type').value;
-        // Sett alle felter riktig
-        let brick = {
-          type,
-          destroyed: false,
-          strength: 1,
-          bonusScore: false,
-          extraBall: false,
-          special: false,
-          effect: null
-        };
-        if (type === "special") {
-          brick.special = true;
-          brick.strength = 3; // eller 1 hvis du vil ha svak spesial
-          brick.effect = Math.random() < 0.5 ? "extend" : "shrink";
-        } else if (type === "sausage") {
-          brick.bonusScore = true;
-          brick.strength = 1;
-        } else if (type === "extra") {
-          brick.extraBall = true;
-          brick.strength = 1;
-        } else if (type === "glass") {
-          brick.strength = 1;
-          brick.bonusScore = false;
-          brick.extraBall = false;
-        } else if (type === "strong") {
-          brick.strength = 2;
-          brick.bonusScore = false;
-          brick.extraBall = false;
-        }
-        bricks[r][c] = brick;
-        drawBricks();
-        return;
+        return { row: r, col: c };
       }
     }
   }
+  return null;
+}
+
+// Helper function to set brick at position
+function setBrickAtPosition(row, col) {
+  const type = document.getElementById('brick-type').value;
+  // Sett alle felter riktig
+  let brick = {
+    type,
+    destroyed: type === "empty" ? true : false, // Empty bricks are marked as destroyed
+    strength: 1,
+    bonusScore: false,
+    extraBall: false,
+    special: false,
+    effect: null
+  };
+  if (type === "special") {
+    brick.special = true;
+    brick.strength = 3; // eller 1 hvis du vil ha svak spesial
+    brick.effect = Math.random() < 0.5 ? "extend" : "shrink";
+  } else if (type === "sausage") {
+    brick.bonusScore = true;
+    brick.strength = 1;
+  } else if (type === "extra") {
+    brick.extraBall = true;
+    brick.strength = 1;
+  } else if (type === "glass") {
+    brick.strength = 1;
+    brick.bonusScore = false;
+    brick.extraBall = false;
+  } else if (type === "strong") {
+    brick.strength = 2;
+    brick.bonusScore = false;
+    brick.extraBall = false;
+  } else if (type === "empty") {
+    // Empty bricks are holes - they don't exist in the game
+    brick.destroyed = true;
+    brick.strength = 0;
+    brick.bonusScore = false;
+    brick.extraBall = false;
+    brick.special = false;
+    brick.effect = null;
+  } else if (type === "finishlevel") {
+    // Finish level brick - immediately completes the level when destroyed
+    brick.strength = 1;
+    brick.bonusScore = false;
+    brick.extraBall = false;
+    brick.special = false;
+    brick.effect = "finishlevel";
+  } else if (type === "bigbonus") {
+    // Big bonus brick - gives a large score bonus when destroyed
+    brick.strength = 1;
+    brick.bonusScore = true;
+    brick.extraBall = false;
+    brick.special = false;
+    brick.effect = "bigbonus";
+  }
+  bricks[row][col] = brick;
+  drawBricks();
+}
+
+// Mouse event handlers for painting
+canvas.addEventListener('mousedown', function(e) {
+  isPainting = true;
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+  const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+  
+  const brickPos = getBrickAtPosition(x, y);
+  if (brickPos) {
+    setBrickAtPosition(brickPos.row, brickPos.col);
+    lastPaintedBrick = `${brickPos.row},${brickPos.col}`;
+  }
 });
+
+canvas.addEventListener('mousemove', function(e) {
+  if (!isPainting) return;
+  
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+  const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+  
+  const brickPos = getBrickAtPosition(x, y);
+  if (brickPos) {
+    const currentBrick = `${brickPos.row},${brickPos.col}`;
+    if (currentBrick !== lastPaintedBrick) {
+      setBrickAtPosition(brickPos.row, brickPos.col);
+      lastPaintedBrick = currentBrick;
+    }
+  }
+});
+
+canvas.addEventListener('mouseup', function(e) {
+  isPainting = false;
+  lastPaintedBrick = null;
+});
+
+canvas.addEventListener('mouseleave', function(e) {
+  isPainting = false;
+  lastPaintedBrick = null;
+});
+
+// Touch event handlers for mobile painting
+canvas.addEventListener('touchstart', function(e) {
+  e.preventDefault();
+  isPainting = true;
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches[0];
+  const x = (touch.clientX - rect.left) * (canvas.width / rect.width);
+  const y = (touch.clientY - rect.top) * (canvas.height / rect.height);
+  
+  const brickPos = getBrickAtPosition(x, y);
+  if (brickPos) {
+    setBrickAtPosition(brickPos.row, brickPos.col);
+    lastPaintedBrick = `${brickPos.row},${brickPos.col}`;
+  }
+});
+
+canvas.addEventListener('touchmove', function(e) {
+  e.preventDefault();
+  if (!isPainting) return;
+  
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches[0];
+  const x = (touch.clientX - rect.left) * (canvas.width / rect.width);
+  const y = (touch.clientY - rect.top) * (canvas.height / rect.height);
+  
+  const brickPos = getBrickAtPosition(x, y);
+  if (brickPos) {
+    const currentBrick = `${brickPos.row},${brickPos.col}`;
+    if (currentBrick !== lastPaintedBrick) {
+      setBrickAtPosition(brickPos.row, brickPos.col);
+      lastPaintedBrick = currentBrick;
+    }
+  }
+});
+
+canvas.addEventListener('touchend', function(e) {
+  e.preventDefault();
+  isPainting = false;
+  lastPaintedBrick = null;
+});
+
+// Confirmation dialog for clearing bricks
+window.confirmClearBricks = function() {
+  const confirmed = confirm("Er du sikker på at du vil tømme hele brettet? Dette kan ikke angres.");
+  if (confirmed) {
+    clearBricks();
+  }
+};
 
 // Eksporter til JSON med alle felter
 window.exportLevel = async function() {
@@ -266,14 +403,14 @@ function exportWithTraditionalMethod(exportObj) {
   });
 }
 
-// Tøm brett (fyll med vanlige brikker)
+// Tøm brett (fyll med tomme brikker)
 window.clearBricks = function() {
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       bricks[r][c] = {
-        type: "normal",
-        destroyed: false,
-        strength: 1,
+        type: "empty",
+        destroyed: true,
+        strength: 0,
         bonusScore: false,
         extraBall: false,
         special: false,
@@ -337,6 +474,12 @@ document.getElementById('level-file').addEventListener('change', function(e) {
               special: loadedBrick.special || false,
               effect: loadedBrick.effect || null
             };
+            
+            // Handle empty bricks - mark them as destroyed
+            if (loadedBrick.type === "empty") {
+              bricks[r][c].destroyed = true;
+              bricks[r][c].strength = 0;
+            }
           } else {
             // Fill expanded areas with normal bricks
             bricks[r][c] = {

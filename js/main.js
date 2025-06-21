@@ -94,9 +94,9 @@ setTimeout(() => {
         game = new Game(app);
         paddle = game.paddle;
         
-        // Set up PIXI event handlers
+        // Set up PIXI event handlers - removed conflicting pointerdown handler
         app.stage.eventMode = 'static';
-        app.stage.on('pointerdown', handleGameRestart);
+        // app.stage.on('pointerdown', handleGameRestart); // Removed - input handled by setupInputHandlers
     }
 }, 100);
 
@@ -133,7 +133,7 @@ startButton.addEventListener('click', () => {
 
 // Set up character selection
 document.querySelectorAll('.char-opt').forEach(img => {
-    img.addEventListener('click', function() {
+    img.addEventListener('click', async function() {
         if (!game || game.characterChosen) return;
 
         game.characterChosen = true;
@@ -153,32 +153,120 @@ document.querySelectorAll('.char-opt').forEach(img => {
         // Force audio unlock on character selection (important for iOS Safari)
         forceAudioUnlock();
 
-        //Reset game state
-        game.resetGameState();
+        // Reset game state and wait for ball creation to complete
+        await game.resetGameState();
+        
+        // Now that the ball is created, place it on the paddle
         game.centerPaddleAndPlaceBall();
 
         //Set input mode to wait for start
         game.inputMode = 'waitForStart';
         game.waitingForInput = true;
         
-        // Start the game when pointer is down
-        app.stage.once('pointerdown', () => {
-            if (!game.gameStarted && !game.gameOver) {
-                game.handleGameStart();
-            }
-        });
+        // Set up input handling for paddle movement and ball launching
+        setupInputHandlers();
         
         gameStarted = true;
-        //game.start();
     });
 });
+
+// Function to set up input handlers for paddle movement and ball launching
+function setupInputHandlers() {
+    // Remove any existing handlers to avoid duplicates
+    app.stage.off('pointerdown');
+    app.stage.off('pointermove');
+    app.stage.off('pointerup');
+    
+    let isPointerDown = false;
+    let hasMoved = false;
+    let startX = 0;
+    let startY = 0;
+    const minMovementThreshold = 10; // Minimum pixels to move before allowing launch
+    
+    app.stage.on('pointerdown', (e) => {
+        // Handle game restart if game is over
+        if (game.gameOver) {
+            game.restart();
+            return;
+        }
+        
+        if (!game.gameOver && game.waitingForInput) {
+            isPointerDown = true;
+            hasMoved = false;
+            startX = e.global.x;
+            startY = e.global.y;
+            game.inputMode = 'moving'; // Allow paddle movement
+            console.log('🎯 Pointer down - Starting movement tracking:', {
+                startX: startX,
+                startY: startY,
+                waitingForInput: game.waitingForInput
+            });
+        }
+    });
+    
+    app.stage.on('pointermove', (e) => {
+        if (isPointerDown && !game.gameOver && game.waitingForInput) {
+            // Check if we've moved enough to consider it a "move" rather than a tap
+            const distance = Math.sqrt(
+                Math.pow(e.global.x - startX, 2) + 
+                Math.pow(e.global.y - startY, 2)
+            );
+            
+            if (distance > minMovementThreshold && !hasMoved) {
+                hasMoved = true;
+                console.log('🎯 Movement detected - Distance:', distance, 'pixels');
+            }
+            
+            // Move paddle and ball together
+            if (game.paddle && game.paddle.handlePointerMove) {
+                game.paddle.handlePointerMove(e);
+            }
+            // Ball positioning is handled by ball.update() method when not moving
+        }
+        // Also handle pointer move for the game (for playing mode)
+        if (game && game.handlePointerMove) {
+            game.handlePointerMove(e);
+        }
+    });
+    
+    app.stage.on('pointerup', (e) => {
+        if (isPointerDown && !game.gameOver && game.waitingForInput) {
+            const distance = Math.sqrt(
+                Math.pow(e.global.x - startX, 2) + 
+                Math.pow(e.global.y - startY, 2)
+            );
+            
+            console.log('🎯 Pointer up - Movement check:', {
+                hasMoved: hasMoved,
+                distance: distance,
+                threshold: minMovementThreshold,
+                waitingForInput: game.waitingForInput
+            });
+            
+            isPointerDown = false;
+            
+            // Only launch if we've actually moved the paddle
+            if (hasMoved) {
+                console.log('🎯 Launching ball - Movement detected');
+                game.inputMode = 'playing';
+                game.handleGameStart();
+            } else {
+                // Reset to waiting state if no movement occurred
+                console.log('🎯 No movement - Returning to wait state');
+                game.inputMode = 'waitForStart';
+            }
+        }
+    });
+}
+
+// Make setupInputHandlers globally accessible
+window.setupInputHandlers = setupInputHandlers;
 
 // Game loop
 app.ticker.add(() => {
     if (gameStarted && game) {
         game.update();
         paddle.update();
-        game.levelInstance.update();
     }
 });
 

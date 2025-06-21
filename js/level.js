@@ -1,6 +1,6 @@
 import { Brick } from './brick.js';
 import { createPowerUp, showPowerUpText } from './powerup.js';
-import { POWERUPS_PER_LEVEL } from './powerupConfig.js';
+import { POWERUPS_PER_LEVEL, distributePowerups } from './powerupConfig.js';
 
 export class Level {
     constructor(app) {
@@ -178,18 +178,28 @@ export class Level {
         const normalBricks = [];
         const glassBricks = [];
         const strongBricks = [];
+        let emptySpaces = 0;
 
         // Create bricks based on level data
         for (let r = 0; r < bricksData.length; r++) {
             for (let c = 0; c < bricksData[r].length; c++) {
                 const brickInfo = bricksData[r][c];
+                
+                // Handle empty bricks (holes) - they should be marked as destroyed
+                if (brickInfo.type === 'empty') {
+                    brickInfo.destroyed = true;
+                    emptySpaces++;
+                }
+                
                 if (!brickInfo.destroyed) {
                     const x = c * (this.brickWidth + this.brickPadding) + this.brickOffsetLeft;
                     const y = r * (this.brickHeight + this.brickPadding) + this.brickOffsetTop;
                     const type = brickInfo.type || 'normal';
                     
-                    if (type === 'glass') {
-                        // Create glass brick at:
+                    // Skip creating bricks for empty type (should be destroyed anyway)
+                    if (type === 'empty') {
+                        emptySpaces++;
+                        continue;
                     }
                     
                     const brick = new Brick(x, y, this.brickWidth, this.brickHeight, type);
@@ -206,37 +216,20 @@ export class Level {
                     } else if (type === 'strong') {
                         strongBricks.push(brick);
                     }
+                } else {
+                    // Mark position as empty in the bricks array
+                    this.bricks[c][r] = null;
+                    if (brickInfo.type === 'empty') {
+                        emptySpaces++;
+                    }
                 }
             }
         }
 
-        console.log(`Created ${normalBricks.length} normal bricks, ${glassBricks.length} glass bricks, and ${strongBricks.length} strong bricks`);
+        console.log(`Created ${normalBricks.length} normal bricks, ${glassBricks.length} glass bricks, ${strongBricks.length} strong bricks, and ${emptySpaces} empty spaces (holes)`);
 
-        // Fordel powerups i tilfeldige "normal"-brikker og glassbrikker
-        const weightedBricks = [];
-        normalBricks.forEach(brick => {
-            weightedBricks.push(brick); // Normal weight
-        });
-        glassBricks.forEach(brick => {
-            // Add each glass brick 3 times (3x weight)
-            weightedBricks.push(brick);
-            weightedBricks.push(brick);
-            weightedBricks.push(brick);
-        });
-        // Note: Strong bricks are not included in powerup distribution as they are unbreakable
-
-        const shuffled = weightedBricks.sort(() => Math.random() - 0.5);
-        let index = 0;
-
-        for (const [type, count] of Object.entries(POWERUPS_PER_LEVEL)) {
-            for (let i = 0; i < count && index < shuffled.length; i++, index++) {
-                const targetBrick = shuffled[index];
-                if (!targetBrick.brickInfo) {
-                    targetBrick.brickInfo = {};
-                }
-                targetBrick.brickInfo.powerUpType = type;
-            }
-        }
+        // Smart powerup distribution based on available bricks
+        distributePowerups(normalBricks, glassBricks);
         
         console.log(`Level loaded successfully with grid size: ${this.brickRowCount}x${this.brickColumnCount}`);
     }
@@ -258,6 +251,8 @@ export class Level {
         let activeBricks = 0;
         let destroyedBricks = 0;
         let strongBricks = 0;
+        let finishLevelBricks = 0;
+        let bigBonusBricks = 0;
 
         // First pass: count bricks and mark destroyed ones
         for (let c = 0; c < this.brickColumnCount; c++) {
@@ -267,6 +262,18 @@ export class Level {
                     // Skip strong bricks in level completion check - they don't block progression
                     if (brick.brickInfo && brick.brickInfo.type === 'strong') {
                         strongBricks++;
+                        continue;
+                    }
+                    
+                    // Skip finishlevel bricks in level completion check - they don't block progression
+                    if (brick.brickInfo && brick.brickInfo.type === 'finishlevel') {
+                        finishLevelBricks++;
+                        continue;
+                    }
+
+                    // Skip bigbonus bricks in level completion check - they don't block progression
+                    if (brick.brickInfo && brick.brickInfo.type === 'bigbonus') {
+                        bigBonusBricks++;
                         continue;
                     }
                     
@@ -281,9 +288,9 @@ export class Level {
             }
         }
 
-        // Log level completion status
-        if (strongBricks > 0) {
-            console.log(`🏗️ Level completion check: ${activeBricks} active bricks, ${strongBricks} strong bricks (excluded from completion)`);
+        // Log level completion status only when there are changes (destroyed bricks)
+        if (destroyedBricks > 0 && (strongBricks > 0 || finishLevelBricks > 0 || bigBonusBricks > 0)) {
+            console.log(`🏗️ Level completion check: ${activeBricks} active bricks, ${strongBricks} strong bricks, ${finishLevelBricks} finish level bricks, ${bigBonusBricks} big bonus bricks (excluded from completion)`);
         }
 
         // Force stage update if there were destroyed bricks

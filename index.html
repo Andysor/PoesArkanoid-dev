@@ -6,6 +6,44 @@
   <title>Poes Arkanoid</title>
   <link rel="stylesheet" href="./css/style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.3.2/pixi.min.js"></script>
+  <script type="module" src="./js/remoteLogger.js"></script>
+  
+  <!-- Mobile Debug Console -->
+  <style>
+    #mobileDebug {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 30%;
+      background: rgba(0, 0, 0, 0.8);
+      color: #00ff00;
+      font-family: monospace;
+      font-size: 12px;
+      padding: 10px;
+      overflow-y: auto;
+      z-index: 10000;
+      display: none;
+      word-wrap: break-word;
+    }
+    
+    #debugToggle {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: #ff0000;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      z-index: 10001;
+      font-size: 12px;
+    }
+    
+    .debug-error { color: #ff0000; }
+    .debug-warn { color: #ffff00; }
+    .debug-info { color: #00ffff; }
+  </style>
 </head>
 <body>
   <div id="name-input-container">
@@ -33,5 +71,51 @@
     </div>
   </div>
   <script type="module" src="./js/main.js"></script>
+  
+  <button id="debugToggle" onclick="toggleDebug()">Debug</button>
+  <div id="mobileDebug"></div>
+  
+  <script>
+    // Mobile Debug Console - now integrated with RemoteLogger
+    function toggleDebug() {
+      if (window.remoteLogger) {
+        const debugDiv = document.getElementById('mobileDebug');
+        if (debugDiv.style.display === 'none') {
+          window.remoteLogger.showHtmlDebugConsole();
+        } else {
+          window.remoteLogger.hideHtmlDebugConsole();
+        }
+      }
+    }
+    
+    // Global error handler
+    window.addEventListener('error', function(e) {
+      const errorMsg = `ERROR: ${e.message} at ${e.filename}:${e.lineno}`;
+      if (window.remoteLogger) {
+        window.remoteLogger.log(errorMsg, 'error');
+      }
+      console.error('Global error:', e);
+    });
+    
+    // Unhandled promise rejection handler
+    window.addEventListener('unhandledrejection', function(e) {
+      const errorMsg = `PROMISE ERROR: ${e.reason}`;
+      if (window.remoteLogger) {
+        window.remoteLogger.log(errorMsg, 'error');
+      }
+      console.error('Unhandled promise rejection:', e);
+    });
+    
+    // Show debug on mobile by default
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      console.log('📱 Mobile device detected - debug console enabled');
+      // Auto-show debug on mobile after 3 seconds
+      setTimeout(() => {
+        if (window.remoteLogger) {
+          window.remoteLogger.showHtmlDebugConsole();
+        }
+      }, 3000);
+    }
+  </script>
 </body>
 </html>

@@ -106,6 +106,9 @@ export class Paddle {
         this.isShrunk = false;
         this.powerUpEndTime = 0;
         this.updateSprite();
+        
+        // Don't reset position - let the paddle stay where the player is controlling it
+        // this.setStartingPosition(); // REMOVED - this was causing the position reset bug
     }
 
     updateSprite() {

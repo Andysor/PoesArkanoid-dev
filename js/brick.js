@@ -38,6 +38,9 @@ export class Brick {
             case 'strong': return ASSETS.images.bricks.brick_strong;
             case 'glass': 
                 return this.isBroken ? ASSETS.images.bricks.brick_glass_broken : ASSETS.images.bricks.brick_glass;
+            case 'finishlevel': return ASSETS.images.bricks.brick_finishlevel;
+            case 'bigbonus': return ASSETS.images.bricks.brick_bigbonus;
+            case 'empty': return ASSETS.images.bricks.brick_normal; // Fallback for empty bricks
             default: return ASSETS.images.bricks.brick_normal;
         }
     }
@@ -79,6 +82,11 @@ export class Brick {
     }
 
     hit() {
+        // Empty bricks cannot be hit
+        if (this.type === 'empty') {
+            return false;
+        }
+        
         if (this.type === 'strong') {
             // Strong bricks are unbreakable by normal hits
             return false; // Don't destroy the brick
@@ -101,6 +109,11 @@ export class Brick {
 
     // Method to handle strong brick destruction by powerups
     hitByPowerup(powerupType) {
+        // Empty bricks cannot be hit by powerups
+        if (this.type === 'empty') {
+            return false;
+        }
+        
         if (this.type === 'strong') {
             // Import the powerup config to check if this powerup can break strong bricks
             const config = getPowerUpConfig(powerupType);

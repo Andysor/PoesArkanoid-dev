@@ -7,7 +7,7 @@ export const TEST_MODE = false;
 // Ball settings - now in percentage of screen width per second
 export const BASE_INITIAL_SPEED_PERCENT = 0.8; // 80% of screen width per second
 export const BASE_MAX_SPEED_PERCENT = 2; // 200% of screen width per second
-export const LEVEL_SPEED_INCREASE = 0.2; // 20% increase per level
+export const LEVEL_SPEED_INCREASE = 0.1; // 20% increase per level
 export const BALL_RADIUS = window.innerWidth * 0.02; // 1% of screen width
 
 // Function to convert percentage speed to actual pixels per frame
@@ -53,3 +53,41 @@ export const PADDLE_HOVER_OFFSET = 0.1; // Screen height from touch point to pad
 
 // Audio constants
 export const POESKLAP_COOLDOWN = 500; // milliseconds between poesklap sounds 
+
+// Level completion time bonus settings
+export const TIME_BONUS_CONFIG = {
+    // Time thresholds (in seconds)
+    EXCELLENT_THRESHOLD: 30,    // Under 30 seconds = excellent
+    GOOD_THRESHOLD: 60,         // Under 60 seconds = good
+    DECENT_THRESHOLD: 120,      // Under 120 seconds = decent
+    
+    // Bonus points for each tier
+    EXCELLENT_BASE_BONUS: 5000,     // Base bonus for excellent time
+    EXCELLENT_PER_SECOND: 500,      // Additional points per second under excellent threshold
+    GOOD_BASE_BONUS: 2500,           // Base bonus for good time
+    GOOD_PER_SECOND: 250,            // Additional points per second under good threshold
+    DECENT_BASE_BONUS: 1000,         // Base bonus for decent time
+    DECENT_PER_SECOND: 100,           // Additional points per second under decent threshold
+    
+    // Visual settings
+    BONUS_TEXT_COLOR: 0x00FF00,     // Green color for bonus text
+    BONUS_TEXT_STROKE: 0x000000,    // Black outline
+    BONUS_TEXT_SIZE: 32,            // Font size
+    BONUS_ANIMATION_DURATION: 4000, // Animation duration in milliseconds
+    BONUS_FADE_SPEED: 0.02,         // How fast text fades out
+    BONUS_SCALE_SPEED: 0.01         // How fast text scales up
+};
+
+// Special brick settings
+export const SPECIAL_BRICK_CONFIG = {
+    // Big bonus brick settings
+    BIG_BONUS_SCORE: 1000,          // Points awarded for hitting big bonus brick
+    BIG_BONUS_TEXT_COLOR: 0xFFD700, // Gold color for bonus text
+    BIG_BONUS_TEXT_SIZE: 24,        // Font size for bonus text
+    BIG_BONUS_ANIMATION_DURATION: 2000, // Animation duration in milliseconds
+    BIG_BONUS_MOVE_DISTANCE: 50,    // How far the text moves up during animation
+    
+    // Finish level brick settings
+    FINISH_LEVEL_SCORE: 10,         // Points awarded for hitting finish level brick
+    FINISH_LEVEL_DELAY: 100         // Delay before forcing level completion (milliseconds)
+}; 

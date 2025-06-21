@@ -4,6 +4,7 @@ import { BallTrail } from './ballTrail.js';
 import { ASSETS, loadImage } from './assets.js';
 import { createPowerUp, showPowerUpText } from './powerup.js';
 import { getPowerUpConfig, BRICK_SCORE_CONFIG } from './powerupConfig.js';
+import { SPECIAL_BRICK_CONFIG } from './config.js';
 
 export class Ball {
     static balls = []; // Static array to track all balls
@@ -28,9 +29,16 @@ export class Ball {
     }
 
     static clearAll() {
+        console.log('🧹 Ball.clearAll - Clearing all balls, current count:', Ball.balls.length);
+        
         // Remove all balls from the stage
         Ball.balls.forEach(ball => {
             if (ball.game && ball.game.objectsContainer) {
+                console.log('🧹 Ball.clearAll - Removing ball from container:', {
+                    ballExists: !!ball,
+                    ballIsExtraBall: ball.isExtraBall,
+                    containerExists: !!ball.game.objectsContainer
+                });
                 ball.game.objectsContainer.removeChild(ball.graphics);
             }
             if (ball.trail) {
@@ -39,6 +47,7 @@ export class Ball {
         });
         // Clear the array
         Ball.balls = [];
+        console.log('🧹 Ball.clearAll - All balls cleared');
     }
 
     constructor(app, isExtraBall = false) {
@@ -75,8 +84,8 @@ export class Ball {
         this.graphics.x = app.screen.width / 2;
         this.graphics.y = app.screen.height / 10;
 
-        // Add to static balls array
-        Ball.balls.push(this);
+        // Don't automatically add to static balls array - let resetAll handle this
+        // Ball.balls.push(this); // Removed to avoid conflicts
 
         // Initialize trail effect with different colors for regular and extra balls
         this.trail = new BallTrail(app, isExtraBall ? 0x42f5f5 : 0xf58a42); // Cyan for extra balls, orange for regular balls
@@ -107,14 +116,17 @@ export class Ball {
         this.graphics.x = ballX;
         this.graphics.y = ballY;
     
-        console.log('🎯 placeOnPaddle called', {
-            ballX,
-            ballY,
-            paddleX: paddle.sprite.x,
-            paddleY: paddle.sprite.y,
-            time: Date.now(),
-            paddleWidth: paddle.width
-        });
+        // Only log occasionally to reduce spam during movement
+        if (Math.random() < 0.01) { // 1% chance to log
+            console.log('🎯 placeOnPaddle called', {
+                ballX,
+                ballY,
+                paddleX: paddle.sprite.x,
+                paddleY: paddle.sprite.y,
+                time: Date.now(),
+                paddleWidth: paddle.width
+            });
+        }
     }
     
 
@@ -150,14 +162,26 @@ export class Ball {
             if (!this.isExtraBall) {
                 const oldX = this.graphics.x;
                 const oldY = this.graphics.y;
-                this.graphics.x = paddle.sprite.x;
-                this.graphics.y = paddle.sprite.y - paddle.height / 2 - this.radius;
-                console.log('🎯 Ball following paddle:', {
-                    oldPosition: { x: oldX, y: oldY },
-                    newPosition: { x: this.graphics.x, y: this.graphics.y },
-                    paddlePosition: { x: paddle.sprite.x, y: paddle.sprite.y },
-                    isExtraBall: this.isExtraBall
-                });
+                const newX = paddle.sprite.x;
+                const newY = paddle.sprite.y - paddle.height / 2 - this.radius;
+                
+                // Only update if position actually changed significantly
+                const positionChanged = Math.abs(oldX - newX) > 0.5 || Math.abs(oldY - newY) > 0.5;
+                
+                if (positionChanged) {
+                    this.graphics.x = newX;
+                    this.graphics.y = newY;
+                    
+                    // Only log occasionally to reduce spam (reduced from 1% to 0.1%)
+                    if (Math.random() < 0.001) { // 0.1% chance to log
+                        console.log('🎯 Ball following paddle:', {
+                            oldPosition: { x: oldX, y: oldY },
+                            newPosition: { x: this.graphics.x, y: this.graphics.y },
+                            paddlePosition: { x: paddle.sprite.x, y: paddle.sprite.y },
+                            isExtraBall: this.isExtraBall
+                        });
+                    }
+                }
             }
             return { brickHit: false, lifeLost: false };
         }
@@ -501,6 +525,51 @@ export class Ball {
                         const extraBallScore = extraBallConfig?.score || BRICK_SCORE_CONFIG.extra || 10;
                         this.game.addScore(extraBallScore);
                     }
+                } else if (brick.brickInfo.type === 'finishlevel') {
+                    // Finish level brick - immediately completes the level
+                    console.log('🏁 Finish level brick hit - completing level!');
+                    
+                    if (this.game) {
+                        // Add score for the brick from config
+                        this.game.addScore(SPECIAL_BRICK_CONFIG.FINISH_LEVEL_SCORE);
+                        
+                        // Trigger special effect
+                        if (this.game.powerupEffects) {
+                            this.game.powerupEffects.triggerPowerupEffect('extra_life', brick.x, brick.y);
+                        }
+                        
+                        // Force level completion with configurable delay
+                        setTimeout(() => {
+                            if (this.game) {
+                                console.log('🏁 Forcing level completion from finish level brick');
+                                // Call nextLevel directly instead of checkLevelComplete
+                                this.game.nextLevel();
+                            }
+                        }, SPECIAL_BRICK_CONFIG.FINISH_LEVEL_DELAY);
+                    }
+                    
+                    // Destroy the brick
+                    this.level.handleBrickDestroyed(c, r);
+                } else if (brick.brickInfo.type === 'bigbonus') {
+                    // Big bonus brick - gives a large score bonus
+                    console.log('💰 Big bonus brick hit - awarding bonus points!');
+                    
+                    if (this.game) {
+                        // Award a large bonus score from config
+                        const bigBonusScore = SPECIAL_BRICK_CONFIG.BIG_BONUS_SCORE;
+                        this.game.addScore(bigBonusScore);
+                        
+                        // Show bonus text effect
+                        if (this.game.powerupEffects) {
+                            this.game.powerupEffects.triggerPowerupEffect('coin_gold', brick.x, brick.y);
+                        }
+                        
+                        // Show bonus text
+                        this.showBonusText(`+${bigBonusScore}`, brick.x + this.level.brickWidth / 2, brick.y + this.level.brickHeight / 2);
+                    }
+                    
+                    // Destroy the brick
+                    this.level.handleBrickDestroyed(c, r);
                 } else {
                     // Default brick destruction
                     this.level.handleBrickDestroyed(c, r);
@@ -530,6 +599,9 @@ export class Ball {
         playSoundByName('poesklap');
     
         const extraBall = new Ball(app, true);
+        
+        // Manually add to balls array since constructor no longer does this
+        Ball.balls.push(extraBall);
     
         extraBall.graphics.x = x;
         extraBall.graphics.y = y;
@@ -575,6 +647,9 @@ export class Ball {
     
 
     static resetAll(app, game, levelInstance) {
+        console.log('🔄 Ball.resetAll - Starting ball reset');
+        console.log('🔄 Ball.resetAll - Current balls before clear:', Ball.balls.length);
+        
         // Remove all ball graphics and clear trails
         Ball.balls.forEach(ball => {
             if (ball.graphics && ball.graphics.parent) {
@@ -587,6 +662,7 @@ export class Ball {
     
         // Clear balls array
         Ball.balls = [];
+        console.log('🔄 Ball.resetAll - Balls array cleared');
     
         // Remove lingering ball graphics
         if (game?.objectsContainer) {
@@ -597,7 +673,6 @@ export class Ball {
             console.log(`🧹 Removed lingering ball graphics (post-clear): ${lingering.length}`);
         }
         
-
         // Check if balls array is empty
         if (Ball.balls.length !== 0) {
             console.warn('❗ Ball.balls not empty after clearing:', Ball.balls);
@@ -611,16 +686,21 @@ export class Ball {
         mainBall.dx = 0;
         mainBall.dy = 0;
         mainBall.isMoving = false;
-        //mainBall.graphics.x = app.screen.width / 2;
-        //mainBall.graphics.y = app.screen.height / 10;
         mainBall.trail.clear();
         mainBall.setLevel(levelInstance);
         mainBall.game = game;
         mainBall.graphics.isBallGraphic = true;
-        Ball.balls = [mainBall]; // Reset balls array
+        
+        console.log('🔄 Ball.resetAll - Created new main ball:', {
+            ballExists: !!mainBall,
+            isExtraBall: mainBall.isExtraBall,
+            isMoving: mainBall.isMoving,
+            totalBalls: Ball.balls.length
+        });
         
         if (mainBall.game?.objectsContainer) {
             mainBall.game.objectsContainer.addChild(mainBall.graphics);
+            console.log('🔄 Ball.resetAll - Added ball to objects container');
         }
 
         return mainBall;
@@ -644,5 +724,55 @@ export class Ball {
             return false; // Main balls and permanent extra balls don't expire
         }
         return Date.now() > this.endTime;
+    }
+
+    showBonusText(text, x, y) {
+        if (!this.game || !this.game.app) return;
+        
+        // Create bonus text using config values
+        const bonusText = new PIXI.Text(text, {
+            fontFamily: 'Arial',
+            fontSize: SPECIAL_BRICK_CONFIG.BIG_BONUS_TEXT_SIZE,
+            fill: SPECIAL_BRICK_CONFIG.BIG_BONUS_TEXT_COLOR,
+            stroke: 0x000000,
+            strokeThickness: 2
+        });
+        
+        bonusText.x = x - bonusText.width / 2;
+        bonusText.y = y - bonusText.height / 2;
+        bonusText.alpha = 1;
+        
+        // Add to game container
+        if (this.game.objectsContainer) {
+            this.game.objectsContainer.addChild(bonusText);
+        } else {
+            this.game.app.stage.addChild(bonusText);
+        }
+        
+        // Animate the text using config values
+        let startTime = Date.now();
+        const duration = SPECIAL_BRICK_CONFIG.BIG_BONUS_ANIMATION_DURATION;
+        
+        const animate = () => {
+            const elapsed = Date.now() - startTime;
+            const progress = elapsed / duration;
+            
+            if (progress >= 1) {
+                // Remove text when animation is complete
+                if (bonusText.parent) {
+                    bonusText.parent.removeChild(bonusText);
+                }
+                bonusText.destroy();
+                return;
+            }
+            
+            // Fade out and move up using config values
+            bonusText.alpha = 1 - progress;
+            bonusText.y = y - bonusText.height / 2 - (progress * SPECIAL_BRICK_CONFIG.BIG_BONUS_MOVE_DISTANCE);
+            
+            requestAnimationFrame(animate);
+        };
+        
+        animate();
     }
 } 

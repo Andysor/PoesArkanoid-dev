@@ -29,7 +29,8 @@ export const ASSETS = {
             brick_glass: './assets/images/bricks/brick_glass.png',
             brick_glass_broken: './assets/images/bricks/brick_glass_broken.png',
             brick_strong: './assets/images/bricks/brick_strong.png',
-            
+            brick_finishlevel: './assets/images/bricks/brick_finishlevel.png',
+            brick_bigbonus: './assets/images/bricks/brick_bigbonus.png',
         },
         levels: (name, ext = '.png') => `./assets/images/levels/${name}${ext}`
     },
@@ -68,8 +69,7 @@ export async function loadLevel(levelNum) {
         return await response.json();
     } catch (error) {
         console.error('Error loading level:', error);
-        // Load a random level as fallback
-        const randomLevel = Math.floor(Math.random() * 20) + 1;
-        return fetch(ASSETS.levels(randomLevel));
+        // Return null instead of trying to load a random level
+        return null;
     }
 } 
