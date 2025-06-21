@@ -1,6 +1,7 @@
 import { Brick } from './brick.js';
 import { createPowerUp, showPowerUpText } from './powerup.js';
 import { POWERUPS_PER_LEVEL, distributePowerups } from './powerupConfig.js';
+import { BRICK_AREA_WIDTH_PERCENT, BRICK_AREA_TOP_PERCENT } from './config.js';
 
 export class Level {
     constructor(app) {
@@ -9,7 +10,7 @@ export class Level {
         this.brickColumnCount = 15;
         
         // Calculate brick dimensions
-        const totalBrickAreaWidth = this.app.screen.width * 0.9; // Use 90% of screen width
+        const totalBrickAreaWidth = this.app.screen.width * BRICK_AREA_WIDTH_PERCENT; // Use configurable percentage of screen width
         this.brickPadding = 3; // Reduced padding to fit more bricks
         
         // Calculate brick size to fit all columns
@@ -18,7 +19,7 @@ export class Level {
         
         // Center the brick area
         this.brickOffsetLeft = (this.app.screen.width - totalBrickAreaWidth) / 2;
-        this.brickOffsetTop = this.app.screen.height * 0.05; // 5% from top
+        this.brickOffsetTop = this.app.screen.height * BRICK_AREA_TOP_PERCENT; // Use configurable percentage from top
         
         this.currentLevel = 1;
         
@@ -41,13 +42,13 @@ export class Level {
             this.brickColumnCount = cols;
             
             // Recalculate brick dimensions for new grid size
-            const totalBrickAreaWidth = this.app.screen.width * 0.9;
+            const totalBrickAreaWidth = this.app.screen.width * BRICK_AREA_WIDTH_PERCENT;
             this.brickWidth = (totalBrickAreaWidth - (this.brickPadding * (this.brickColumnCount - 1))) / this.brickColumnCount;
             this.brickHeight = this.brickWidth;
             
             // Recalculate offsets
             this.brickOffsetLeft = (this.app.screen.width - totalBrickAreaWidth) / 2;
-            this.brickOffsetTop = this.app.screen.height * 0.05;
+            this.brickOffsetTop = this.app.screen.height * BRICK_AREA_TOP_PERCENT;
             
             // Reinitialize brick array with new size
             this.bricks = new Array(this.brickColumnCount);

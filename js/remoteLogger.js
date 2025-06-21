@@ -1,4 +1,6 @@
 // Remote Logger for Mobile Debugging
+import { DEBUG_MODE } from './config.js';
+
 export class RemoteLogger {
     constructor() {
         this.logs = [];
@@ -17,13 +19,17 @@ export class RemoteLogger {
             info: console.info
         };
         
-        // Override console methods to capture logs
-        this.overrideConsole();
+        // Only override console methods if debug mode is enabled
+        if (DEBUG_MODE) {
+            this.overrideConsole();
+        }
         
-        // Auto-save logs every 10 seconds
-        setInterval(() => {
-            this.saveLogs();
-        }, 10000);
+        // Auto-save logs every 10 seconds (only if debug mode is enabled)
+        if (DEBUG_MODE) {
+            setInterval(() => {
+                this.saveLogs();
+            }, 10000);
+        }
     }
     
     overrideConsole() {
@@ -31,22 +37,30 @@ export class RemoteLogger {
         
         console.log = function(...args) {
             self.originalConsole.log.apply(console, args);
-            self.log(args.join(' '), 'log');
+            if (DEBUG_MODE) {
+                self.log(args.join(' '), 'log');
+            }
         };
         
         console.error = function(...args) {
             self.originalConsole.error.apply(console, args);
-            self.log(args.join(' '), 'error');
+            if (DEBUG_MODE) {
+                self.log(args.join(' '), 'error');
+            }
         };
         
         console.warn = function(...args) {
             self.originalConsole.warn.apply(console, args);
-            self.log(args.join(' '), 'warn');
+            if (DEBUG_MODE) {
+                self.log(args.join(' '), 'warn');
+            }
         };
         
         console.info = function(...args) {
             self.originalConsole.info.apply(console, args);
-            self.log(args.join(' '), 'info');
+            if (DEBUG_MODE) {
+                self.log(args.join(' '), 'info');
+            }
         };
     }
     
@@ -260,42 +274,44 @@ export class RemoteLogger {
 // Create global instance
 window.remoteLogger = new RemoteLogger();
 
-// Add keyboard shortcut to show debug panel (Ctrl+Shift+D)
-document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.shiftKey && e.key === 'D') {
-        window.remoteLogger.showDebugPanel();
-    }
-});
-
-// Auto-show debug panel on mobile after 5 seconds
-if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-    setTimeout(() => {
-        window.remoteLogger.showDebugPanel();
-    }, 5000);
-    
-    // Add tap gesture to show debug panel (tap top-right corner 3 times quickly)
-    let tapCount = 0;
-    let lastTapTime = 0;
-    
-    document.addEventListener('click', (e) => {
-        const now = Date.now();
-        const screenWidth = window.innerWidth;
-        const screenHeight = window.innerHeight;
-        
-        // Check if tap is in top-right corner (last 100px of width, first 100px of height)
-        if (e.clientX > screenWidth - 100 && e.clientY < 100) {
-            if (now - lastTapTime < 1000) { // Within 1 second
-                tapCount++;
-                if (tapCount >= 3) {
-                    window.remoteLogger.showDebugPanel();
-                    tapCount = 0;
-                }
-            } else {
-                tapCount = 1;
-            }
-            lastTapTime = now;
-        } else {
-            tapCount = 0;
+// Add keyboard shortcut to show debug panel (Ctrl+Shift+D) - only if debug mode is enabled
+if (DEBUG_MODE) {
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+            window.remoteLogger.showDebugPanel();
         }
     });
+
+    // Auto-show debug panel on mobile after 5 seconds - only if debug mode is enabled
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        setTimeout(() => {
+            window.remoteLogger.showDebugPanel();
+        }, 5000);
+        
+        // Add tap gesture to show debug panel (tap top-right corner 3 times quickly)
+        let tapCount = 0;
+        let lastTapTime = 0;
+        
+        document.addEventListener('click', (e) => {
+            const now = Date.now();
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            
+            // Check if tap is in top-right corner (last 100px of width, first 100px of height)
+            if (e.clientX > screenWidth - 100 && e.clientY < 100) {
+                if (now - lastTapTime < 1000) { // Within 1 second
+                    tapCount++;
+                    if (tapCount >= 3) {
+                        window.remoteLogger.showDebugPanel();
+                        tapCount = 0;
+                    }
+                } else {
+                    tapCount = 1;
+                }
+                lastTapTime = now;
+            } else {
+                tapCount = 0;
+            }
+        });
+    }
 } 

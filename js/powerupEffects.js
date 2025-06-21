@@ -5,21 +5,16 @@ export class PowerupEffects {
         this.activeEffects = new Map();
         this.originalPositions = new Map();
         
-        // Detect mobile device for reduced effects
+        // Detect mobile devices for performance optimization
         this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        
-        // On very low-end mobile devices, disable some effects entirely
-        this.isLowEndMobile = this.isMobile && (
-            navigator.hardwareConcurrency <= 2 || 
-            /Android.*[1-4]\.|iPhone.*OS [1-8]_/i.test(navigator.userAgent)
-        );
+        this.isLowEndMobile = this.isMobile && (navigator.hardwareConcurrency <= 2 || navigator.deviceMemory <= 2);
         
         if (this.isMobile) {
-            console.log('📱 PowerupEffects: Mobile device detected - using reduced effects');
+            // Mobile devices get reduced effects for better performance
         }
         
         if (this.isLowEndMobile) {
-            console.log('📱 PowerupEffects: Low-end mobile detected - disabling complex effects');
+            // Low-end mobile devices get minimal effects
         }
     }
 
@@ -123,10 +118,10 @@ export class PowerupEffects {
         return effectId;
     }
 
-    // Particle burst effect
+    // Create particle burst effect
     createParticleBurst(x, y, color = 0xFFFFFF, count = 20) {
         try {
-            const effectId = 'particle_burst_' + Date.now();
+            const effectId = 'particle_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             const particles = [];
             
             // Reduce particle count and duration on mobile
@@ -135,17 +130,6 @@ export class PowerupEffects {
             
             // Additional safety check for very high particle counts
             const safeCount = Math.min(actualCount, 50);
-            
-            console.log('🎆 Creating particle burst:', {
-                effectId,
-                requestedCount: count,
-                actualCount,
-                safeCount,
-                isMobile: this.isMobile,
-                maxDuration,
-                position: { x, y },
-                color: '0x' + color.toString(16)
-            });
             
             // Create particle container
             const particleContainer = new PIXI.Container();
@@ -174,13 +158,6 @@ export class PowerupEffects {
                 }
             }
 
-            console.log('🎆 Particle burst created:', {
-                effectId,
-                particlesCreated: particles.length,
-                containerChildren: particleContainer.children.length,
-                activeEffects: this.activeEffects.size
-            });
-
             const particleEffect = {
                 id: effectId,
                 type: 'particle_burst',
@@ -195,11 +172,6 @@ export class PowerupEffects {
                         
                         // Safety timeout - force cleanup if effect runs too long
                         if (elapsed > particleEffect.maxDuration) {
-                            console.log('⚠️ PowerupEffects: Particle effect timeout, forcing cleanup', {
-                                effectId,
-                                elapsed,
-                                maxDuration: particleEffect.maxDuration
-                            });
                             this.removeEffect(effectId);
                             return false;
                         }
@@ -233,23 +205,7 @@ export class PowerupEffects {
                             }
                         });
                         
-                        // Log particle status every 30 frames (about 0.5 seconds at 60fps)
-                        if (Math.random() < 0.02) { // ~2% chance per frame
-                            console.log('🎆 Particle update:', {
-                                effectId,
-                                aliveCount,
-                                totalParticles: particles.length,
-                                elapsed: Math.round(elapsed),
-                                allDead
-                            });
-                        }
-                        
                         if (allDead) {
-                            console.log('🎆 Particle effect complete:', {
-                                effectId,
-                                totalParticles: particles.length,
-                                duration: elapsed
-                            });
                             this.removeEffect(effectId);
                             return false;
                         }
@@ -263,10 +219,6 @@ export class PowerupEffects {
             };
 
             this.activeEffects.set(effectId, particleEffect);
-            console.log('🎆 Particle effect registered:', {
-                effectId,
-                totalActiveEffects: this.activeEffects.size
-            });
             return effectId;
         } catch (error) {
             console.error('❌ PowerupEffects: Error creating particle burst', error);
@@ -299,7 +251,6 @@ export class PowerupEffects {
                 
                 // Safety timeout - force cleanup if effect runs too long
                 if (elapsed > waveEffect.maxDuration) {
-                    console.log('⚠️ PowerupEffects: Wave effect timeout, forcing cleanup');
                     this.removeEffect(effectId);
                     return false;
                 }
@@ -329,48 +280,24 @@ export class PowerupEffects {
     // Remove specific effect
     removeEffect(effectId) {
         try {
-            console.log('🧹 Removing effect:', {
-                effectId,
-                totalActiveEffects: this.activeEffects.size
-            });
-            
             const effect = this.activeEffects.get(effectId);
             if (effect) {
-                console.log('🧹 Effect details:', {
-                    effectId,
-                    type: effect.type,
-                    hasContainer: !!effect.container,
-                    hasParticles: !!(effect.particles && effect.particles.length),
-                    hasFlash: !!effect.flash,
-                    hasWave: !!effect.wave
-                });
-                
-                // Clean up effect-specific resources
+                // Remove flash effect
                 if (effect.type === 'flash' && effect.flash) {
                     try {
                         if (effect.flash.parent) {
                             effect.flash.parent.removeChild(effect.flash);
-                            console.log('🧹 Flash effect removed from parent');
                         }
                         effect.flash.destroy();
-                        console.log('🧹 Flash effect destroyed');
                     } catch (error) {
                         console.error('❌ PowerupEffects: Error removing flash effect', error);
                     }
                 } else if (effect.type === 'particle_burst' && effect.container) {
                     try {
-                        console.log('🧹 Cleaning up particle burst:', {
-                            effectId,
-                            containerChildren: effect.container.children.length,
-                            particlesCount: effect.particles ? effect.particles.length : 0
-                        });
-                        
                         if (effect.container.parent) {
                             effect.container.parent.removeChild(effect.container);
-                            console.log('🧹 Particle container removed from parent');
                         }
                         effect.container.destroy();
-                        console.log('🧹 Particle container destroyed');
                     } catch (error) {
                         console.error('❌ PowerupEffects: Error removing particle effect', error);
                     }
@@ -378,10 +305,8 @@ export class PowerupEffects {
                     try {
                         if (effect.wave.parent) {
                             effect.wave.parent.removeChild(effect.wave);
-                            console.log('🧹 Wave effect removed from parent');
                         }
                         effect.wave.destroy();
-                        console.log('🧹 Wave effect destroyed');
                     } catch (error) {
                         console.error('❌ PowerupEffects: Error removing wave effect', error);
                     }
@@ -397,21 +322,15 @@ export class PowerupEffects {
                                 container.y = originalPos.y;
                             }
                         });
-                        console.log('🧹 Screen shake positions restored');
                     } catch (error) {
                         console.error('❌ PowerupEffects: Error restoring screen shake positions', error);
                     }
                 }
                 
                 this.activeEffects.delete(effectId);
-                console.log('🧹 Effect removed from active effects map:', {
-                    effectId,
-                    remainingActiveEffects: this.activeEffects.size
-                });
             } else {
                 // Effect not found - this can happen due to race conditions during cleanup
                 // Don't warn about it since it's harmless
-                console.log('🧹 PowerupEffects: Effect already removed (race condition):', effectId);
             }
         } catch (error) {
             console.error('❌ PowerupEffects: Error in removeEffect', effectId, error);
@@ -422,10 +341,7 @@ export class PowerupEffects {
 
     // Remove all effects
     clearAllEffects() {
-        console.log('🧹 PowerupEffects: Clearing all effects, count:', this.activeEffects.size);
-        
         const effectIds = Array.from(this.activeEffects.keys());
-        console.log('🧹 Effect IDs to remove:', effectIds);
         
         effectIds.forEach(id => this.removeEffect(id));
         
@@ -433,8 +349,6 @@ export class PowerupEffects {
         if (this.app && this.app.stage) {
             const stageChildren = [...this.app.stage.children];
             let cleanedCount = 0;
-            
-            console.log('🧹 Scanning stage for leftover graphics, total children:', stageChildren.length);
             
             stageChildren.forEach((child, index) => {
                 // Look for graphics objects that might be leftover effects
@@ -445,14 +359,6 @@ export class PowerupEffects {
                     const hasAlpha = child.alpha !== undefined && child.alpha < 1;
                     
                     if (isSmall || hasAlpha) {
-                        console.log('🧹 Found leftover graphics:', {
-                            index,
-                            bounds: { width: bounds.width, height: bounds.height },
-                            alpha: child.alpha,
-                            isSmall,
-                            hasAlpha
-                        });
-                        
                         if (child.parent) {
                             child.parent.removeChild(child);
                         }
@@ -461,17 +367,10 @@ export class PowerupEffects {
                     }
                 }
             });
-            
-            if (cleanedCount > 0) {
-                console.log('🧹 PowerupEffects: Cleaned up', cleanedCount, 'additional graphics objects');
-            } else {
-                console.log('🧹 PowerupEffects: No leftover graphics found');
-            }
         }
         
         // Clear original positions map
         this.originalPositions.clear();
-        console.log('🧹 PowerupEffects: Clear all effects complete');
     }
 
     // Update all active effects (call this in game loop)
@@ -511,17 +410,8 @@ export class PowerupEffects {
 
     // Trigger effect for specific powerup
     triggerPowerupEffect(powerupType, x = null, y = null) {
-        console.log('🎆 Triggering powerup effect:', {
-            powerupType,
-            position: { x, y },
-            isMobile: this.isMobile,
-            isLowEndMobile: this.isLowEndMobile,
-            activeEffects: this.activeEffects.size
-        });
-        
         // Skip complex effects on low-end mobile devices
         if (this.isLowEndMobile) {
-            console.log('📱 PowerupEffects: Skipping complex effect on low-end mobile:', powerupType);
             return;
         }
         
@@ -594,55 +484,31 @@ export class PowerupEffects {
                 }
                 break;
         }
-        
-        console.log('🎆 Powerup effect triggered:', {
-            powerupType,
-            effectId,
-            finalActiveEffects: this.activeEffects.size
-        });
     }
 
-    // Force cleanup all effects (for emergency cleanup)
+    // Force cleanup of all graphics objects (emergency cleanup)
     forceCleanup() {
-        console.log('🚨 PowerupEffects: Force cleanup initiated');
-        
-        // Clear all tracked effects
+        // Remove all active effects
         this.clearAllEffects();
         
-        // Additional aggressive cleanup: remove ALL graphics from stage that look like effects
+        // Scan stage for any remaining graphics objects
         if (this.app && this.app.stage) {
             const stageChildren = [...this.app.stage.children];
             let cleanedCount = 0;
             
-            console.log('🚨 Force cleanup: scanning', stageChildren.length, 'stage children');
-            
-            stageChildren.forEach((child, index) => {
+            stageChildren.forEach(child => {
                 if (child instanceof PIXI.Graphics) {
-                    const bounds = child.getBounds();
-                    const isSmall = bounds.width < 200 && bounds.height < 200;
-                    
-                    if (isSmall) {
-                        console.log('🚨 Force cleanup: removing graphics', {
-                            index,
-                            bounds: { width: bounds.width, height: bounds.height }
-                        });
-                        
-                        if (child.parent) {
-                            child.parent.removeChild(child);
-                        }
-                        child.destroy();
-                        cleanedCount++;
+                    if (child.parent) {
+                        child.parent.removeChild(child);
                     }
+                    child.destroy();
+                    cleanedCount++;
                 }
             });
-            
-            if (cleanedCount > 0) {
-                console.log('🚨 PowerupEffects: Force cleanup removed', cleanedCount, 'graphics objects');
-            } else {
-                console.log('🚨 PowerupEffects: Force cleanup - no graphics to remove');
-            }
         }
         
-        console.log('🚨 PowerupEffects: Force cleanup complete');
+        // Clear all maps
+        this.activeEffects.clear();
+        this.originalPositions.clear();
     }
 } 

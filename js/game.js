@@ -36,7 +36,7 @@ export class Game {
         this.gameStarted = false;
         this.readyToStart = false;
         this.playerName = '';
-        this.selectedCharacter = ASSETS.images.characters.RugbyBall;
+        this.selectedCharacter = 'rugbyball'; // Default character
         this.gameOver = false;
         this.showHighscores = false;
         this.levelLoaded = false;
@@ -54,9 +54,21 @@ export class Game {
         this.boundHandlePointerUp = this.handlePointerUp.bind(this);
         this.boundHandlePointerDown = this.handlePointerDown.bind(this);
         
+        // FPS monitoring
+        this.fpsCounter = {
+            frames: 0,
+            lastTime: Date.now(),
+            currentFps: 60,
+            lowFpsThreshold: 60,
+            lowFpsLogged: false
+        };
+        
         // Level completion time tracking
         this.levelStartTime = null;
         this.levelCompletionTimeBonus = 0;
+        
+        // Speed increase tracking
+        this.lastSpeedIncreaseTime = null;
         
         // Make stage interactive
         this.app.stage.eventMode = 'static';
@@ -75,32 +87,32 @@ export class Game {
         this.objectsContainer = new PIXI.Container();
         this.gameContainer.addChild(this.objectsContainer);
         
-        // Create UI container (for score, lives, level) - add after objects so it renders on top
+        // Create UI container (for score, lives, level) - add directly to stage to ensure it renders on top
         this.uiContainer = new PIXI.Container();
-        this.gameContainer.addChild(this.uiContainer);
+        this.uiContainer.zIndex = 1000; // Set high z-index to ensure it renders on top
         
         // Create score text
         this.scoreText = new PIXI.Text('Score: 0', {
             fontFamily: 'Arial',
-            fontSize: 24,
+            fontSize: 18,
             fill: 0xffffff
         });
-        this.scoreText.position.set(10, 10);
+        this.scoreText.position.set(app.screen.width - 170, 10);
         this.uiContainer.addChild(this.scoreText);
         
-        // Create lives text
+        // Create lives text (will be replaced with sprites when textures load)
         this.livesText = new PIXI.Text('Lives: 3', {
             fontFamily: 'Arial',
-            fontSize: 24,
+            fontSize: 18,
             fill: 0xffffff
         });
-        this.livesText.position.set(app.screen.width - 100, 10);
+        this.livesText.position.set(app.screen.width - 200, 10);
         this.uiContainer.addChild(this.livesText);
         
         // Create level text
         this.levelText = new PIXI.Text('Level: 1', {
             fontFamily: 'Arial',
-            fontSize: 24,
+            fontSize: 18,
             fill: 0xffffff
         });
         this.levelText.position.set(app.screen.width / 2 - 50, 10);
@@ -160,6 +172,44 @@ export class Game {
             coin_silver: loadImage(ASSETS.images.items.coin_silver),
             brannas: loadImage(ASSETS.images.items.brannas)
         };
+
+        // Create containers
+        this.gameOverContainer = new PIXI.Container();
+        this.characterSelectContainer = new PIXI.Container();
+        
+        // Add containers to stage
+        this.app.stage.addChild(this.gameOverContainer);
+        this.app.stage.addChild(this.characterSelectContainer);
+        
+        // Load character images for lives display
+        this.characterTextures = {};
+        this.livesSprites = [];
+        this.loadCharacterTextures();
+        
+        // Add UI container last to ensure it renders on top
+        this.app.stage.addChild(this.uiContainer);
+    }
+
+    async loadCharacterTextures() {
+        const characterPaths = {
+            saflag: ASSETS.images.characters.saflag,
+            springbok: ASSETS.images.characters.springbok,
+            voortrekker: ASSETS.images.characters.voortrekker,
+            braai: ASSETS.images.characters.braai,
+            rugbyball: ASSETS.images.characters.rugbyball
+        };
+        
+        for (const [key, path] of Object.entries(characterPaths)) {
+            try {
+                const texture = PIXI.Texture.from(path);
+                this.characterTextures[key] = texture;
+            } catch (error) {
+                console.error(`Failed to load character texture for ${key}:`, error);
+            }
+        }
+        
+        // Update lives display after textures are loaded
+        this.updateLives();
     }
 
     //Handle pointer move
@@ -232,43 +282,15 @@ export class Game {
             movementStartY: this.movementStartY
         });
         
-        // Only launch ball if we're in moving mode and waiting for input
-        if (this.inputMode === 'moving' && this.waitingForInput) {
-            console.log('🎯 Pointer up - Launching ball');
-            
-            // Reset movement tracking
-            this.movementStartX = null;
-            this.movementStartY = null;
-            
-            // Launch the ball
-            this.handleGameStart(e);
-        } else {
-            // Reset movement tracking if not launching
-            this.movementStartX = null;
-            this.movementStartY = null;
-        }
+        // Reset movement tracking
+        this.movementStartX = null;
+        this.movementStartY = null;
     }
 
     //Center paddle and place ball
     centerPaddleAndPlaceBall() {
-        console.log('🎯 centerPaddleAndPlaceBall - Starting ball placement');
-        console.log('🎯 centerPaddleAndPlaceBall - Paddle state:', {
-            paddleExists: !!this.paddle,
-            paddlePosition: this.paddle ? { x: this.paddle.sprite.x, y: this.paddle.sprite.y } : null,
-            paddleSize: this.paddle ? { width: this.paddle.width, height: this.paddle.height } : null
-        });
-        console.log('🎯 centerPaddleAndPlaceBall - Ball state:', {
-            ballExists: !!this.ball,
-            ballIsMoving: this.ball?.isMoving,
-            ballPosition: this.ball ? { x: this.ball.graphics.x, y: this.ball.graphics.y } : null
-        });
-        
         // Use centralized paddle positioning
         this.paddle.setStartingPosition();
-        console.log('🎯 centerPaddleAndPlaceBall - Paddle repositioned to:', {
-            x: this.paddle.sprite.x,
-            y: this.paddle.sprite.y
-        });
 
         if (!this.paddle || !this.ball) {
             console.error('🎯 centerPaddleAndPlaceBall - Missing paddle or ball!');
@@ -276,74 +298,26 @@ export class Game {
         }
 
         // Place ball immediately (synchronously) to avoid race conditions
-        console.log('🎬 Calling placeOnPaddle. Paddle at:', {
-            x: this.paddle.sprite.x,
-            y: this.paddle.sprite.y
-        });
-        console.log('🎬 Ball before placeOnPaddle:', {
-            ballX: this.ball.graphics.x,
-            ballY: this.ball.graphics.y,
-            inBallArray: Ball.balls.includes(this.ball)
-        });
-        
         this.ball.placeOnPaddle(this.paddle);
-
-        console.log('✅ Ball after placeOnPaddle:', {
-            ballX: this.ball.graphics.x,
-            ballY: this.ball.graphics.y
-        });
-        console.log('✅ centerPaddleAndPlaceBall - Final state:', {
-            ballIsMoving: this.ball.isMoving,
-            waitingForInput: this.waitingForInput,
-            gameStarted: this.gameStarted
-        });
     }
 
     // Unified method for creating and setting up a new ball
     createAndSetupBall() {
-        console.log('🎯 createAndSetupBall - Starting ball creation');
-        console.log('🎯 createAndSetupBall - Current state:', {
-            paddleExists: !!this.paddle,
-            paddlePosition: this.paddle ? { x: this.paddle.sprite.x, y: this.paddle.sprite.y } : null,
-            levelInstanceExists: !!this.levelInstance,
-            objectsContainerExists: !!this.objectsContainer,
-            objectsContainerChildren: this.objectsContainer ? this.objectsContainer.children.length : 0
-        });
-        
         // Create new main ball using resetAll to ensure proper setup
         this.ball = Ball.resetAll(this.app, this, this.levelInstance);
-        
-        console.log('🎯 createAndSetupBall - Ball created:', {
-            ballExists: !!this.ball,
-            ballIsExtraBall: this.ball?.isExtraBall,
-            ballIsMoving: this.ball?.isMoving,
-            totalBalls: Ball.balls.length,
-            ballGraphicsExists: !!this.ball?.graphics
-        });
         
         // Add the new ball to the container
         if (this.objectsContainer) {
             this.objectsContainer.addChild(this.ball.graphics);
-            console.log('🎯 createAndSetupBall - Ball added to objects container');
             
             // Ensure the ball is visible
             this.ball.graphics.visible = true;
-            console.log('🎯 createAndSetupBall - Ball visibility set to:', this.ball.graphics.visible);
         } else {
             console.error('🎯 createAndSetupBall - No objects container found!');
         }
         
         // Center paddle and place the new ball
         this.centerPaddleAndPlaceBall();
-        
-        console.log('🎯 createAndSetupBall - Ball creation complete:', {
-            ballExists: !!this.ball,
-            totalBalls: Ball.balls.length,
-            ballIsMoving: this.ball?.isMoving,
-            ballPosition: this.ball ? { x: this.ball.graphics.x, y: this.ball.graphics.y } : null,
-            ballVisible: this.ball?.graphics.visible,
-            ballInContainer: this.ball?.graphics.parent === this.objectsContainer
-        });
         
         return this.ball;
     }
@@ -354,7 +328,7 @@ export class Game {
             console.log('🔄 resetGameState - Starting reset');
             
             // Reset game state
-            if (!keepScore) {
+        if (!keepScore) {
                 this.score = 0;
                 this.level = 1; // Reset to level 1 for fresh game
             }
@@ -374,7 +348,7 @@ export class Game {
             // Reset movement tracking
             this.movementStartX = null;
             this.movementStartY = null;
-            
+        
             // Reset level completion time tracking
             this.levelStartTime = null;
             this.levelCompletionTimeBonus = 0;
@@ -387,17 +361,16 @@ export class Game {
             // Clear active power-ups
             if (this.activePowerUps && this.activePowerUps.length > 0) {
                 console.log('🧹 Clearing active power-ups:', this.activePowerUps.length);
-                this.activePowerUps.forEach(powerUp => {
-                    if (powerUp && powerUp.deactivate) {
-                        powerUp.deactivate();
-                    }
-                });
-                this.activePowerUps = [];
-            }
-            
+            this.activePowerUps.forEach(powerUp => {
+                if (powerUp && powerUp.deactivate) {
+                    powerUp.deactivate();
+                }
+            });
+            this.activePowerUps = [];
+        }
+        
             // Clear power-up container
             if (this.powerUpContainer) {
-                console.log('🧹 Clearing power-up container, children:', this.powerUpContainer.children.length);
                 while (this.powerUpContainer.children.length > 0) {
                     const child = this.powerUpContainer.children[0];
                     this.powerUpContainer.removeChild(child);
@@ -406,7 +379,7 @@ export class Game {
                     }
                 }
             }
-            
+        
             // Reset ball speed
             this.resetBallSpeed(true);
             
@@ -414,7 +387,7 @@ export class Game {
             console.log('🔄 resetGameState - About to load level:', this.level);
             await this.levelInstance.loadLevel(this.level);
             console.log('🔄 resetGameState - Level loaded successfully');
-            
+        
             // Load level background (non-blocking)
             this.loadLevelBackground(this.level).catch(error => {
                 console.error('🔄 resetGameState - Background loading failed:', error);
@@ -423,7 +396,7 @@ export class Game {
             
             this.levelLoaded = true;
             this.loadingNextLevel = false;
-            
+
             // Create and setup ball
             console.log('🔄 resetGameState - About to create ball');
             this.createAndSetupBall();
@@ -432,6 +405,9 @@ export class Game {
             // Ready for input
             this.waitingForInput = true;
             this.inputMode = 'waitForStart';
+
+            // Update lives display
+            this.updateLives();
 
             // Remove any existing pointerdown listeners to prevent immediate launch
             this.app.stage.off('pointerdown', this.boundHandleGameStart);
@@ -453,7 +429,6 @@ export class Game {
             // Stop the game and hide game elements
             this.gameStarted = false;
             this.scoreText.visible = false;
-            this.livesText.visible = false;
             this.levelText.visible = false;
             
             // Hide game elements (bricks, paddle, ball)
@@ -461,7 +436,6 @@ export class Game {
                 this.app.stage.children.forEach(child => {
                     if (child !== this.gameOverContainer && 
                         child !== this.scoreText && 
-                        child !== this.livesText && 
                         child !== this.levelText) {
                         child.visible = false;
                     }
@@ -471,7 +445,7 @@ export class Game {
             this.showHighscores = true;
             this.loadHighscores();
         } else {
-            console.log('🔄 Before High Scores -> New Game:', {
+            console.log('🎮 Before High Scores -> New Game:', {
                 gameStarted: this.gameStarted,
                 gameOver: this.gameOver,
                 showHighscores: this.showHighscores,
@@ -496,11 +470,11 @@ export class Game {
 
             // Initialize fresh game state (async)
             this.resetGameState(false).then(() => {
-                console.log('🔄 After game initialization:', {
-                    gameStarted: this.gameStarted,
-                    gameOver: this.gameOver,
-                    showHighscores: this.showHighscores,
-                    waitingForInput: this.waitingForInput
+            console.log('🔄 After game initialization:', {
+                gameStarted: this.gameStarted,
+                gameOver: this.gameOver,
+                showHighscores: this.showHighscores,
+                waitingForInput: this.waitingForInput
                 });
             });
 
@@ -525,9 +499,6 @@ export class Game {
             ballExists: !!this.ball,
             ballIsMoving: this.ball?.isMoving
         });
-        
-        // Add stack trace to see where this is being called from
-        console.log('🎮 handleGameStart - Stack trace:', new Error().stack);
         
         if (this.waitingForInput) {
             console.log('🎮 Game Start: Input received, ball will start moving');
@@ -826,38 +797,41 @@ export class Game {
     start() {
         // Don't return early if game is already started - we need this for ball launching after life loss
         if (!this.gameStarted) {
-            this.gameStarted = true;
-            console.log('🎮 Starting game...');
-            
-            // Start speed increase timer
-            this.lastSpeedIncreaseTime = Date.now();
+        this.gameStarted = true;
+        console.log('🎮 Starting game...');
+        
+        // Start speed increase timer
+        this.lastSpeedIncreaseTime = Date.now();
             
             // Record level start time for completion bonus
             if (!this.levelStartTime) {
                 this.levelStartTime = Date.now();
                 console.log('⏱️ Level start time recorded:', this.levelStartTime);
             }
+        
+        // Show UI elements
+        if (this.scoreText) this.scoreText.visible = true;
+        if (this.livesText) this.livesText.visible = true;
+        if (this.levelText) this.levelText.visible = true;
             
-            // Show UI elements
-            if (this.scoreText) this.scoreText.visible = true;
-            if (this.livesText) this.livesText.visible = true;
-            if (this.levelText) this.levelText.visible = true;
-            
-            // Show game elements
-            if (this.app.stage.children) {
-                this.app.stage.children.forEach(child => {
-                    if (child !== this.gameOverManager.gameOverContainer && 
-                        child !== this.gameOverManager.highscoreContainer) {
-                        child.visible = true;
-                    }
-                });
-            }
-            
-            // Start the game loop
-            this.app.ticker.start();
-            
-            // Force audio unlock
-            forceAudioUnlock();
+            // Update lives display to ensure it's visible
+            this.updateLives();
+        
+        // Show game elements
+        if (this.app.stage.children) {
+            this.app.stage.children.forEach(child => {
+                if (child !== this.gameOverManager.gameOverContainer && 
+                    child !== this.gameOverManager.highscoreContainer) {
+                    child.visible = true;
+                }
+            });
+        }
+        
+        // Start the game loop
+        this.app.ticker.start();
+        
+        // Force audio unlock
+        forceAudioUnlock();
         }
         
         // Always set waitingForInput to false when starting (for ball launch)
@@ -938,64 +912,63 @@ export class Game {
         
         // Only process game logic if in playing mode (not moving mode) and not waiting for input
         if (this.inputMode === 'playing' && !this.waitingForInput) {
-            // Handle life lost
-            if (lifeLost) {
-                this.loseLife();
-                this.inputMode = 'waitForStart';
-                this.waitingForInput = true;
-            }
-            
-            // Handle brick hit
-            if (brickHit) {
-                this.addScore(10);
-            }
-            
-            // Update level
-            if (this.levelInstance) {
-                this.levelInstance.update();
-            }
-            
-            // Maintain ball speed (apply time-based increases)
-            this.maintainBallSpeed();
-            
-            // Check for level completion
-            if (this.checkLevelComplete()) {
-                this.nextLevel();
-            }
+        // Handle life lost
+        if (lifeLost) {
+            this.loseLife();
+            this.inputMode = 'waitForStart';
+            this.waitingForInput = true;
+        }
+        
+        // Handle brick hit
+        if (brickHit) {
+            this.addScore(10);
+        }
+        
+        // Update level
+        if (this.levelInstance) {
+            this.levelInstance.update();
+        }
+        
+        // Maintain ball speed (apply time-based increases)
+        this.maintainBallSpeed();
+        
+        // Check for level completion
+        if (this.checkLevelComplete()) {
+            this.nextLevel();
+        }
 
-            // Update power-ups
-            if (this.activePowerUps) {
-                this.activePowerUps = this.activePowerUps.filter(powerUp => {
-                    if (!powerUp.active) {
-                        return false;
-                    }
+        // Update power-ups
+        if (this.activePowerUps) {
+            this.activePowerUps = this.activePowerUps.filter(powerUp => {
+                if (!powerUp.active) {
+                    return false;
+                }
 
-                    powerUp.update();
+                powerUp.update();
 
-                    // Check collision with paddle
-                    if (this.paddle && this.checkPowerUpCollision(powerUp, this.paddle)) {
-                        this.handlePowerUpCollection(powerUp);
-                        return false;
-                    }
+                // Check collision with paddle
+                if (this.paddle && this.checkPowerUpCollision(powerUp, this.paddle)) {
+                    this.handlePowerUpCollection(powerUp);
+                    return false;
+                }
 
-                    return true;
-                });
-            }
-            
-            // Check brannas effect expiration
-            if (this.brannasActive && Date.now() > this.brannasEndTime) {
-                this.brannasActive = false;
-            }
-            
-            // Update powerup effects
-            if (this.powerupEffects) {
-                this.powerupEffects.update();
+                return true;
+            });
+        }
+        
+        // Check brannas effect expiration
+        if (this.brannasActive && Date.now() > this.brannasEndTime) {
+            this.brannasActive = false;
+        }
+        
+        // Update powerup effects
+        if (this.powerupEffects) {
+            this.powerupEffects.update();
             }
         }
         
         // Update UI elements (always update these)
         this.updateScore();
-        this.updateLives();
         this.updateLevel();
 
         // Periodic cleanup of leftover graphics (run every 5 seconds instead of every frame)
@@ -1064,7 +1037,47 @@ export class Game {
     }
     
     updateLives() {
-        this.livesText.text = `Lives: ${this.lives}`;
+        console.log('🔄 ENTERED updateLives method');
+        
+        // Always update the text first
+        if (this.livesText) {
+            this.livesText.text = `Lives: ${this.lives}`;
+        }
+        
+        // Convert selectedCharacter to lowercase for texture lookup
+        const textureKey = this.selectedCharacter.toLowerCase();
+        
+        // If textures are loaded, also update sprites
+        if (this.characterTextures[textureKey]) {
+            console.log('🎮 Updating lives sprites...');
+            
+            // Clear existing lives sprites
+            this.livesSprites.forEach(sprite => {
+                if (sprite.parent) {
+                    sprite.parent.removeChild(sprite);
+                }
+            });
+            this.livesSprites = [];
+
+            // Create new lives sprites (oldest to newest, left to right)
+            for (let i = 0; i < this.lives; i++) {
+                const sprite = new PIXI.Sprite(this.characterTextures[textureKey]);
+                sprite.width = 20;
+                sprite.height = 20;
+                sprite.x = 20 + (i * 25); // Left side positioning: oldest life on left, newest on right
+                sprite.y = 10;
+                this.uiContainer.addChild(sprite);
+                this.livesSprites.push(sprite);
+            }
+            
+            console.log('🎮 Total lives sprites created:', this.livesSprites.length);
+            
+            // Hide text when sprites are shown
+            if (this.livesText) this.livesText.visible = false;
+        } else {
+            console.log('⚠️ Character textures not loaded yet, using text only');
+        }
+        
         if (this.lives <= 0 && !this.gameOver) {
             console.log('🎮 Game over state triggered');
             this.gameOver = true;
@@ -1073,7 +1086,7 @@ export class Game {
             
             // Hide game elements
             this.scoreText.visible = false;
-            this.livesText.visible = false;
+            if (this.livesText) this.livesText.visible = false;
             this.levelText.visible = false;
             
             // Delegate all game over handling to GameOverManager
@@ -1112,7 +1125,6 @@ export class Game {
         
         // Clear power-up container
         if (this.powerUpContainer) {
-            console.log('🧹 Clearing power-up container on life loss, children:', this.powerUpContainer.children.length);
             while (this.powerUpContainer.children.length > 0) {
                 const child = this.powerUpContainer.children[0];
                 this.powerUpContainer.removeChild(child);
@@ -1127,7 +1139,12 @@ export class Game {
 
         // Update lives and set waiting state
         this.lives--;
+        console.log('🔄 About to call updateLives with lives:', this.lives);
+        try {
         this.updateLives();
+        } catch (error) {
+            console.error('❌ Error in updateLives:', error);
+        }
         this.playSound('lifeloss');
         this.waitingForInput = true;
         this.inputMode = 'waitForStart'; // Allow paddle movement again
@@ -1202,9 +1219,9 @@ export class Game {
             
             // Reset level start time for the new level
             this.levelStartTime = null;
-            
-            // Apply level speed increase after reset
-            this.applyLevelSpeedIncrease();
+        
+        // Apply level speed increase after reset
+        this.applyLevelSpeedIncrease();
             
             console.log('🎮 Next level setup complete:', {
                 level: this.level,
@@ -1323,7 +1340,7 @@ export class Game {
             this.showHighscores = true;
             this.gameOver = false;
             this.resetGameState().then(() => {
-                this.app.ticker.start();
+            this.app.ticker.start();
             });
         });
     }
@@ -1374,25 +1391,6 @@ export class Game {
 
         const currentSpeed = Math.sqrt(this.ball.dx * this.ball.dx + this.ball.dy * this.ball.dy);
         
-        // Debug logging every 5 seconds
-        const now = Date.now();
-        if (!this.lastSpeedDebugTime || now - this.lastSpeedDebugTime > 5000) {
-            console.log('🎮 Speed Debug:', {
-                gameStarted: this.gameStarted,
-                lastSpeedIncreaseTime: this.lastSpeedIncreaseTime,
-                timeSinceStart: this.lastSpeedIncreaseTime ? now - this.lastSpeedIncreaseTime : 'N/A',
-                timeBasedMultiplier: timeBasedMultiplier,
-                speeds: speeds,
-                targetSpeedPercent: targetSpeedPercent,
-                finalTargetSpeedPercent: finalTargetSpeedPercent,
-                finalTargetSpeed: finalTargetSpeed,
-                currentSpeed: currentSpeed,
-                ballSpeedPercent: this.ball.speedPercent,
-                ballSpeed: this.ball.speed
-            });
-            this.lastSpeedDebugTime = now;
-        }
-        
         // Only adjust speed if difference is significant (more than 1%)
         if (Math.abs(currentSpeed - finalTargetSpeed) > finalTargetSpeed * 0.01) {
             const angle = Math.atan2(this.ball.dy, this.ball.dx);
@@ -1402,12 +1400,6 @@ export class Game {
             // Update ball's speed properties to keep them in sync
             this.ball.speed = finalTargetSpeed;
             this.ball.speedPercent = finalTargetSpeedPercent;
-            
-            console.log('🎮 Speed adjusted:', {
-                from: currentSpeed,
-                to: finalTargetSpeed,
-                multiplier: timeBasedMultiplier
-            });
         }
     }
 
@@ -1475,6 +1467,7 @@ export class Game {
                 break;
             case 'extra_life':
                 this.lives++;
+                this.updateLives();
                 break;
             case 'skull':
                 // Handle skull effect - cause loss of life

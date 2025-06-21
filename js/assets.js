@@ -2,11 +2,11 @@
 export const ASSETS = {
     images: {
         characters: {
-            SAFlag: './assets/images/characters/SAFlag.png',
-            Springbok: './assets/images/characters/Springbok.png',
-            Voortrekker: './assets/images/characters/Voortrekker.png',
-            Braai: './assets/images/characters/Braai.png',
-            RugbyBall: './assets/images/characters/RugbyBall.png'
+            saflag: './assets/images/characters/saflag.png',
+            springbok: './assets/images/characters/springbok.png',
+            voortrekker: './assets/images/characters/voortrekker.png',
+            braai: './assets/images/characters/braai.png',
+            rugbyball: './assets/images/characters/rugbyball.png'
         },
         items: {
             sausage: './assets/images/items/sausage.png',

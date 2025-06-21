@@ -29,7 +29,7 @@
     
     #debugToggle {
       position: fixed;
-      top: 10px;
+      bottom: 10px;
       right: 10px;
       background: #ff0000;
       color: white;
@@ -105,16 +105,40 @@
       }
       console.error('Unhandled promise rejection:', e);
     });
+  </script>
+  
+  <!-- Debug mode check and conditional debug UI -->
+  <script type="module">
+    import { DEBUG_MODE } from './js/config.js';
     
-    // Show debug on mobile by default
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-      console.log('📱 Mobile device detected - debug console enabled');
-      // Auto-show debug on mobile after 3 seconds
-      setTimeout(() => {
-        if (window.remoteLogger) {
-          window.remoteLogger.showHtmlDebugConsole();
-        }
-      }, 3000);
+    // Hide debug elements if debug mode is disabled
+    if (!DEBUG_MODE) {
+      // Remove debug button and console from DOM
+      const debugButton = document.getElementById('debugToggle');
+      const debugConsole = document.getElementById('mobileDebug');
+      if (debugButton) debugButton.remove();
+      if (debugConsole) debugConsole.remove();
+      
+      // Remove debug styles
+      const debugStyles = document.querySelector('style');
+      if (debugStyles) {
+        debugStyles.textContent = debugStyles.textContent.replace(/#mobileDebug[^}]*}/g, '');
+        debugStyles.textContent = debugStyles.textContent.replace(/#debugToggle[^}]*}/g, '');
+        debugStyles.textContent = debugStyles.textContent.replace(/\.debug-error[^}]*}/g, '');
+        debugStyles.textContent = debugStyles.textContent.replace(/\.debug-warn[^}]*}/g, '');
+        debugStyles.textContent = debugStyles.textContent.replace(/\.debug-info[^}]*}/g, '');
+      }
+    } else {
+      // Debug mode is enabled - show debug on mobile
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        console.log('📱 Mobile device detected - debug console enabled');
+        // Auto-show debug on mobile after 3 seconds
+        setTimeout(() => {
+          if (window.remoteLogger) {
+            window.remoteLogger.showHtmlDebugConsole();
+          }
+        }, 3000);
+      }
     }
   </script>
 </body>

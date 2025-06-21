@@ -189,16 +189,19 @@ export class GameOverManager {
             this.highscoreCtx.fillText(`${index + 1}.`, startX, yPos);
             
             // Draw character image if available
-            if (score.character && this.characterImages[score.character]) {
-                const charImg = this.characterImages[score.character];
-                const charSize = 30;
-                this.highscoreCtx.drawImage(
-                    charImg, 
-                    charX, 
-                    yPos - charSize + 10, 
-                    charSize, 
-                    charSize
-                );
+            if (score.character) {
+                const characterKey = score.character.toLowerCase();
+                if (this.characterImages[characterKey]) {
+                    const charImg = this.characterImages[characterKey];
+                    const charSize = 30;
+                    this.highscoreCtx.drawImage(
+                        charImg, 
+                        charX, 
+                        yPos - charSize + 10, 
+                        charSize, 
+                        charSize
+                    );
+                }
             }
             
             // Draw name

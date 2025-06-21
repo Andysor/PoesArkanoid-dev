@@ -13,6 +13,7 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         duration: 5000,
         score: 100,
         canBreakStrongBricks: true,        // Brannas can break strong bricks
+        fallSpeed: 6,                      // Pixels per frame falling speed
     },
     extraball: {
         spriteKey: 'extraball',
@@ -28,6 +29,7 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         duration: 10000,
         score: 100,
         canBreakStrongBricks: false,       // Extra ball cannot break strong bricks
+        fallSpeed: 6,                      // Pixels per frame falling speed
     },
     large_paddle: {
         spriteKey: 'powerup_largepaddle',
@@ -43,6 +45,7 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         duration: 10000,
         score: 0,
         canBreakStrongBricks: false,       // Paddle powerups cannot break strong bricks
+        fallSpeed: 5,                      // Pixels per frame falling speed
     },
     small_paddle: {
         spriteKey: 'powerup_smallpaddle',
@@ -58,6 +61,7 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         duration: 10000,
         score: 0,
         canBreakStrongBricks: false,       // Paddle powerups cannot break strong bricks
+        fallSpeed: 5,                      // Pixels per frame falling speed
     },
     extra_life: {
         spriteKey: 'extra_life',
@@ -73,6 +77,7 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         duration: 0,
         score: 0,
         canBreakStrongBricks: false,       // Extra life cannot break strong bricks
+        fallSpeed: 4,                      // Pixels per frame falling speed (slower for rare powerup)
     },
     skull: {
         spriteKey: 'skull',
@@ -88,6 +93,7 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         duration: 0,
         score: 0,
         canBreakStrongBricks: false,       // Skull cannot break strong bricks
+        fallSpeed: 7,                      // Pixels per frame falling speed (faster for dangerous powerup)
     },
     coin_gold: {
         spriteKey: 'coin_gold',
@@ -103,6 +109,7 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         duration: 0,
         score: 100,
         canBreakStrongBricks: false,       // Coins cannot break strong bricks
+        fallSpeed: 8,                      // Pixels per frame falling speed (fast for coins)
     },
     coin_silver: {
         spriteKey: 'coin_silver',
@@ -118,6 +125,7 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         duration: 0,
         score: 25,
         canBreakStrongBricks: false,       // Coins cannot break strong bricks
+        fallSpeed: 8,                      // Pixels per frame falling speed (fast for coins)
     },
 };
 
@@ -154,7 +162,7 @@ export const POWERUP_DISTRIBUTION_CONFIG = {
     // Powerup distribution ratios (percentages of max powerups)
     RATIOS: {
         BRANNAS: 0.03,        // 3% - rare
-        EXTRA_LIFE: 0.01,     // 1% - rare
+        EXTRA_LIFE: 0.03,     // 3% - rare (increased from 1% to ensure placement)
         SKULL: 0.03,          // 3% - uncommon
         COIN_GOLD: 0.1,      // 10% - common
         COIN_SILVER: 0.2,    // 20% - common
@@ -181,7 +189,6 @@ export function distributePowerups(normalBricks, glassBricks) {
     });
 
     if (weightedBricks.length === 0) {
-        console.log('No bricks available for powerup distribution');
         return;
     }
 
@@ -194,8 +201,6 @@ export function distributePowerups(normalBricks, glassBricks) {
         POWERUP_DISTRIBUTION_CONFIG.MIN_POWERUPS, 
         Math.min(totalBricks, Math.floor(totalBricks * POWERUP_DISTRIBUTION_CONFIG.MAX_POWERUP_PERCENTAGE))
     );
-    
-    console.log(`Distributing powerups: ${totalBricks} weighted bricks available, max ${maxPowerups} powerups`);
 
     let powerupIndex = 0;
     let totalPlaced = 0;
@@ -206,7 +211,6 @@ export function distributePowerups(normalBricks, glassBricks) {
         const count = Math.max(0, Math.floor(maxPowerups * ratio));
         
         if (count > 0) {
-            console.log(`Placing ${count} ${type} powerups`);
             powerupComposition[type] = count;
             
             for (let i = 0; i < count && powerupIndex < shuffled.length; i++, powerupIndex++) {
@@ -224,7 +228,6 @@ export function distributePowerups(normalBricks, glassBricks) {
 
     // If no powerups were placed due to rounding, place at least one fallback powerup
     if (totalPlaced === 0 && shuffled.length > 0) {
-        console.log(`No powerups placed due to rounding, placing at least one ${POWERUP_DISTRIBUTION_CONFIG.FALLBACK_POWERUP}`);
         const targetBrick = shuffled[0];
         if (!targetBrick.brickInfo) {
             targetBrick.brickInfo = {};
@@ -233,33 +236,6 @@ export function distributePowerups(normalBricks, glassBricks) {
         totalPlaced = 1;
         powerupComposition[POWERUP_DISTRIBUTION_CONFIG.FALLBACK_POWERUP] = 1;
     }
-
-    // Log the powerup composition breakdown
-    console.log('🎯 LEVEL POWERUP COMPOSITION:');
-    console.log('═'.repeat(50));
-    console.log(`📊 Total Powerups: ${totalPlaced} / ${maxPowerups} maximum`);
-    console.log(`🧱 Available Bricks: ${totalBricks} (${normalBricks.length} normal, ${glassBricks.length} glass)`);
-    console.log('─'.repeat(50));
-    
-    // Sort powerups by count (highest first)
-    const sortedPowerups = Object.entries(powerupComposition)
-        .sort(([,a], [,b]) => b - a)
-        .filter(([,count]) => count > 0);
-    
-    if (sortedPowerups.length === 0) {
-        console.log('❌ No powerups placed');
-    } else {
-        sortedPowerups.forEach(([type, count]) => {
-            const percentage = ((count / totalPlaced) * 100).toFixed(1);
-            const ratio = POWERUP_DISTRIBUTION_CONFIG.RATIOS[type];
-            const ratioPercent = (ratio * 100).toFixed(1);
-            console.log(`🎁 ${type.padEnd(20)}: ${count.toString().padStart(2)} (${percentage}% of placed, ${ratioPercent}% target)`);
-        });
-    }
-    
-    console.log('═'.repeat(50));
-
-    console.log(`Total powerups placed: ${totalPlaced} out of ${maxPowerups} maximum`);
 }
 
 // Game sounds that aren't powerups but need sound pools

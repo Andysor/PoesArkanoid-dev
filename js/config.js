@@ -1,8 +1,15 @@
 // Game version
 export const GAME_VERSION = '0.1.0';
 
+// Debug mode flag - set to true to enable debug logging and features
+export const DEBUG_MODE = false;
+
 // Test mode flag
 export const TEST_MODE = false;
+
+// Level layout settings
+export const BRICK_AREA_WIDTH_PERCENT = 0.95; // 95% of screen width (reduced from 90% to minimize edge gaps)
+export const BRICK_AREA_TOP_PERCENT = 0.05; // 5% from top of screen
 
 // Ball settings - now in percentage of screen width per second
 export const BASE_INITIAL_SPEED_PERCENT = 0.8; // 80% of screen width per second

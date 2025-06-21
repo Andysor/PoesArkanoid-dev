@@ -1,0 +1,1402 @@
+[
+  {
+    "timestamp": "2025-06-21T14:57:25.127Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:25.157Z",
+    "message": "🎮 Speed Debug: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.078Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.082Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.095Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.097Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.111Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.113Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.131Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.133Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.145Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.146Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.161Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.163Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.177Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.179Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.195Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.197Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.228Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.230Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.261Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.263Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.295Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.297Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.328Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.330Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.361Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.363Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.394Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.396Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.428Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.429Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.461Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.463Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.495Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.496Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.528Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.529Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.561Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.563Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.595Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.596Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.628Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.630Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.662Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.664Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.695Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.697Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.729Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.731Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.746Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:27.747Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:28.300Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:28.304Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:30.132Z",
+    "message": "🎮 Speed adjusted: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:30.165Z",
+    "message": "🎮 Speed Debug: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:30.250Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:30.254Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:31.835Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:31.841Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:32.870Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:32.876Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:35.174Z",
+    "message": "🎮 Speed Debug: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:35.526Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:35.529Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:36.928Z",
+    "message": "🎆 Triggering powerup effect: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:36.932Z",
+    "message": "🎆 Creating particle burst: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:36.934Z",
+    "message": "🎆 Particle burst created: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:36.936Z",
+    "message": "🎆 Particle effect registered: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:36.938Z",
+    "message": "🎆 Powerup effect triggered: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:37.964Z",
+    "message": "🎆 Particle effect complete: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:37.968Z",
+    "message": "🧹 Removing effect: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:37.970Z",
+    "message": "🧹 Effect details: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:37.972Z",
+    "message": "🧹 Cleaning up particle burst: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:37.973Z",
+    "message": "🧹 Particle container removed from parent",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:37.975Z",
+    "message": "🧹 Particle container destroyed",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:37.977Z",
+    "message": "🧹 Effect removed from active effects map: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:37.979Z",
+    "message": "🧹 Removing effect: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:37.981Z",
+    "message": "🧹 PowerupEffects: Effect already removed (race condition): particle_burst_1750517856932",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:40.132Z",
+    "message": "🎮 Speed adjusted: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:40.182Z",
+    "message": "🎮 Speed Debug: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:40.483Z",
+    "message": "💰 Big bonus brick hit - awarding bonus points!",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:40.488Z",
+    "message": "🎆 Triggering powerup effect: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:40.492Z",
+    "message": "🎆 Creating particle burst: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:40.495Z",
+    "message": "🎆 Particle burst created: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:40.497Z",
+    "message": "🎆 Particle effect registered: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:40.499Z",
+    "message": "🎆 Powerup effect triggered: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:40.950Z",
+    "message": "🎆 Particle update: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:41.752Z",
+    "message": "🎆 Particle effect complete: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:41.757Z",
+    "message": "🧹 Removing effect: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:41.760Z",
+    "message": "🧹 Effect details: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:41.764Z",
+    "message": "🧹 Cleaning up particle burst: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:41.768Z",
+    "message": "🧹 Particle container removed from parent",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:41.772Z",
+    "message": "🧹 Particle container destroyed",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:41.776Z",
+    "message": "🧹 Effect removed from active effects map: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:41.778Z",
+    "message": "🧹 Removing effect: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:41.780Z",
+    "message": "🧹 PowerupEffects: Effect already removed (race condition): particle_burst_1750517860492",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:42.202Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:42.207Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:45.190Z",
+    "message": "🎮 Speed Debug: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:49.581Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:49.586Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:50.132Z",
+    "message": "🎮 Speed adjusted: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:50.199Z",
+    "message": "🎮 Speed Debug: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:57:55.207Z",
+    "message": "🎮 Speed Debug: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:00.132Z",
+    "message": "🎮 Speed adjusted: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:00.216Z",
+    "message": "🎮 Speed Debug: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:05.228Z",
+    "message": "🎮 Speed Debug: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:09.265Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:09.267Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:09.901Z",
+    "message": "🎆 Triggering powerup effect: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:09.904Z",
+    "message": "🎆 Creating particle burst: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:09.906Z",
+    "message": "🎆 Particle burst created: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:09.908Z",
+    "message": "🎆 Particle effect registered: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:09.910Z",
+    "message": "🎆 Powerup effect triggered: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.083Z",
+    "message": "🎆 Triggering powerup effect: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.086Z",
+    "message": "🎆 Creating particle burst: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.087Z",
+    "message": "🎆 Particle burst created: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.090Z",
+    "message": "🎆 Particle effect registered: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.091Z",
+    "message": "🎆 Powerup effect triggered: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.133Z",
+    "message": "🎮 Speed adjusted: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.233Z",
+    "message": "🎮 Speed Debug: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.300Z",
+    "message": "🎆 Particle update: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.315Z",
+    "message": "🧹 Removing effect: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.318Z",
+    "message": "🧹 Effect details: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.320Z",
+    "message": "🧹 Screen shake positions restored",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.322Z",
+    "message": "🧹 Effect removed from active effects map: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.324Z",
+    "message": "🧹 Removing effect: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.326Z",
+    "message": "🧹 PowerupEffects: Effect already removed (race condition): screen_shake_1750517889904",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.450Z",
+    "message": "🎆 Triggering powerup effect: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.452Z",
+    "message": "🎆 Creating particle burst: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.454Z",
+    "message": "🎆 Particle burst created: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.456Z",
+    "message": "🎆 Particle effect registered: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.457Z",
+    "message": "🎆 Powerup effect triggered: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.459Z",
+    "message": "🎆 Particle update: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.667Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.670Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.700Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.702Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.738Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.740Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.767Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.769Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.800Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.803Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.834Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.836Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.850Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.852Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.867Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.869Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.884Z",
+    "message": "💪 Strong brick hit - unbreakable by normal hits [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.885Z",
+    "message": "💪 Strong brick collision - ball bouncing off",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.901Z",
+    "message": "🎆 Particle update: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.934Z",
+    "message": "🎆 Triggering powerup effect: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.936Z",
+    "message": "🎆 Creating particle burst: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.937Z",
+    "message": "🎆 Particle burst created: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.939Z",
+    "message": "🎆 Particle effect registered: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.940Z",
+    "message": "🎆 Powerup effect triggered: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.967Z",
+    "message": "🎆 Triggering powerup effect: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.968Z",
+    "message": "🎆 Creating particle burst: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.969Z",
+    "message": "🎆 Particle burst created: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.971Z",
+    "message": "🎆 Particle effect registered: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:10.972Z",
+    "message": "🎆 Powerup effect triggered: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.067Z",
+    "message": "🎆 Particle update: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.235Z",
+    "message": "💔 LOSE LIFE - Starting life loss process",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.237Z",
+    "message": "🧹 Ball.clearAll - Clearing all balls, current count: 2",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.239Z",
+    "message": "🧹 Ball.clearAll - Removing ball from container: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.241Z",
+    "message": "🧹 Ball.clearAll - Removing ball from container: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.243Z",
+    "message": "🧹 Ball.clearAll - All balls cleared",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.244Z",
+    "message": "🧹 Clearing power-up container on life loss, children: 0",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.246Z",
+    "message": "🎯 createAndSetupBall - Starting ball creation",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.248Z",
+    "message": "🎯 createAndSetupBall - Current state: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.249Z",
+    "message": "🔄 Ball.resetAll - Starting ball reset",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.251Z",
+    "message": "🔄 Ball.resetAll - Current balls before clear: 0",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.253Z",
+    "message": "🔄 Ball.resetAll - Balls array cleared",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.255Z",
+    "message": "🧹 Removed lingering ball graphics (post-clear): 0",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.257Z",
+    "message": "🔄 Ball.resetAll - Created new main ball: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.259Z",
+    "message": "🔄 Ball.resetAll - Added ball to objects container",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.260Z",
+    "message": "🎯 createAndSetupBall - Ball created: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.262Z",
+    "message": "🎯 createAndSetupBall - Ball added to objects container",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.263Z",
+    "message": "🎯 createAndSetupBall - Ball visibility set to: true",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.265Z",
+    "message": "🎯 centerPaddleAndPlaceBall - Starting ball placement",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.266Z",
+    "message": "🎯 centerPaddleAndPlaceBall - Paddle state: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.267Z",
+    "message": "🎯 centerPaddleAndPlaceBall - Ball state: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.269Z",
+    "message": "🎯 centerPaddleAndPlaceBall - Paddle repositioned to: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.270Z",
+    "message": "🎬 Calling placeOnPaddle. Paddle at: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.272Z",
+    "message": "🎬 Ball before placeOnPaddle: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.273Z",
+    "message": "✅ Ball after placeOnPaddle: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.274Z",
+    "message": "✅ centerPaddleAndPlaceBall - Final state: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.276Z",
+    "message": "🎯 createAndSetupBall - Ball creation complete: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:11.277Z",
+    "message": "💔 LOSE LIFE - State updated: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:12.191Z",
+    "message": "🎯 Pointer down - Starting movement tracking: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:12.289Z",
+    "message": "🎯 Pointer up - Movement check: [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:12.294Z",
+    "message": "🎯 No movement - Returning to wait state",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:22.354Z",
+    "message": "🔥 Initializing Firebase...",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:22.458Z",
+    "message": "🎮 GameOverManager: Initializing...",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:22.459Z",
+    "message": "🎮 GameOverManager: Initialized with canvases [object Object]",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:22.459Z",
+    "message": "📱 PowerupEffects: Mobile device detected - using reduced effects",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  },
+  {
+    "timestamp": "2025-06-21T14:58:22.833Z",
+    "message": "✅ Firebase initialized successfully",
+    "type": "log",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/136.0.7103.91 Mobile/15E148 Safari/604.1",
+    "url": "https://andysor.github.io/PoesArkanoid-dev/"
+  }
+]

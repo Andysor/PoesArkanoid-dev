@@ -3,7 +3,7 @@ export class BallTrail {
         this.app = app;
         this.particles = [];
         this.maxParticles = 15;
-        this.particleLifetime = 15; // frames
+        this.particleLifetime = 12; // frames
         this.trailColor = trailColor;
         this.trailAlpha = 0.5;
         

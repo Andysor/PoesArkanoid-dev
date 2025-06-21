@@ -115,18 +115,6 @@ export class Ball {
         // Update graphics position
         this.graphics.x = ballX;
         this.graphics.y = ballY;
-    
-        // Only log occasionally to reduce spam during movement
-        if (Math.random() < 0.01) { // 1% chance to log
-            console.log('🎯 placeOnPaddle called', {
-                ballX,
-                ballY,
-                paddleX: paddle.sprite.x,
-                paddleY: paddle.sprite.y,
-                time: Date.now(),
-                paddleWidth: paddle.width
-            });
-        }
     }
     
 
@@ -458,11 +446,6 @@ export class Ball {
                 } else if (brick.brickInfo.type === 'strong') {
                     // Strong bricks are unbreakable by normal hits
                     // They can only be destroyed by specific powerups like brannas
-                    console.log('💪 Strong brick hit - unbreakable by normal hits', {
-                        brickPosition: { x: brick.x, y: brick.y },
-                        ballPosition: { x: this.graphics.x, y: this.graphics.y },
-                        brannasActive: this.game ? this.game.isBrannasActive() : false
-                    });
                     
                     // Check if brannas effect is active
                     if (this.game && this.game.isBrannasActive()) {
@@ -475,7 +458,6 @@ export class Ball {
                     }
                     
                     // Ball bounces off strong brick but doesn't destroy it
-                    console.log('💪 Strong brick collision - ball bouncing off');
                     return true; // Return true to indicate collision occurred
                 } else if (brick.brickInfo.type === 'sausage') {
                     // Create falling sausage power-up
@@ -613,13 +595,11 @@ export class Ball {
             extraBall.setDuration(duration);
         }
     
-        // Spre litt på retningen
-        const currentAngle = Math.atan2(dy, dx);
-        const angleOffset = Math.PI / 4; // 45 grader
-        const newAngle = currentAngle + angleOffset;
+        // Random angle for extra ball
+        const randomAngle = Math.random() * 2 * Math.PI; // Random angle between 0 and 2π
     
-        extraBall.dx = speed * Math.cos(newAngle);
-        extraBall.dy = speed * Math.sin(newAngle);
+        extraBall.dx = speed * Math.cos(randomAngle);
+        extraBall.dy = speed * Math.sin(randomAngle);
         extraBall.isMoving = true;
     
         const mainBall = Ball.balls.find(b => !b.isExtraBall);
@@ -647,9 +627,6 @@ export class Ball {
     
 
     static resetAll(app, game, levelInstance) {
-        console.log('🔄 Ball.resetAll - Starting ball reset');
-        console.log('🔄 Ball.resetAll - Current balls before clear:', Ball.balls.length);
-        
         // Remove all ball graphics and clear trails
         Ball.balls.forEach(ball => {
             if (ball.graphics && ball.graphics.parent) {
@@ -662,7 +639,6 @@ export class Ball {
     
         // Clear balls array
         Ball.balls = [];
-        console.log('🔄 Ball.resetAll - Balls array cleared');
     
         // Remove lingering ball graphics
         if (game?.objectsContainer) {
@@ -691,16 +667,8 @@ export class Ball {
         mainBall.game = game;
         mainBall.graphics.isBallGraphic = true;
         
-        console.log('🔄 Ball.resetAll - Created new main ball:', {
-            ballExists: !!mainBall,
-            isExtraBall: mainBall.isExtraBall,
-            isMoving: mainBall.isMoving,
-            totalBalls: Ball.balls.length
-        });
-        
         if (mainBall.game?.objectsContainer) {
             mainBall.game.objectsContainer.addChild(mainBall.graphics);
-            console.log('🔄 Ball.resetAll - Added ball to objects container');
         }
 
         return mainBall;

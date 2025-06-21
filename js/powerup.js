@@ -29,11 +29,13 @@ export class PowerUp {
         this.y = y;
         this.width = 30;
         this.height = 30;
-        this.speed = POWER_UP_FALLING_SPEED;
         this.active = false;
         this.duration = 0;
         this.endTime = 0;
         this.config = getPowerUpConfig(type);
+        
+        // Use individual fallSpeed from config, or fallback to global default
+        this.speed = this.config?.fallSpeed || POWER_UP_FALLING_SPEED;
 
         // Create PIXI sprite using the sprite key from config
         const spriteKey = getPowerUpSpriteKey(type);

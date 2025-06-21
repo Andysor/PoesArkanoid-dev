@@ -249,7 +249,7 @@ function setupInputHandlers() {
             if (hasMoved) {
                 console.log('🎯 Launching ball - Movement detected');
                 game.inputMode = 'playing';
-                game.handleGameStart();
+                game.handleGameStart(e);
             } else {
                 // Reset to waiting state if no movement occurred
                 console.log('🎯 No movement - Returning to wait state');
