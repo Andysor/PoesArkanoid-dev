@@ -277,11 +277,11 @@
     ],
     [
       {
-        "type": "glass",
+        "type": "extra",
         "destroyed": false,
         "strength": 1,
         "bonusScore": false,
-        "extraBall": false,
+        "extraBall": true,
         "special": false,
         "effect": null
       },
@@ -459,11 +459,11 @@
         "effect": null
       },
       {
-        "type": "normal",
+        "type": "extra",
         "destroyed": false,
         "strength": 1,
         "bonusScore": false,
-        "extraBall": false,
+        "extraBall": true,
         "special": false,
         "effect": null
       },
@@ -971,11 +971,11 @@
         "effect": null
       },
       {
-        "type": "normal",
+        "type": "extra",
         "destroyed": false,
         "strength": 1,
         "bonusScore": false,
-        "extraBall": false,
+        "extraBall": true,
         "special": false,
         "effect": null
       },
@@ -1034,11 +1034,11 @@
         "effect": null
       },
       {
-        "type": "normal",
+        "type": "extra",
         "destroyed": false,
         "strength": 1,
         "bonusScore": false,
-        "extraBall": false,
+        "extraBall": true,
         "special": false,
         "effect": null
       },

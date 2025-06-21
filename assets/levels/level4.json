@@ -66,148 +66,11 @@
         "effect": null
       },
       {
-        "type": "empty",
-        "destroyed": false,
-        "strength": 0,
-        "bonusScore": false,
-        "extraBall": false,
-        "special": false,
-        "effect": null
-      },
-      {
-        "type": "empty",
-        "destroyed": false,
-        "strength": 0,
-        "bonusScore": false,
-        "extraBall": false,
-        "special": false,
-        "effect": null
-      },
-      {
-        "type": "empty",
-        "destroyed": false,
-        "strength": 0,
-        "bonusScore": false,
-        "extraBall": false,
-        "special": false,
-        "effect": null
-      },
-      {
-        "type": "glass",
+        "type": "extra",
         "destroyed": false,
         "strength": 1,
         "bonusScore": false,
-        "extraBall": false,
-        "special": false,
-        "effect": null
-      },
-      {
-        "type": "glass",
-        "destroyed": false,
-        "strength": 1,
-        "bonusScore": false,
-        "extraBall": false,
-        "special": false,
-        "effect": null
-      },
-      {
-        "type": "glass",
-        "destroyed": false,
-        "strength": 1,
-        "bonusScore": false,
-        "extraBall": false,
-        "special": false,
-        "effect": null
-      },
-      {
-        "type": "bigbonus",
-        "destroyed": false,
-        "strength": 1,
-        "bonusScore": true,
-        "extraBall": false,
-        "special": false,
-        "effect": "bigbonus"
-      },
-      {
-        "type": "bigbonus",
-        "destroyed": false,
-        "strength": 1,
-        "bonusScore": true,
-        "extraBall": false,
-        "special": false,
-        "effect": "bigbonus"
-      }
-    ],
-    [
-      {
-        "type": "normal",
-        "destroyed": false,
-        "strength": 1,
-        "bonusScore": false,
-        "extraBall": false,
-        "special": false,
-        "effect": null
-      },
-      {
-        "type": "glass",
-        "destroyed": false,
-        "strength": 1,
-        "bonusScore": false,
-        "extraBall": false,
-        "special": false,
-        "effect": null
-      },
-      {
-        "type": "bigbonus",
-        "destroyed": false,
-        "strength": 1,
-        "bonusScore": true,
-        "extraBall": false,
-        "special": false,
-        "effect": "bigbonus"
-      },
-      {
-        "type": "glass",
-        "destroyed": false,
-        "strength": 1,
-        "bonusScore": false,
-        "extraBall": false,
-        "special": false,
-        "effect": null
-      },
-      {
-        "type": "normal",
-        "destroyed": false,
-        "strength": 1,
-        "bonusScore": false,
-        "extraBall": false,
-        "special": false,
-        "effect": null
-      },
-      {
-        "type": "empty",
-        "destroyed": false,
-        "strength": 0,
-        "bonusScore": false,
-        "extraBall": false,
-        "special": false,
-        "effect": null
-      },
-      {
-        "type": "empty",
-        "destroyed": false,
-        "strength": 0,
-        "bonusScore": false,
-        "extraBall": false,
-        "special": false,
-        "effect": null
-      },
-      {
-        "type": "empty",
-        "destroyed": false,
-        "strength": 0,
-        "bonusScore": false,
-        "extraBall": false,
+        "extraBall": true,
         "special": false,
         "effect": null
       },
@@ -295,13 +158,13 @@
         "effect": null
       },
       {
-        "type": "glass",
+        "type": "bigbonus",
         "destroyed": false,
         "strength": 1,
-        "bonusScore": false,
+        "bonusScore": true,
         "extraBall": false,
         "special": false,
-        "effect": null
+        "effect": "bigbonus"
       },
       {
         "type": "glass",
@@ -318,6 +181,143 @@
         "strength": 1,
         "bonusScore": false,
         "extraBall": false,
+        "special": false,
+        "effect": null
+      },
+      {
+        "type": "empty",
+        "destroyed": false,
+        "strength": 0,
+        "bonusScore": false,
+        "extraBall": false,
+        "special": false,
+        "effect": null
+      },
+      {
+        "type": "empty",
+        "destroyed": false,
+        "strength": 0,
+        "bonusScore": false,
+        "extraBall": false,
+        "special": false,
+        "effect": null
+      },
+      {
+        "type": "empty",
+        "destroyed": false,
+        "strength": 0,
+        "bonusScore": false,
+        "extraBall": false,
+        "special": false,
+        "effect": null
+      },
+      {
+        "type": "empty",
+        "destroyed": false,
+        "strength": 0,
+        "bonusScore": false,
+        "extraBall": false,
+        "special": false,
+        "effect": null
+      },
+      {
+        "type": "empty",
+        "destroyed": false,
+        "strength": 0,
+        "bonusScore": false,
+        "extraBall": false,
+        "special": false,
+        "effect": null
+      },
+      {
+        "type": "glass",
+        "destroyed": false,
+        "strength": 1,
+        "bonusScore": false,
+        "extraBall": false,
+        "special": false,
+        "effect": null
+      },
+      {
+        "type": "glass",
+        "destroyed": false,
+        "strength": 1,
+        "bonusScore": false,
+        "extraBall": false,
+        "special": false,
+        "effect": null
+      },
+      {
+        "type": "extra",
+        "destroyed": false,
+        "strength": 1,
+        "bonusScore": false,
+        "extraBall": true,
+        "special": false,
+        "effect": null
+      },
+      {
+        "type": "bigbonus",
+        "destroyed": false,
+        "strength": 1,
+        "bonusScore": true,
+        "extraBall": false,
+        "special": false,
+        "effect": "bigbonus"
+      },
+      {
+        "type": "bigbonus",
+        "destroyed": false,
+        "strength": 1,
+        "bonusScore": true,
+        "extraBall": false,
+        "special": false,
+        "effect": "bigbonus"
+      }
+    ],
+    [
+      {
+        "type": "normal",
+        "destroyed": false,
+        "strength": 1,
+        "bonusScore": false,
+        "extraBall": false,
+        "special": false,
+        "effect": null
+      },
+      {
+        "type": "glass",
+        "destroyed": false,
+        "strength": 1,
+        "bonusScore": false,
+        "extraBall": false,
+        "special": false,
+        "effect": null
+      },
+      {
+        "type": "glass",
+        "destroyed": false,
+        "strength": 1,
+        "bonusScore": false,
+        "extraBall": false,
+        "special": false,
+        "effect": null
+      },
+      {
+        "type": "glass",
+        "destroyed": false,
+        "strength": 1,
+        "bonusScore": false,
+        "extraBall": false,
+        "special": false,
+        "effect": null
+      },
+      {
+        "type": "extra",
+        "destroyed": false,
+        "strength": 1,
+        "bonusScore": false,
+        "extraBall": true,
         "special": false,
         "effect": null
       },
@@ -796,11 +796,11 @@
         "effect": null
       },
       {
-        "type": "normal",
+        "type": "extra",
         "destroyed": false,
         "strength": 1,
         "bonusScore": false,
-        "extraBall": false,
+        "extraBall": true,
         "special": false,
         "effect": null
       },
@@ -998,11 +998,11 @@
         "effect": null
       },
       {
-        "type": "normal",
+        "type": "extra",
         "destroyed": false,
         "strength": 1,
         "bonusScore": false,
-        "extraBall": false,
+        "extraBall": true,
         "special": false,
         "effect": null
       },
