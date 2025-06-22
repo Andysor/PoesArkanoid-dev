@@ -35,8 +35,8 @@ export const ASSETS = {
         levels: (name, ext = '.png') => `./assets/images/levels/${name}${ext}`
     },
     sounds: {
-        hit: './assets/sounds/hit.m4a',
-        lifeloss: './assets/sounds/lifeloss.m4a',
+        normal: './assets/sounds/normal.mp3',
+        lifeloss: './assets/sounds/masepoes.m4a',
         poesklap: './assets/sounds/poesklap.m4a',
         brannas: './assets/sounds/brannas.m4a',
         brick_glass_break: './assets/sounds/brick_glass_break.m4a',
@@ -44,7 +44,12 @@ export const ASSETS = {
         extra_life: './assets/sounds/extra_life.m4a',
         coin_silver: './assets/sounds/coin_silver.m4a',
         coin_gold: './assets/sounds/coin_gold.m4a',
-        gameOver1: './assets/sounds/game_over1.m4a'
+        gameOver1: './assets/sounds/game_over1.m4a',
+        groot: './assets/sounds/groot.mp3',
+        klein: './assets/sounds/klein.mp3',
+        strong: './assets/sounds/strong.m4a',
+        bigbonus: './assets/sounds/bigbonus.m4a',
+        
     },
     levels: (levelNum) => `./assets/levels/level${levelNum}.json`
 };

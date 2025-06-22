@@ -1,4 +1,4 @@
-import { BASE_INITIAL_SPEED, BASE_MAX_SPEED, LEVEL_SPEED_INCREASE, COMPONENT_SPEED, BALL_RADIUS, getScreenRelativeSpeed, BASE_INITIAL_SPEED_PERCENT, BASE_MAX_SPEED_PERCENT } from './config.js';
+import { BASE_INITIAL_SPEED, BASE_MAX_SPEED, LEVEL_SPEED_INCREASE, COMPONENT_SPEED, BALL_RADIUS, getScreenRelativeSpeed, BASE_INITIAL_SPEED_PERCENT, BASE_MAX_SPEED_PERCENT, BRICK_SOUND_CONFIG } from './config.js';
 import { playSoundByName } from './audio.js';
 import { BallTrail } from './ballTrail.js';
 import { ASSETS, loadImage } from './assets.js';
@@ -450,6 +450,8 @@ export class Ball {
                     // Check if brannas effect is active
                     if (this.game && this.game.isBrannasActive()) {
                         console.log('🔥 Brannas active - destroying strong brick!');
+                        // Play strong brick destruction sound
+                        playSoundByName('strong');
                         this.level.handleBrickDestroyed(c, r);
                         if (this.game) {
                             this.game.addScore(BRICK_SCORE_CONFIG.strong || 30);
@@ -458,6 +460,8 @@ export class Ball {
                     }
                     
                     // Ball bounces off strong brick but doesn't destroy it
+                    // Play strong brick hit sound
+                    playSoundByName('strong');
                     return true; // Return true to indicate collision occurred
                 } else if (brick.brickInfo.type === 'sausage') {
                     // Create falling sausage power-up
@@ -536,6 +540,9 @@ export class Ball {
                     // Big bonus brick - gives a large score bonus
                     console.log('💰 Big bonus brick hit - awarding bonus points!');
                     
+                    // Play big bonus sound
+                    playSoundByName('bigbonus');
+                    
                     if (this.game) {
                         // Award a large bonus score from config
                         const bigBonusScore = SPECIAL_BRICK_CONFIG.BIG_BONUS_SCORE;
@@ -554,6 +561,10 @@ export class Ball {
                     this.level.handleBrickDestroyed(c, r);
                 } else {
                     // Default brick destruction
+                    // Play normal brick sound if enabled
+                    if (BRICK_SOUND_CONFIG.ENABLE_NORMAL_BRICK_SOUNDS) {
+                        playSoundByName('normal');
+                    }
                     this.level.handleBrickDestroyed(c, r);
                     if (this.game) {
                         this.game.addScore(BRICK_SCORE_CONFIG.normal || 10);
@@ -561,6 +572,10 @@ export class Ball {
                 }
             } else {
                 // Default brick destruction for bricks without brickInfo
+                // Play normal brick sound if enabled
+                if (BRICK_SOUND_CONFIG.ENABLE_NORMAL_BRICK_SOUNDS) {
+                    playSoundByName('normal');
+                }
                 this.level.handleBrickDestroyed(c, r);
                 if (this.game) {
                     this.game.addScore(BRICK_SCORE_CONFIG.default || 10);

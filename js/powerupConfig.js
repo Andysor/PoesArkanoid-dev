@@ -1,17 +1,17 @@
 export const POWERUP_BEHAVIOR_CONFIG = {
     brannas: {
-        spriteKey: 'brannas',       // må matche assets.js
+        spriteKey: 'brannas',
         showSprite: true,
         showText: true,
         text: 'BRANNAS!',
-        textPosition: 'center',             // 'center' eller 'brick'
-        textSize: 32,
-        textBlink: true,
-        playSound: true,
-        sound: 'brannas',                  // Fixed: use brannas sound instead of brick_glass_break
-        activateOn: 'screen',              // 'brick', 'paddle', 'screen'
-        duration: 5000,
-        score: 100,
+        textPosition: 'center',
+        textSize: 28,
+        textBlink: false,
+        playSound: true,                   
+        sound: 'brannas',                  // References asset name
+        activateOn: 'screen',
+        duration: 10000,
+        score: 0,
         canBreakStrongBricks: true,        // Brannas can break strong bricks
         fallSpeed: 6,                      // Pixels per frame falling speed
     },
@@ -19,19 +19,19 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         spriteKey: 'extraball',
         showSprite: true,
         showText: true,
-        text: 'POESKLAP!',
+        text: 'EXTRA!',
         textPosition: 'center',
-        textSize: 32,
-        textBlink: true,
-        playSound: true,
-        sound: 'poesklap',
-        activateOn: 'screen',
-        duration: 10000,
-        score: 100,
+        textSize: 28,
+        textBlink: false,
+        playSound: true,                   
+        sound: 'extra_life',               // References asset name
+        activateOn: 'brick',
+        duration: 0,
+        score: 0,
         canBreakStrongBricks: false,       // Extra ball cannot break strong bricks
         fallSpeed: 6,                      // Pixels per frame falling speed
     },
-    large_paddle: {
+    powerup_largepaddle: {
         spriteKey: 'powerup_largepaddle',
         showSprite: true,
         showText: true,
@@ -39,15 +39,15 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         textPosition: 'center',
         textSize: 28,
         textBlink: false,
-        playSound: false,                   // No sound for paddle powerups
-        sound: null,
+        playSound: true,                   
+        sound: 'groot',                    // References asset name
         activateOn: 'screen',
         duration: 10000,
         score: 0,
         canBreakStrongBricks: false,       // Paddle powerups cannot break strong bricks
-        fallSpeed: 5,                      // Pixels per frame falling speed
+        fallSpeed: 8,                      // Pixels per frame falling speed
     },
-    small_paddle: {
+    powerup_smallpaddle: {
         spriteKey: 'powerup_smallpaddle',
         showSprite: true,
         showText: true,
@@ -55,13 +55,13 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         textPosition: 'center',
         textSize: 28,
         textBlink: false,
-        playSound: false,                   // No sound for paddle powerups
-        sound: null,
+        playSound: true,                   
+        sound: 'klein',                    // References asset name
         activateOn: 'screen',
         duration: 10000,
         score: 0,
         canBreakStrongBricks: false,       // Paddle powerups cannot break strong bricks
-        fallSpeed: 5,                      // Pixels per frame falling speed
+        fallSpeed: 8,                      // Pixels per frame falling speed
     },
     extra_life: {
         spriteKey: 'extra_life',
@@ -72,7 +72,7 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         textSize: 28,
         textBlink: false,
         playSound: true,
-        sound: 'extra_life',
+        sound: 'extra_life',               // References asset name
         activateOn: 'brick',
         duration: 0,
         score: 0,
@@ -87,13 +87,13 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         textPosition: 'center',
         textSize: 28,
         textBlink: false,
-        playSound: false,                   // No sound for skull powerup
-        sound: null,
+        playSound: false,                   
+        sound: 'null',
         activateOn: 'brick',
         duration: 0,
         score: 0,
         canBreakStrongBricks: false,       // Skull cannot break strong bricks
-        fallSpeed: 7,                      // Pixels per frame falling speed (faster for dangerous powerup)
+        fallSpeed: 4,                      // Pixels per frame falling speed (faster for dangerous powerup)
     },
     coin_gold: {
         spriteKey: 'coin_gold',
@@ -104,7 +104,7 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         textSize: 28,
         textBlink: false,
         playSound: true,                   
-        sound: 'coin_gold',
+        sound: 'coin_gold',                // References asset name
         activateOn: 'paddle',
         duration: 0,
         score: 100,
@@ -120,10 +120,10 @@ export const POWERUP_BEHAVIOR_CONFIG = {
         textSize: 28,
         textBlink: false,
         playSound: true,                   
-        sound: 'coin_silver',
+        sound: 'coin_silver',              // References asset name
         activateOn: 'paddle',
         duration: 0,
-        score: 25,
+        score: 50,
         canBreakStrongBricks: false,       // Coins cannot break strong bricks
         fallSpeed: 8,                      // Pixels per frame falling speed (fast for coins)
     },
@@ -252,8 +252,6 @@ export const GAME_SOUNDS_CONFIG = {
         volume: 0.3,
         poolSize: 'mobile'
     },
-    
-    
     brick_glass_break: {
         playSound: true,
         sound: 'brick_glass_break',
@@ -266,8 +264,24 @@ export const GAME_SOUNDS_CONFIG = {
         volume: 0.5,
         poolSize: 'desktop'
     },
-    
-    
+    strong: {
+        playSound: true,
+        sound: 'strong',
+        volume: 0.4,
+        poolSize: 'desktop'
+    },
+    bigbonus: {
+        playSound: true,
+        sound: 'bigbonus',
+        volume: 0.5,
+        poolSize: 'desktop'
+    },
+    normal: {
+        playSound: true,
+        sound: 'normal',
+        volume: 0.3,
+        poolSize: 'desktop'
+    },
 };
 
 // Helper function to get powerup config by type
@@ -287,13 +301,13 @@ export function getPowerUpConfig(type) {
         'skull': 'skull',
         'coin_gold': 'coin_gold',
         'coin_silver': 'coin_silver',
-        'largepaddle': 'large_paddle',
-        'smallpaddle': 'small_paddle',
+        'largepaddle': 'powerup_largepaddle',
+        'smallpaddle': 'powerup_smallpaddle',
         'extralife': 'extra_life',
         'coingold': 'coin_gold',
         'coinsilver': 'coin_silver',
-        'large_paddle': 'large_paddle',
-        'small_paddle': 'small_paddle'
+        'large_paddle': 'powerup_largepaddle',
+        'small_paddle': 'powerup_smallpaddle'
     };
     
     // Try the mapping first

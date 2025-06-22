@@ -146,27 +146,53 @@ document.querySelectorAll('.char-opt').forEach(img => {
         document.querySelectorAll('.char-opt').forEach(i => i.style.border = "2px solid #fff");
         this.style.border = "4px solid gold";
 
-        //Hide character select, show canvas
+        // Hide character select, show info page
         document.getElementById('character-select').style.display = "none";
-        app.view.style.display = 'block';
+        document.getElementById('info-page').style.display = "block";
 
         // Force audio unlock on character selection (important for iOS Safari)
         forceAudioUnlock();
+    });
+});
 
-        // Reset game state and wait for ball creation to complete
-        await game.resetGameState();
-        
-        // Now that the ball is created, place it on the paddle
-        game.centerPaddleAndPlaceBall();
+// Set up start game button
+document.getElementById('start-game-button').addEventListener('click', async () => {
+    // Hide info page, show canvas
+    document.getElementById('info-page').style.display = "none";
+    app.view.style.display = 'block';
 
-        //Set input mode to wait for start
-        game.inputMode = 'waitForStart';
-        game.waitingForInput = true;
+    // Force audio unlock on game start (important for iOS Safari)
+    forceAudioUnlock();
+
+    // Reset game state and wait for ball creation to complete
+    await game.resetGameState();
+    
+    // Now that the ball is created, place it on the paddle
+    game.centerPaddleAndPlaceBall();
+
+    //Set input mode to wait for start
+    game.inputMode = 'waitForStart';
+    game.waitingForInput = true;
+    
+    // Set up input handling for paddle movement and ball launching
+    setupInputHandlers();
+    
+    gameStarted = true;
+});
+
+// Set up tab switching for info page
+document.querySelectorAll('.tab-button').forEach(button => {
+    button.addEventListener('click', () => {
+        // Remove active class from all tabs and panels
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
         
-        // Set up input handling for paddle movement and ball launching
-        setupInputHandlers();
+        // Add active class to clicked tab
+        button.classList.add('active');
         
-        gameStarted = true;
+        // Show corresponding panel
+        const tabName = button.getAttribute('data-tab');
+        document.getElementById(`${tabName}-tab`).classList.add('active');
     });
 });
 

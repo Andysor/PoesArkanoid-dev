@@ -54,17 +54,22 @@ function createSoundPool(soundName, volume, poolSizeType = 'mobile') {
 
 // Get volume for a sound type
 function getSoundVolume(soundType) {
-    const volumeMap = {
-        'hit': 0.1,
-        'lifeloss': 0.3,
-        'poesklap': 0.8,
-        'brannas': 0.8,
-        'brick_glass_break': 0.4,
-        'brick_glass_destroyed': 0.5,
-        'extra_life': 0.6,
-        'gameOver1': 0.7
-    };
-    return volumeMap[soundType] || 0.5;
+    // Check if it's a powerup sound first
+    for (const [powerupType, config] of Object.entries(POWERUP_BEHAVIOR_CONFIG)) {
+        if (config.sound === soundType) {
+            return 0.5; // Default volume for powerup sounds
+        }
+    }
+    
+    // Check if it's a game sound
+    for (const [gameSoundType, config] of Object.entries(GAME_SOUNDS_CONFIG)) {
+        if (config.sound === soundType) {
+            return config.volume || 0.5;
+        }
+    }
+    
+    // Default volume for any other sounds
+    return 0.5;
 }
 
 // Play powerup sound based on configuration

@@ -1450,8 +1450,10 @@ export class Game {
         // Get powerup configuration for scoring
         const powerupConfig = getPowerUpConfig(powerUp.type);
         
-        // Play sound using the new configuration-based system
-        playSoundByName(powerUp.type);
+        // Play sound using the configuration-based system
+        if (powerupConfig && powerupConfig.playSound && powerupConfig.sound) {
+            playSoundByName(powerupConfig.sound);
+        }
         
         // Trigger powerup effects
         if (this.powerupEffects) {

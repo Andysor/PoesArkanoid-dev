@@ -61,6 +61,12 @@ export const PADDLE_HOVER_OFFSET = 0.1; // Screen height from touch point to pad
 // Audio constants
 export const POESKLAP_COOLDOWN = 500; // milliseconds between poesklap sounds 
 
+// Brick sound settings
+export const BRICK_SOUND_CONFIG = {
+    ENABLE_NORMAL_BRICK_SOUNDS: true, // Set to false to disable normal brick hit sounds
+    NORMAL_BRICK_SOUND_VOLUME: 0.3,   // Volume for normal brick hit sounds (0.0 to 1.0)
+};
+
 // Level completion time bonus settings
 export const TIME_BONUS_CONFIG = {
     // Time thresholds (in seconds)

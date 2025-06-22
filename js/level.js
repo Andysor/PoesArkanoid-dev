@@ -254,6 +254,7 @@ export class Level {
         let strongBricks = 0;
         let finishLevelBricks = 0;
         let bigBonusBricks = 0;
+        let glassBricks = 0;
 
         // First pass: count bricks and mark destroyed ones
         for (let c = 0; c < this.brickColumnCount; c++) {
@@ -277,6 +278,12 @@ export class Level {
                         bigBonusBricks++;
                         continue;
                     }
+
+                    // Skip glass bricks in level completion check - they don't block progression
+                    if (brick.brickInfo && brick.brickInfo.type === 'glass') {
+                        glassBricks++;
+                        continue;
+                    }
                     
                     if (brick.status === 1) {
                         allDestroyed = false;
@@ -290,8 +297,8 @@ export class Level {
         }
 
         // Log level completion status only when there are changes (destroyed bricks)
-        if (destroyedBricks > 0 && (strongBricks > 0 || finishLevelBricks > 0 || bigBonusBricks > 0)) {
-            console.log(`🏗️ Level completion check: ${activeBricks} active bricks, ${strongBricks} strong bricks, ${finishLevelBricks} finish level bricks, ${bigBonusBricks} big bonus bricks (excluded from completion)`);
+        if (destroyedBricks > 0 && (strongBricks > 0 || finishLevelBricks > 0 || bigBonusBricks > 0 || glassBricks > 0)) {
+            console.log(`🏗️ Level completion check: ${activeBricks} active bricks, ${strongBricks} strong bricks, ${finishLevelBricks} finish level bricks, ${bigBonusBricks} big bonus bricks, ${glassBricks} glass bricks (excluded from completion)`);
         }
 
         // Force stage update if there were destroyed bricks
