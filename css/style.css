@@ -4,6 +4,11 @@ html, body {
   height: 100%;
   overflow: hidden;
   background-color: #000;
+  background-image: url('../assets/images/loading/loadingscreen.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   /* Prevent text selection and touch callouts */
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -32,6 +37,18 @@ canvas {
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
   outline: none;
+}
+
+/* Hide loading screen background when game is active */
+body.game-active {
+  background-image: none !important;
+}
+
+/* Mobile-specific loading screen adjustments */
+@media (max-width: 768px) {
+  html, body {
+    background-attachment: scroll; /* Better performance on mobile */
+  }
 }
 
 #name-input-container {

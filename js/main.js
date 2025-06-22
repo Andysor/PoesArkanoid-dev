@@ -109,7 +109,7 @@ startButton.addEventListener('click', () => {
     
     // Validate name length
     if (!enteredName) {
-        alert("Please enter your name!");
+        alert("Skryf jou fokken naam!");
         nameInput.focus();
         return;
     }
@@ -160,6 +160,9 @@ document.getElementById('start-game-button').addEventListener('click', async () 
     // Hide info page, show canvas
     document.getElementById('info-page').style.display = "none";
     app.view.style.display = 'block';
+
+    // Hide loading screen background
+    document.body.classList.add('game-active');
 
     // Force audio unlock on game start (important for iOS Safari)
     forceAudioUnlock();
